@@ -1,8 +1,11 @@
 package net.minecraft.src;
 
-public class BlockTimeTraveler extends Block
-{
+import net.minecraft.client.Minecraft;
 
+public class BlockTimeTraveler extends Block
+{	
+	mod_Time mt = new mod_Time();
+	Minecraft mc = ModLoader.getMinecraftInstance();
      protected BlockTimeTraveler(int i, int j)
     {
         super(i, Material.ground);
@@ -13,8 +16,7 @@ public class BlockTimeTraveler extends Block
     	     double d = i;
     	     double d1 = j;
     	     double d2 = k;
-  	  	        	 ModLoader.openGUI(entityplayer, new GuiTimeTravel());
-  	 
+  	  	     mt.returnToPresent(mc);  	 
 
     	 
     
