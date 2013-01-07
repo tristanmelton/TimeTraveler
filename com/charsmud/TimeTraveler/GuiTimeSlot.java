@@ -1,11 +1,18 @@
-package net.minecraft.src;
+package com.charsmud.TimeTraveler;
 
 import java.util.Date;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.src.GuiSlot;
+import net.minecraft.src.MathHelper;
+import net.minecraft.src.ModLoader;
+import net.minecraft.src.Tessellator;
 
 class GuiTimeSlot extends GuiSlot
 {
     final GuiTimeTravel parentWorldGui;
-
+    Minecraft minecraft = ModLoader.getMinecraftInstance();
+    
     public GuiTimeSlot(GuiTimeTravel par1)
     {
         super(par1.mc, par1.width, par1.height, 32, par1.height - 64, 36);
@@ -89,9 +96,8 @@ class GuiTimeSlot extends GuiSlot
                 var9 = var9 + ", " + StatCollector.translateToLocal("selectWorld.cheats");
             }
         }*/
-
-        this.parentWorldGui.drawString(this.parentWorldGui.fontRenderer, var7, par2 + 2, par3 + 1, 16777215);
-        this.parentWorldGui.drawString(this.parentWorldGui.fontRenderer, var8, par2 + 2, par3 + 12, 8421504);
-        this.parentWorldGui.drawString(this.parentWorldGui.fontRenderer, var9, par2 + 2, par3 + 12 + 10, 8421504);
+        this.parentWorldGui.drawString(minecraft.fontRenderer, var7, par2 + 2, par3 + 1, 16777215);
+        this.parentWorldGui.drawString(minecraft.fontRenderer, var8, par2 + 2, par3 + 12, 8421504);
+        this.parentWorldGui.drawString(minecraft.fontRenderer, var9, par2 + 2, par3 + 12 + 10, 8421504);
     }
 }

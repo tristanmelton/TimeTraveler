@@ -1,5 +1,22 @@
-package net.minecraft.src;
+package com.charsmud.TimeTraveler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.BaseMod;
+import net.minecraft.src.Block;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerSP;
+import net.minecraft.src.GuiButton;
+import net.minecraft.src.GuiIngame;
+import net.minecraft.src.GuiMainMenu;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.ModLoader;
+import net.minecraft.src.Potion;
+import net.minecraft.src.ScaledResolution;
+import net.minecraft.src.StatList;
+import net.minecraft.src.World;
+import net.minecraft.src.WorldClient;
+import net.minecraft.src.WorldInfo;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -109,10 +126,9 @@ public void load()
 	pastCreation.mkdirs();
 	File presentCreation = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present");
 	presentCreation.mkdirs();
-	paradoximer = new ItemParadoximer(2330).setItemName("paradoximer");
-	paradoximer.iconIndex = ModLoader.addOverride("/gui/items.png", "/TimeMod/Items/paradoximer.png");
+	paradoximer = new ItemParadoximer(2330).setItemName("paradoximer");	
 	ModLoader.setInGameHook(this, true, false);
-	travelTime = new BlockTimeTraveler(255, 0).setHardness(9.0F).setBlockName("travelTime");
+	travelTime = new BlockTimeTraveler(255, 0).setBlockName("travelTime");
 	ModLoader.registerBlock(travelTime);
 	ModLoader.addName(travelTime, "Paradox Cube");
 	ModLoader.addName(paradoximer, "Paradoximer");
@@ -197,7 +213,7 @@ public boolean onTickInGame(float f, Minecraft minecraft)
 					invisPotTime = 0;
 				}
 			}
-			if(eps.isJumping) 
+			if(eps.isEating()) 
 			{
 				paradoxLevel++;
 			}

@@ -1,5 +1,11 @@
-package net.minecraft.src;
+package com.charsmud.TimeTraveler;
 import java.util.Random;
+
+import net.minecraft.src.Block;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.TileEntityChest;
+import net.minecraft.src.World;
+import net.minecraft.src.WorldGenerator;
 
 public class WorldGenPastTemple extends WorldGenerator
 {
