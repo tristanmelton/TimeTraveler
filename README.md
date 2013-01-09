@@ -6,4 +6,4 @@ For those of you that are familiar with the physics of reality and time travel, 
 Installation
 ============
 
-Install Modloader.  Put the zip file into the mods folder, and you're done!  :)  That easy.
+Install Modloader.  Put the zip file into the mods folder, and you're done!  :)  That easy.  Alernatively, you can launch the auto-installer for your OS and it will install it for you.
