@@ -77,9 +77,9 @@ public class GuiFutureTravel extends GuiScreen{
     {
         this.theGuiTextField.textboxKeyTyped(par1, par2);
         ((GuiButton)this.controlList.get(0)).enabled = this.theGuiTextField.getText().trim().length() > 0;
-        if(!Keyboard.isKeyDown(Keyboard.KEY_1) || !Keyboard.isKeyDown(Keyboard.KEY_2) || !Keyboard.isKeyDown(Keyboard.KEY_3) || !Keyboard.isKeyDown(Keyboard.KEY_4)|| !Keyboard.isKeyDown(Keyboard.KEY_5) || !Keyboard.isKeyDown(Keyboard.KEY_6)|| !Keyboard.isKeyDown(Keyboard.KEY_7) || !Keyboard.isKeyDown(Keyboard.KEY_8)|| !Keyboard.isKeyDown(Keyboard.KEY_9))
+        if(!Keyboard.isKeyDown(2) | !Keyboard.isKeyDown(3) | !Keyboard.isKeyDown(4) | !Keyboard.isKeyDown(5) | !Keyboard.isKeyDown(6) | !Keyboard.isKeyDown(7) | !Keyboard.isKeyDown(8) | !Keyboard.isKeyDown(9) | !Keyboard.isKeyDown(10) | !Keyboard.isKeyDown(11))
         {
-        	this.theGuiTextField.deleteFromCursor(1);
+        	System.out.println(":)");
         }
         if (par1 == 13)
         {
