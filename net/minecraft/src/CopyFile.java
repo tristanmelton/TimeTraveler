@@ -1,4 +1,4 @@
-package com.charsmud.TimeTraveler;
+package net.minecraft.src;
 
 import java.io.*;
 import java.nio.ByteBuffer;

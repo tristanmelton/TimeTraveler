@@ -1,9 +1,6 @@
-package com.charsmud.TimeTraveler;
+package net.minecraft.src;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityCreature;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.World;
 
 public class EntityPlayerPast extends EntityCreature
 {

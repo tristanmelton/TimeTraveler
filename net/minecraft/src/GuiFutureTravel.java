@@ -1,12 +1,8 @@
-package com.charsmud.TimeTraveler;
+package net.minecraft.src;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import net.minecraft.src.GuiButton;
-import net.minecraft.src.GuiScreen;
-import net.minecraft.src.GuiTextField;
-import net.minecraft.src.StringTranslate;
 
 import org.lwjgl.input.Keyboard;
 

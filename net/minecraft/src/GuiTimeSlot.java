@@ -1,12 +1,8 @@
-package com.charsmud.TimeTraveler;
+package net.minecraft.src;
 
 import java.util.Date;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.GuiSlot;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.ModLoader;
-import net.minecraft.src.Tessellator;
 
 class GuiTimeSlot extends GuiSlot
 {

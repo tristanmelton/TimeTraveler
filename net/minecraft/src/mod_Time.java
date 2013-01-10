@@ -1,21 +1,5 @@
-package com.charsmud.TimeTraveler;
+package net.minecraft.src;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.BaseMod;
-import net.minecraft.src.Block;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerSP;
-import net.minecraft.src.GuiButton;
-import net.minecraft.src.GuiIngame;
-import net.minecraft.src.GuiMainMenu;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
-import net.minecraft.src.Potion;
-import net.minecraft.src.ScaledResolution;
-import net.minecraft.src.StatList;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldClient;
-import net.minecraft.src.WorldInfo;
 
 import java.util.List;
 import java.util.Map;
