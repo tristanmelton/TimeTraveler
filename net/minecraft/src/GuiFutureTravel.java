@@ -75,14 +75,11 @@ public class GuiFutureTravel extends GuiScreen{
      */
     protected void keyTyped(char par1, int par2)
     {
-    	if(!Keyboard.isKeyDown(Keyboard.KEY_0) || !Keyboard.isKeyDown(Keyboard.KEY_1) || !Keyboard.isKeyDown(Keyboard.KEY_2) || !Keyboard.isKeyDown(Keyboard.KEY_3)|| !Keyboard.isKeyDown(Keyboard.KEY_4) || !Keyboard.isKeyDown(Keyboard.KEY_5) || !Keyboard.isKeyDown(Keyboard.KEY_6) || !Keyboard.isKeyDown(Keyboard.KEY_7)|| !Keyboard.isKeyDown(Keyboard.KEY_8) || !Keyboard.isKeyDown(Keyboard.KEY_9))
-    	{
-    		System.out.println("Do Nothing");
-    	}
-    	else
-    	{
-            this.theGuiTextField.textboxKeyTyped(par1, par2);
-    	}
+    	Character c = par1;
+    		if(c.isDigit(c))
+    		{
+	            this.theGuiTextField.textboxKeyTyped(par1, par2);
+    		}
         ((GuiButton)this.controlList.get(0)).enabled = this.theGuiTextField.getText().trim().length() > 0;
         if (par1 == 13)
         {
