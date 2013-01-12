@@ -2,11 +2,16 @@ package net.minecraft.src;
 
 import net.minecraft.client.Minecraft;
 
-public class EntityPlayerPast extends EntityCreature
+public class EntityPlayerPast extends EntityAnimal
 {
+	private PathEntity pathToEntity;
+	Minecraft minecraft = ModLoader.getMinecraftInstance();
+	World w = minecraft.theWorld;
     public EntityPlayerPast(World par1World) {
 		super(par1World);
         this.entityType = "humanoid";
+        this.texture = "/mob/pigzombie.png";
+
         //this.skinUrl = Minecraft.getMinecraft().thePlayer.skinUrl;
         this.fireResistance = 20;
 
@@ -50,4 +55,25 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     {
         return 0;
     }
+    
+    @Override
+    public void setPathToEntity(PathEntity pathentity)
+    {
+     pathToEntity = this.worldObj.getEntityPathToXYZ(this, -6, 68, 117, 30F, true, true, false, false);
+
+     super.setPathToEntity(pathToEntity);
+    }
+
+    
+    public void onUpdate()
+    {
+    	super.onUpdate();
+    	setPathToEntity(pathToEntity);
+    }
+	@Override
+	public EntityAgeable func_90011_a(EntityAgeable var1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

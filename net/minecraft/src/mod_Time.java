@@ -124,8 +124,17 @@ public void load()
 		  {
 	  			"x", "s", Character.valueOf('x'), Block.wood, Character.valueOf('s'), Block.dirt
 		  });
-    
+  	ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
+
+    	ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
 }
+
+public void addRenderer(Map var1)
+{
+var1.put(EntityPlayerPast.class, new RenderLiving(new ModelBiped(),.5f));//says that the pigman should use the living renderer and the biped model note you can change the renderer and the model
+}
+
+
 /**
  * Runs once every tick.  Currently handles Paradox Level, Rendering paradox bar, handling Time Zone saving
  */
