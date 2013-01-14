@@ -11,6 +11,7 @@ import java.util.List;
 
 import static java.nio.file.StandardCopyOption.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 
 public class GuiTimeTravel extends GuiScreen {
 
@@ -47,8 +48,10 @@ private GuiButton buttonSelect;
  * Initializes the GUI, sest up buttons and title and directories.
  */
         public void initGui() {
+        	Minecraft minecraft = ModLoader.getMinecraftInstance();
+        	MinecraftServer ms = minecraft.getIntegratedServer();
         	
-        	directory = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/" + wi.getWorldName());
+        	directory = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName());
         	directory.mkdir();
         	
         	files = directory.listFiles(); 
@@ -71,6 +74,8 @@ private GuiButton buttonSelect;
          * Called whenever a button is pressed.  Handles past travel to different zones
          */ 
         	public void actionPerformed(GuiButton gButton) {
+        		Minecraft minecraft = ModLoader.getMinecraftInstance();
+        		MinecraftServer ms = minecraft.getIntegratedServer();
         		if(gButton.id == 0)
         		{
         			mc.displayGuiScreen(null);
@@ -87,8 +92,8 @@ private GuiButton buttonSelect;
             				try {
             					WorldInfo worldi = mc.theWorld.getWorldInfo();
             					mc.thePlayer.addChatMessage("Loading...");
-            					File present = new File(Minecraft.getMinecraftDir(), "saves/" + worldi.getWorldName() + "/region");
-            					String fname = ModLoader.getMinecraftInstance().getMinecraftDir() + "\\mods\\TimeMod\\present\\" + worldi.getWorldName();
+            					File present = new File(Minecraft.getMinecraftDir(), "saves/" + ms.getWorldName() + "/region");
+            					String fname = ModLoader.getMinecraftInstance().getMinecraftDir() + "\\mods\\TimeMod\\present\\" + ms.getWorldName();
                             
             					File directory = new File(fname);
                             
@@ -99,7 +104,6 @@ private GuiButton buttonSelect;
             					System.out.println(isInPast + " This check is in GUiTimeTravel");
 
             					System.out.println(files[i].getName());
-            					Minecraft minecraft = ModLoader.getMinecraftInstance();
             					WorldClient wc = minecraft.theWorld;
             					EntityPlayer player = minecraft.thePlayer;
 
@@ -107,11 +111,11 @@ private GuiButton buttonSelect;
             					minecraft.loadWorld((WorldClient)null);
             					minecraft.displayGuiScreen(new GuiMainMenu());
                            
-            					source =  new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + wi.getWorldName() + "/" + nameOfTime); 
+            					source =  new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/" + nameOfTime); 
             					staticsource = source;
                             	worldInPast = source;
                             	System.out.println(this.getSaveNumber() + "2345678" + source);
-                            	File dest = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/saves/" + wi.getWorldName() + "/region");
+                            	File dest = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
                             
                             	try 
                             	{

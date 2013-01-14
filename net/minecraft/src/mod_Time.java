@@ -1,5 +1,6 @@
 package net.minecraft.src;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ boolean hasRun = false;
 
 public int ctr;
 public int ct;
+public int count;
 public int paradoxLevel;
 public int seconds = 30;
 public int minutes = 1;
@@ -106,10 +108,16 @@ public boolean onTickInGUI(Minecraft minecraft, GuiScreen guiscreen)
  */
 public void load()
 {  	
+	Minecraft m = ModLoader.getMinecraftInstance();
+	MinecraftServer ms = m.getIntegratedServer();
+	
 	File pastCreation = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past");
 	pastCreation.mkdirs();
 	File presentCreation = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present");
 	presentCreation.mkdirs();
+	//File playerLoc = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
+	//playerLoc.mkdirs();
+	
 	paradoximer = new ItemParadoximer(2330).setItemName("paradoximer");	
 	ModLoader.setInGameHook(this, true, false);
 	travelTime = new BlockTimeTraveler(255, 0).setBlockName("travelTime");
@@ -126,9 +134,12 @@ public void load()
 		  });
   	ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
 
-    	ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
+    ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
 }
 
+/**
+ * Adds render for PlayerPast
+ */
 public void addRenderer(Map var1)
 {
 var1.put(EntityPlayerPast.class, new RenderLiving(new ModelBiped(),.5f));//says that the pigman should use the living renderer and the biped model note you can change the renderer and the model
@@ -140,8 +151,10 @@ var1.put(EntityPlayerPast.class, new RenderLiving(new ModelBiped(),.5f));//says 
  */
 public boolean onTickInGame(float f, Minecraft minecraft)
 {
-	WorldClient w = minecraft.theWorld;
-	WorldInfo wi = w.getWorldInfo();
+	MinecraftServer ms = minecraft.getIntegratedServer();
+	
+	//WorldClient w = minecraft.theWorld;
+	//WorldInfo wi = w.getWorldInfo();
 	
     ScaledResolution var5 = new ScaledResolution(minecraft.gameSettings, minecraft.displayWidth, minecraft.displayHeight);
    
@@ -154,7 +167,9 @@ public boolean onTickInGame(float f, Minecraft minecraft)
     int playerZ = (int) minecraft.thePlayer.posZ;
     
     ctr++;
-	
+	count++;
+
+    
     text  = "Time Remaining: " + minutes + " Minutes, " + seconds + " Seconds";
 	
     GuiTimeTravel gtt = new GuiTimeTravel();
@@ -164,21 +179,24 @@ public boolean onTickInGame(float f, Minecraft minecraft)
     GuiIngame gig = new GuiIngame(minecraft);
 	
     //Render Paradox Bar
-    
-    GL11.glBindTexture(GL11.GL_TEXTURE_2D, minecraft.renderEngine.getTexture("/TimeMod/gui/newGUIElements.png")); //3553
-	//GL11.glEnable(GL11.GL_BLEND);  //3042
-	//GL11.glBlendFunc(775, 769);
+    GL11.glBindTexture(GL11.GL_TEXTURE_2D, minecraft.renderEngine.getTexture("/TimeMod/gui/newGUIElements.png"));
 	gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 0, 128, 8);
-	//GL11.glDisable(GL11.GL_BLEND); //3042
 	
-    File beginningOfWorld = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present/" + wi.getWorldName());
-	
+    File beginningOfWorld = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
+	File playerLoc = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
+    
+    if(count == 240)
+    {
+    	playerLoc(playerLoc, minecraft);
+    	count = 0;
+    }
+    
     if(beginningOfWorld.length() == 0)
     {
-    	File initWorldGen = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + wi.getWorldName());
+    	File initWorldGen = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName());
     	initWorldGen.mkdirs();
-        File fi = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "\\saves\\" + wi.getWorldName() + "\\region");
-        File moveTo = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + wi.getWorldName() + "/Time 000");
+        File fi = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
+        File moveTo = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/Time 001");
         try
         {
             cf.copyDirectory(fi, moveTo);
@@ -209,6 +227,7 @@ public boolean onTickInGame(float f, Minecraft minecraft)
 			if(eps.isEating()) 
 			{
 				paradoxLevel++;
+				eps.experienceTotal = eps.experienceTotal + 2;
 			}
 			if(eps.isSneaking())
 			{
@@ -514,9 +533,9 @@ public boolean onTickInGame(float f, Minecraft minecraft)
             
             //minecraft.loadWorld(w);
             
-            File present = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present/" + wi.getWorldName());
+            File present = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
             File worldFileDest = GuiTimeTravel.staticsource;
-            File worldFile = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/saves/" + wi.getWorldName() + "/region");
+            File worldFile = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
             
             System.out.println(present);
             System.out.println(worldFileDest);
@@ -542,16 +561,16 @@ public boolean onTickInGame(float f, Minecraft minecraft)
 			ct++;
 			if(minutes <= 0) {
 				text = "Time Remaining: " + seconds + " Seconds";
-				if(seconds <= 1) {					
+				if(seconds <= 0) {					
 		            minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
 		            minecraft.theWorld.sendQuittingDisconnectingPacket();
 		            minecraft.loadWorld((WorldClient)null);
 		            minecraft.displayGuiScreen(new GuiMainMenu());
 		           
 		            //minecraft.loadWorld(w);
-		            File present = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present/" + wi.getWorldName());
+		            File present = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
 		            File worldFileDest = GuiTimeTravel.staticsource;
-		            File worldFile = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/saves/" + wi.getWorldName() + "/region");
+		            File worldFile = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
 		           
 		            System.out.println(worldFileDest + " " + gtt.getSaveNumber());
 		            System.out.println(present);
@@ -599,7 +618,7 @@ public boolean onTickInGame(float f, Minecraft minecraft)
    if(!b) {
    WorldInfo we = minecraft.theWorld.getWorldInfo();
    
-   File fil = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/" + we.getWorldName());
+   File fil = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName());
    
    if(!fil.exists())
    {
@@ -607,18 +626,18 @@ public boolean onTickInGame(float f, Minecraft minecraft)
    }
 
    		  //Happens after ctr ticks
-   		  int counterstart = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/" + we.getWorldName()).listFiles().length;
+   		  int counterstart = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName()).listFiles().length;
           counter = counterstart;
           
           try
           {
            WorldInfo worldinfo = minecraft.theWorld.getWorldInfo();
   
-           File fi = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "\\saves\\" + we.getWorldName() + "\\region");
-           File f2 = new File (ModLoader.getMinecraftInstance().getMinecraftDir() + "\\mods\\TimeMod\\past\\" + worldinfo.getWorldName());
+           File fi = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "\\saves\\" + ms.getWorldName() + "\\region");
+           File f2 = new File (ModLoader.getMinecraftInstance().getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName());
            f2.mkdir();
 
-           String fname = ModLoader.getMinecraftInstance().getMinecraftDir() + "\\mods\\TimeMod\\past\\" + worldinfo.getWorldName() + "\\Time ";
+           String fname = ModLoader.getMinecraftInstance().getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName() + "\\Time ";
            counter = counter + 1;
            fname = fname.concat(String.format("%03d",counter));
           
@@ -628,7 +647,7 @@ public boolean onTickInGame(float f, Minecraft minecraft)
    
            cf.copyDirectory(fi, directoryToMoveTo);
           
-           System.out.println("Created a time!");                
+           System.out.println("Created a time!");       
            //File destination = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past");
            //File zipped = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/w1.zip");
            
@@ -671,4 +690,57 @@ public void generateSurface(World world, Random rand, int y, int z)
 
      }
  }
+public void playerLoc(File destToSave, Minecraft minecraft)
+{
+	EntityPlayer ep = minecraft.thePlayer;
+	
+	int playerX = (int)ep.posX;
+	int playerY = (int)ep.posY;
+	int playerZ = (int)ep.posZ;
+	
+	System.out.println(playerX + " " + playerY + " " + playerZ);
+	
+	if(!destToSave.exists())
+	{
+		destToSave.mkdirs();
+	}
+	
+	/*if(destToSave.listFiles().length == 0)
+	{
+		File primaryLoc = new File(destToSave + "/loc1.txt");		
+		try
+		{
+	        BufferedWriter out = new BufferedWriter(new FileWriter(primaryLoc));
+	        out.write(Integer.toString(playerX));
+	        out.newLine();
+	        out.write(Integer.toString(playerY));
+	        out.newLine();
+	        out.write(Integer.toString(playerZ));
+		}
+		catch(IOException ex)
+		{
+			ex.printStackTrace();
+		}
+		
+	}*/
+	//else
+	//{
+		File nextLoc = new File(destToSave + "/loc" + ((destToSave.listFiles().length) + 1) + ".txt");
+		try
+		{
+			BufferedWriter out = new BufferedWriter(new FileWriter(nextLoc));
+			out.write(Integer.toString(playerX));
+			out.newLine();
+			out.write(Integer.toString(playerY));
+			out.newLine();
+			out.write(Integer.toString(playerZ));
+			out.flush();
+			out.close();
+		}
+		catch(IOException ex)
+		{
+			ex.printStackTrace();
+		}
+	//}
+}
 }
