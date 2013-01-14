@@ -704,28 +704,7 @@ public void playerLoc(File destToSave, Minecraft minecraft)
 	{
 		destToSave.mkdirs();
 	}
-	
-	/*if(destToSave.listFiles().length == 0)
-	{
-		File primaryLoc = new File(destToSave + "/loc1.txt");		
-		try
-		{
-	        BufferedWriter out = new BufferedWriter(new FileWriter(primaryLoc));
-	        out.write(Integer.toString(playerX));
-	        out.newLine();
-	        out.write(Integer.toString(playerY));
-	        out.newLine();
-	        out.write(Integer.toString(playerZ));
-		}
-		catch(IOException ex)
-		{
-			ex.printStackTrace();
-		}
-		
-	}*/
-	//else
-	//{
-		File nextLoc = new File(destToSave + "/loc" + ((destToSave.listFiles().length) + 1) + ".txt");
+	File nextLoc = new File(destToSave + "/loc" + ((destToSave.listFiles().length) + 1) + ".txt");
 		try
 		{
 			BufferedWriter out = new BufferedWriter(new FileWriter(nextLoc));
@@ -741,6 +720,5 @@ public void playerLoc(File destToSave, Minecraft minecraft)
 		{
 			ex.printStackTrace();
 		}
-	//}
-}
+	}
 }
