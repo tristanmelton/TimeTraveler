@@ -1,25 +1,56 @@
 package net.minecraft.src;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 
 public class EntityPlayerPast extends EntityAnimal
 {
 	private PathEntity pathToEntity;
 	Minecraft minecraft = ModLoader.getMinecraftInstance();
 	World w = minecraft.theWorld;
+	
+	int i;
+	
+	int playerX;
+	int playerY;
+	int playerZ;
+	float rangeToPoint;
+	
+	double distFromCoords;
+	
     public EntityPlayerPast(World par1World) {
 		super(par1World);
+		
+		i = 1;
+		rangeToPoint = 30F;
+		
         this.entityType = "humanoid";
         this.texture = "/mob/pigzombie.png";
 
         //this.skinUrl = Minecraft.getMinecraft().thePlayer.skinUrl;
         this.fireResistance = 20;
-
+        
+        //this.getNavigator().setBreakDoors(true);
+        //this.tasks.addTask(0, new EntityAISwimming(this));
+        //this.tasks.addTask(1, new EntityAIBreakDoor(this));
 	}
+    /**
+     * Gets amount of health (max)
+     */
     public int getMaxHealth()
     {
         return 20;
     }
+
+   /* protected boolean isAIEnabled()
+    {
+        return true;
+    }*/
 
 public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     {
@@ -56,20 +87,76 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
         return 0;
     }
     
+    
+    /**
+     * Sets pathing to a specific point.  
+     */
     @Override
     public void setPathToEntity(PathEntity pathentity)
     {
-     pathToEntity = this.worldObj.getEntityPathToXYZ(this, -6, 68, 117, 30F, true, true, false, false);
+    	Minecraft m = ModLoader.getMinecraftInstance();
+    	MinecraftServer ms = m.getIntegratedServer();
+    	File locDirectory = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
+    	
+    	File locs = new File(locDirectory + "/loc" + i + ".txt");
+    	
+    	try
+    	{
+    		if(locs.exists())
+    		{
+            	BufferedReader reader = new BufferedReader(new FileReader(locs));
+            	
+            	playerX = Integer.parseInt(reader.readLine());
+            	playerY = Integer.parseInt(reader.readLine());
+            	playerZ = Integer.parseInt(reader.readLine());
+            	
+            	distFromCoords = this.getDistance(playerX, playerY, playerZ);
+            	if(distFromCoords >= rangeToPoint)
+            	{
+            		rangeToPoint = (float)distFromCoords + 3;
+            	}
+            	
+            	pathentity = this.worldObj.getEntityPathToXYZ(this, playerX, playerY, playerZ, rangeToPoint, true, true, false, false);
 
-     super.setPathToEntity(pathToEntity);
+            	super.setPathToEntity(pathentity);
+
+    		}
+    		
+    	}
+    	catch(IOException ex)
+    	{
+    		ex.printStackTrace();
+    	}
     }
-
-    
+    /**
+     * Checks if path is complete (or near to)
+     * @param pathentity
+     * @return
+     */
+    public boolean checkPathComplete(PathEntity pathentity)
+    {    	
+    	if(this.getDistance(playerX, playerY, playerZ) <= 2.0F)
+    	{
+        	i++;
+        	return true;
+    	}
+        else
+        {
+        	return false;
+        }
+    }
+    /**
+     * Runs once a tick, updates the entity and it's AI
+     */
     public void onUpdate()
     {
     	super.onUpdate();
     	setPathToEntity(pathToEntity);
+    	checkPathComplete(pathToEntity);
     }
+    /**
+     * UNUSED
+     */
 	@Override
 	public EntityAgeable func_90011_a(EntityAgeable var1) {
 		// TODO Auto-generated method stub

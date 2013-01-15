@@ -134,7 +134,7 @@ public void load()
 		  });
   	ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
 
-    ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
+   // ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
 }
 
 /**
@@ -612,7 +612,7 @@ public boolean onTickInGame(float f, Minecraft minecraft)
 	   }
 	   
   if(ctr == 20 * 60) //20 is the amount of ticks per second. Times 60 for 1 minute.
-   //change to 350 for final release
+   //change to 3600 for final release
 	  
   {
    if(!b) {
