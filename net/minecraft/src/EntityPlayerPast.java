@@ -22,6 +22,7 @@ public class EntityPlayerPast extends EntityAnimal
 	float rangeToPoint;
 	
 	double distFromCoords;
+	private BufferedReader reader;
 	
     public EntityPlayerPast(World par1World) {
 		super(par1World);
@@ -35,9 +36,6 @@ public class EntityPlayerPast extends EntityAnimal
         //this.skinUrl = Minecraft.getMinecraft().thePlayer.skinUrl;
         this.fireResistance = 20;
         
-        //this.getNavigator().setBreakDoors(true);
-        //this.tasks.addTask(0, new EntityAISwimming(this));
-        //this.tasks.addTask(1, new EntityAIBreakDoor(this));
 	}
     /**
      * Gets amount of health (max)
@@ -46,11 +44,6 @@ public class EntityPlayerPast extends EntityAnimal
     {
         return 20;
     }
-
-   /* protected boolean isAIEnabled()
-    {
-        return true;
-    }*/
 
 public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     {
@@ -69,7 +62,7 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 
     protected String getHurtSound()
     {
-        return "null";
+        return "damage.hit1";
     }
 
     protected String getDeathSound()
@@ -104,7 +97,7 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     	{
     		if(locs.exists())
     		{
-            	BufferedReader reader = new BufferedReader(new FileReader(locs));
+            	reader = new BufferedReader(new FileReader(locs));
             	
             	playerX = Integer.parseInt(reader.readLine());
             	playerY = Integer.parseInt(reader.readLine());
