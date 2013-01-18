@@ -14,7 +14,7 @@ public class WorldGenPastTemple extends WorldGenerator
 			return false;
 		}
         TileEntityChest tileentitychest = new TileEntityChest();
-        tileentitychest.setInventorySlotContents(0, new ItemStack(mod_Time.paradoximer.shiftedIndex, 1, 1));
+        tileentitychest.setInventorySlotContents(0, new ItemStack(mod_Time.paradoximer.itemID, 1, 1));
 		world.setBlock(i + 0, j + 0, k + 0, Block.grass.blockID);
 		world.setBlock(i + 0, j + 0, k + 1, Block.grass.blockID);
 		world.setBlock(i + 0, j + 0, k + 2, Block.grass.blockID);

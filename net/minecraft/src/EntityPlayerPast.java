@@ -147,13 +147,11 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     	setPathToEntity(pathToEntity);
     	checkPathComplete(pathToEntity);
     }
-    /**
-     * UNUSED
-     */
 	@Override
-	public EntityAgeable func_90011_a(EntityAgeable var1) {
-		// TODO Auto-generated method stub
+	/**
+	 * UNUSED
+	 */
+	public EntityAgeable createChild(EntityAgeable var1) {
 		return null;
 	}
-
 }
