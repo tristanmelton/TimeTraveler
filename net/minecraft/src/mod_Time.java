@@ -31,6 +31,11 @@ public int minutes = 1;
 public int invisPotTime = 0;
 public int sneakTime = 0;
 
+int nonPastChunks = 0;
+int pastChunks;
+
+
+
 int prevSheep;
 int prevPig;
 int prevCow;
@@ -89,6 +94,7 @@ String text;
    
 /*
 public boolean onTickInGUI(Minecraft minecraft, GuiScreen guiscreen)
+
 {
 	GuiTimeTravel gtt = new GuiTimeTravel();
         if(minecraft.theWorld!=null){
@@ -115,8 +121,6 @@ public void load()
 	pastCreation.mkdirs();
 	File presentCreation = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present");
 	presentCreation.mkdirs();
-	//File playerLoc = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
-	//playerLoc.mkdirs();
 	
 	paradoximer = new ItemParadoximer(2330).setItemName("paradoximer");	
 	ModLoader.setInGameHook(this, true, false);
@@ -126,6 +130,7 @@ public void load()
 	ModLoader.addName(paradoximer, "Paradoximer");
 	ModLoader.addRecipe(new ItemStack(travelTime,  13), new Object[] 
 			{
+		//
 				"x", Character.valueOf('x'), Block.dirt
 			});
   ModLoader.addRecipe(new ItemStack(paradoximer,  13), new Object[] 
@@ -153,8 +158,7 @@ public boolean onTickInGame(float f, Minecraft minecraft)
 {
 	MinecraftServer ms = minecraft.getIntegratedServer();
 	
-	//WorldClient w = minecraft.theWorld;
-	//WorldInfo wi = w.getWorldInfo();
+	World w = minecraft.theWorld;
 	
     ScaledResolution var5 = new ScaledResolution(minecraft.gameSettings, minecraft.displayWidth, minecraft.displayHeight);
    
@@ -207,8 +211,18 @@ public boolean onTickInGame(float f, Minecraft minecraft)
         }
     }
 	//Paradox Bar Computations
+    if(!b)
+    {
+    	nonPastChunks = w.chunkProvider.getLoadedChunkCount();
+    }
 	if(b)
-	{
+	{	
+		pastChunks = w.chunkProvider.getLoadedChunkCount();
+		
+		if(pastChunks == nonPastChunks)
+		{
+				w.chunkProvider.loadChunk(0, 0);
+		}
 		if(paradoxLevel < 0) {
 			paradoxLevel = 0;
 		}
@@ -690,6 +704,11 @@ public void generateSurface(World world, Random rand, int y, int z)
 
      }
  }
+/**
+ * Saves the player location
+ * @param destToSave
+ * @param minecraft
+ */
 public void playerLoc(File destToSave, Minecraft minecraft)
 {
 	EntityPlayer ep = minecraft.thePlayer;
@@ -703,10 +722,11 @@ public void playerLoc(File destToSave, Minecraft minecraft)
 	if(!destToSave.exists())
 	{
 		destToSave.mkdirs();
+		
 	}
 	File nextLoc = new File(destToSave + "/loc" + ((destToSave.listFiles().length) + 1) + ".txt");
 		try
-		{
+		{			
 			BufferedWriter out = new BufferedWriter(new FileWriter(nextLoc));
 			out.write(Integer.toString(playerX));
 			out.newLine();

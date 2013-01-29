@@ -17,7 +17,7 @@ public class GuiTimeTravel extends GuiScreen {
 
 public static boolean isInPast = false;
 private ArrayList timeList;
-
+//
 /** the currently selected world */
 private int selectedWorld;
 
@@ -169,7 +169,10 @@ private GuiButton buttonSelect;
             System.out.println(files);
             for(File file : files) {
             	System.out.println(files.length + " " + file.getName());
-            	timeList.add(file.getName());
+            	if(!file.getName().contains("player"))
+            	{
+                	timeList.add(file.getName());
+            	}
             }
             this.selectedWorld = -1;
         }

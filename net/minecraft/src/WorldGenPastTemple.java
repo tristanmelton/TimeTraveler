@@ -1,7 +1,7 @@
 package net.minecraft.src;
 import java.util.Random;
 
-
+//
 public class WorldGenPastTemple extends WorldGenerator
 {
 	public WorldGenPastTemple() { }

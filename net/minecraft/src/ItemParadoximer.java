@@ -5,7 +5,7 @@ import java.io.File;
 import net.minecraft.client.Minecraft;
 
 public class ItemParadoximer extends Item {
-	
+	//
 	
 	public ItemParadoximer (int i) {
 		super(i);

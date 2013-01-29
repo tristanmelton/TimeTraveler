@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 
 public class BlockTimeTraveler extends Block
 {	
+	//
      protected BlockTimeTraveler(int i, int j)
     {
         super(i, Material.ground);

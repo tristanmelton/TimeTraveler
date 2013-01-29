@@ -110,7 +110,7 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
             	}
             	
             	pathentity = this.worldObj.getEntityPathToXYZ(this, playerX, playerY, playerZ, rangeToPoint, true, true, false, false);
-
+//
             	super.setPathToEntity(pathentity);
 
     		}
