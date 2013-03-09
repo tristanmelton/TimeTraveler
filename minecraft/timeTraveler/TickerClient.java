@@ -459,7 +459,6 @@ public class TickerClient implements ITickHandler {
 				mechanics.outOfTime(mc, mc.getIntegratedServer(), minutes, seconds, text);
 			}
 		}
-		mechanics.updateParadoxBar(mc, paradoxLevel);
 	}
 	private void onTickInGui(Minecraft mc, GuiScreen gui)
 	{
