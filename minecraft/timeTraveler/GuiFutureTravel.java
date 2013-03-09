@@ -66,7 +66,8 @@ public class GuiFutureTravel extends GuiScreen{
             else if (par1GuiButton.id == 0)
             {
                 //var2.renameWorld(this.worldName, this.theGuiTextField.getText().trim()); //What happens when you hit "Rename"
-                this.mc.displayGuiScreen(this.parentGuiScreen);
+                //this.mc.displayGuiScreen(null);
+            	//TODO: ADD IN FUTURE STUFFS
             }
         }
     }

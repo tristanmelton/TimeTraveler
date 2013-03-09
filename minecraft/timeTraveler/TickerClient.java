@@ -34,6 +34,7 @@ import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.potion.Potion;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 public class TickerClient implements ITickHandler {
@@ -95,23 +96,6 @@ public class TickerClient implements ITickHandler {
 		else
 			if(type.equals(EnumSet.of(TickType.CLIENT)))
 			{
-				Minecraft mc = Minecraft.getMinecraft();
-				GuiScreen gui = mc.currentScreen;
-				if(gui != null)
-				{
-					onTickInGui(mc, gui);
-				}
-				else
-				{
-					onTickInGame(mc);
-					PastMechanics mechanics = new PastMechanics();
-					if(isInPast)
-					{
-						mechanics.drawTimeTicker(mc, text);
-					}
-					mechanics.updateParadoxBar(mc, paradoxLevel);
-
-				}
 			}
 	}
 	private void onTickInGame(Minecraft mc)
@@ -475,12 +459,24 @@ public class TickerClient implements ITickHandler {
 				mechanics.outOfTime(mc, mc.getIntegratedServer(), minutes, seconds, text);
 			}
 		}
+		mechanics.updateParadoxBar(mc, paradoxLevel);
 	}
 	private void onTickInGui(Minecraft mc, GuiScreen gui)
 	{
 	}
 	private void onRenderTick()
 	{
+		Minecraft mc = FMLClientHandler.instance().getClient();
+		PastMechanics mechanics = new PastMechanics();
+
+        if(mc.currentScreen == null)
+        {
+        	if(isInPast)
+        	{
+				mechanics.drawTimeTicker(mc, text);
+        	}
+    		mechanics.updateParadoxBar(mc, paradoxLevel);
+        }
 
 	}
 	@Override
