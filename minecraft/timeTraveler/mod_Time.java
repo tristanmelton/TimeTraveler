@@ -150,7 +150,7 @@ public void load(FMLInitializationEvent event)
 		  {
 	  			"x", "s", Character.valueOf('x'), Block.wood, Character.valueOf('s'), Block.dirt
 		  });
-  	//ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
+  	ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
 
    // ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
 	}

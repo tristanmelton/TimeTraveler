@@ -191,7 +191,7 @@ public class PastMechanics {
         try {
         	Thread.sleep(3000);
         	CopyFile.moveMultipleFiles(worldFile, worldFileDest);
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         	CopyFile.moveMultipleFiles(present, worldFile);
             gtt.isInPast = false;
         }

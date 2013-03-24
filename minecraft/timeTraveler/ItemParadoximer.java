@@ -26,11 +26,11 @@ public class ItemParadoximer extends Item {
     	GuiFutureTravel gft = new GuiFutureTravel(gtt, "");
     	ModLoader.openGUI(par2EntityPlayer, gft);
     	
-    	//EntityPlayerPast p = new EntityPlayerPast(par3World);
+    	EntityPlayerPast p = new EntityPlayerPast(par3World);
 
-    	//p.setLocationAndAngles(par2EntityPlayer.posX, par2EntityPlayer.posY, par3EntityPlayer.posZ, 0, 0);
+    	p.setLocationAndAngles(par2EntityPlayer.posX, par2EntityPlayer.posY, par2EntityPlayer.posZ, 0, 0);
 
-    	//par2World.spawnEntityInWorld(p);
+    	par3World.spawnEntityInWorld(p);
 
     	
     	return true;

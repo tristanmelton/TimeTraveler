@@ -96,6 +96,16 @@ public class TickerClient implements ITickHandler {
 		else
 			if(type.equals(EnumSet.of(TickType.CLIENT)))
 			{
+			     GuiScreen curScreen = Minecraft.getMinecraft().currentScreen;
+			     if(curScreen != null)
+			     {
+			          onTickInGui(FMLClientHandler.instance().getClient(), curScreen);
+			     }
+			     else 
+			     {
+			    	 onTickInGame(FMLClientHandler.instance().getClient());
+			     }
+
 			}
 	}
 	private void onTickInGame(Minecraft mc)
