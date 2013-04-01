@@ -7,6 +7,11 @@ import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.input.Keyboard;
 
+/**
+ * GUI for the paradoximer
+ * @author Charsmud
+ *
+ */
 public class GuiFutureTravel extends GuiScreen{
 
     private GuiScreen parentGuiScreen;

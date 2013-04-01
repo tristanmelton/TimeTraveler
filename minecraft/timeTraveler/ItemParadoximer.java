@@ -10,6 +10,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 
+/**
+ * Paradoximer item information
+ * @author Charsmud
+ *
+ */
 public class ItemParadoximer extends Item {
 	//
 	
@@ -25,7 +30,6 @@ public class ItemParadoximer extends Item {
     	GuiTimeTravel gtt = new GuiTimeTravel();
     	GuiFutureTravel gft = new GuiFutureTravel(gtt, "");
     	ModLoader.openGUI(par2EntityPlayer, gft);
-    	
     	EntityPlayerPast p = new EntityPlayerPast(par3World);
 
     	p.setLocationAndAngles(par2EntityPlayer.posX, par2EntityPlayer.posY, par2EntityPlayer.posZ, 0, 0);

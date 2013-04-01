@@ -21,6 +21,11 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.WorldInfo;
 
+/**
+ * Contains information about the new Mechanics for the past
+ * @author Charsmud
+ *
+ */
 public class PastMechanics {
 	/**
 	 * Updates Paradox Bar and Renders
@@ -46,12 +51,12 @@ public class PastMechanics {
 	 * @param ms
 	 * @param minecraft
 	 */
-	public void addPlayerLoc(MinecraftServer ms, Minecraft minecraft)
+	public void addPlayerLoc(MinecraftServer ms, Minecraft minecraft, String special)
 	{
-	    File beginningOfWorld = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
-		File playerLoc = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
+	    File beginningOfWorld = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
+		File playerLoc = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
 	    
-	    playerLoc(playerLoc, minecraft);
+	    playerLoc(playerLoc, minecraft, special);
 
 	}
 	/**
@@ -59,7 +64,7 @@ public class PastMechanics {
 	 * @param destToSave
 	 * @param minecraft
 	 */
-	public void playerLoc(File destToSave, Minecraft minecraft)
+	public void playerLoc(File destToSave, Minecraft minecraft, String special)
 	{
 		EntityPlayer ep = minecraft.thePlayer;
 		
@@ -83,6 +88,8 @@ public class PastMechanics {
 			out.write(Integer.toString(playerY));
 			out.newLine();
 			out.write(Integer.toString(playerZ));
+			out.newLine();
+			out.write(special);
 			out.flush();
 			out.close();
 		}
@@ -117,6 +124,12 @@ public class PastMechanics {
 	        }
 	    }
 	}
+	/**
+	 * Creates a Past Timezone
+	 * @param ms
+	 * @param minecraft
+	 * @param cf
+	 */
 	public void saveTime(MinecraftServer ms, Minecraft minecraft, CopyFile cf)
 	{
 		WorldInfo we = minecraft.theWorld.getWorldInfo();

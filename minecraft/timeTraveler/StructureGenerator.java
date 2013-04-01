@@ -7,6 +7,11 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import cpw.mods.fml.common.IWorldGenerator;
 
+/**
+ * Generates the new structures
+ * @author Charsmud
+ *
+ */
 public class StructureGenerator implements IWorldGenerator 
 {
 	@Override

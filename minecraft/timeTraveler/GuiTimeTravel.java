@@ -17,6 +17,11 @@ import net.minecraft.util.StringTranslate;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
 
+/**
+ * GUI for the Paradox Cube
+ * @author Charsmud
+ *
+ */
 public class GuiTimeTravel extends GuiScreen {
 
 public static boolean isInPast = false;

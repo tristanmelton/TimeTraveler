@@ -1,6 +1,7 @@
 package timeTraveler;
 import java.util.EnumSet;
 
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -37,6 +38,11 @@ import net.minecraft.potion.Potion;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+/**
+ * Ticker
+ * @author Charsmud
+ *
+ */
 public class TickerClient implements ITickHandler {
 
 	public int ctr;
@@ -123,8 +129,15 @@ public class TickerClient implements ITickHandler {
 		{
 			if(!isInPast)
 			{
-				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc);
+				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "");
 				ct = 0;
+			}
+		}
+		if(!isInPast)
+		{
+			if(mc.thePlayer.isJumping)
+			{
+				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "jump");
 			}
 		}
 		if(ctr == 20 * 60)

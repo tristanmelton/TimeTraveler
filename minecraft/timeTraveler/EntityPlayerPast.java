@@ -14,6 +14,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 
+
+/**
+ * Entity for the Past Player
+ * @author Charsmud
+ *
+ */
 public class EntityPlayerPast extends EntityAnimal
 {
 	private PathEntity pathToEntity;
@@ -116,9 +122,23 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
             	}
             	
             	pathentity = this.worldObj.getEntityPathToXYZ(this, playerX, playerY, playerZ, rangeToPoint, true, true, false, false);
-//
             	super.setPathToEntity(pathentity);
 
+            	String special = reader.readLine();
+          		System.out.println(special);
+
+            	if(special.equalsIgnoreCase("jump"))
+            	{
+            		m.thePlayer.sendChatMessage("JUMP");
+            		System.out.println("JUMPING:  " + this.isJumping);
+            		this.getJumpHelper().setJumping();
+            		this.getJumpHelper().doJump();
+            	}
+            	if(special.equalsIgnoreCase(""))
+            	{
+            		System.out.println("SETSET");
+                	super.setPathToEntity(pathentity);
+            	}
     		}
     		
     	}

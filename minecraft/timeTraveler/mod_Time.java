@@ -64,7 +64,11 @@ import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = "TimeTraveler", name = "Time Traveler", version = "0.1")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
-
+/**
+ * Main laucher for TimeTraveler
+ * @author Charsmud
+ *
+ */
 public class mod_Time
 {
 @SidedProxy(clientSide = "timeTraveler.ClientProxy", serverSide = "timeTraveler.CommonProxy")

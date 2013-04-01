@@ -6,7 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
-
+/**
+ * Past Temple information
+ * @author Charsmud
+ *
+ */
 public class WorldGenPastTemple extends WorldGenerator
 {
 	public WorldGenPastTemple() { }
