@@ -125,22 +125,24 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
             	super.setPathToEntity(pathentity);
 
             	String special = reader.readLine();
-          		System.out.println(special);
 
-            	if(special.equalsIgnoreCase("jump"))
+            	if(special != null)
             	{
-            		m.thePlayer.sendChatMessage("JUMP");
-            		System.out.println("JUMPING:  " + this.isJumping);
-            		this.getJumpHelper().setJumping();
-            		this.getJumpHelper().doJump();
+                	System.out.println(special);
+
+                	if(special.equalsIgnoreCase("jump"))
+                	{
+                		m.thePlayer.sendChatMessage("JUMP");
+                		this.getJumpHelper().setJumping();
+                		this.getJumpHelper().doJump();
+                	}
+                	if(special.equalsIgnoreCase(""))
+                	{
+                		System.out.println("SETSET");
+                    	super.setPathToEntity(pathentity);
+                	}
             	}
-            	if(special.equalsIgnoreCase(""))
-            	{
-            		System.out.println("SETSET");
-                	super.setPathToEntity(pathentity);
-            	}
-    		}
-    		
+    		}    		
     	}
     	catch(IOException ex)
     	{
