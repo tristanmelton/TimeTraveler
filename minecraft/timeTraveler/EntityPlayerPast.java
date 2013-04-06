@@ -122,7 +122,6 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
             	}
             	
             	pathentity = this.worldObj.getEntityPathToXYZ(this, playerX, playerY, playerZ, rangeToPoint, true, true, false, false);
-            	super.setPathToEntity(pathentity);
 
             	String special = reader.readLine();
 
@@ -136,12 +135,18 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
                 		this.getJumpHelper().setJumping();
                 		this.getJumpHelper().doJump();
                 	}
+                	if(special.equalsIgnoreCase("sneak"))
+                	{
+                		this.setSneaking(true);
+                	}
                 	if(special.equalsIgnoreCase(""))
                 	{
                 		System.out.println("SETSET");
                     	super.setPathToEntity(pathentity);
                 	}
             	}
+            	super.setPathToEntity(pathentity);
+
     		}    		
     	}
     	catch(IOException ex)

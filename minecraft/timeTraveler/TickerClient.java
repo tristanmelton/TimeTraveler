@@ -139,6 +139,10 @@ public class TickerClient implements ITickHandler {
 			{
 				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "jump");
 			}
+			if(mc.thePlayer.isSneaking())
+			{
+				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "sneak");
+			}
 		}
 		if(ctr == 20 * 60)
 		{

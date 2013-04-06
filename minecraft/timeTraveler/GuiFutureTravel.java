@@ -7,6 +7,8 @@ import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.input.Keyboard;
 
+import cpw.mods.fml.client.FMLClientHandler;
+
 /**
  * GUI for the paradoximer
  * @author Charsmud
@@ -73,6 +75,8 @@ public class GuiFutureTravel extends GuiScreen{
                 //var2.renameWorld(this.worldName, this.theGuiTextField.getText().trim()); //What happens when you hit "Rename"
                 //this.mc.displayGuiScreen(null);
             	//TODO: ADD IN FUTURE STUFFS
+            	FutureTravelMechanics mechanics = new FutureTravelMechanics();
+            	mechanics.expandOres(FMLClientHandler.instance().getClient().theWorld);
             }
         }
     }
