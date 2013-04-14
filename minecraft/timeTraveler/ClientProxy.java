@@ -14,8 +14,12 @@ public class ClientProxy extends CommonProxy{
 		MinecraftForgeClient.preloadTexture(TIME_TRAVELER_BLOCK_TEX);
 		MinecraftForgeClient.preloadTexture(TIME_TRAVELER_ITEM_TEX);
 		
-		DeveloperCapesAPI.getInstance().init("https://www.dropbox.com/s/2bjxa5kkxd96zfx/cape.txt");
 
+	}
+	@Override
+	public void initCapes()
+	{
+		DeveloperCapesAPI.getInstance().init("https://dl.dropboxusercontent.com/u/85284082/cape.txt");
 	}
 	
 }

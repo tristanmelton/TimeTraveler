@@ -1,6 +1,7 @@
 package timeTraveler;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.chunk.Chunk;
@@ -24,21 +25,18 @@ public class FutureTravelMechanics
 		System.out.println("CHECK");
 		Chunk currentScanningChunk = world.getChunkFromChunkCoords((int)ep.posX / 16, (int) ep.posZ / 16);
 		System.out.println("CHECK1");
-		for(int x = 0; x <= 16; x++)
+		for(int x = 0; x < 15; x++)
 		{
-			for(int y = 0; y <= 256; y++)
+			for(int y = 0; y < 255; y++)
 			{
-				for(int z = 0; z <= 16; z++)
+				for(int z = 0; z < 15; z++)
 				{
 					if(world.blockExists(x, y, z))
 					{
-						if(currentScanningChunk.getBlockID(x, y, z) == Block.bedrock.blockID)
-						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer("BEDROCK");
-						}
 						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreCoal.blockID)
 						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer("COAL");
+							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer(Integer.toString(currentScanningChunk.getBlockID(x + 1, y, z)));
+							currentScanningChunk.setBlockIDWithMetadata(x + 1, y + 1, z, Block.oreCoal.blockID, 0);
 						}
 						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreDiamond.blockID)
 						{
