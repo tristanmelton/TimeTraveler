@@ -15,10 +15,11 @@ import cpw.mods.fml.client.FMLClientHandler;
 public class FutureTravelMechanics
 {
 	EntityPlayer ep;
-	
+	WorldClient world;
 	public FutureTravelMechanics()
 	{
 		ep = FMLClientHandler.instance().getClient().thePlayer;
+		world = FMLClientHandler.instance().getClient().theWorld;
 	}
 	public void expandOres(WorldClient world)
 	{
@@ -36,6 +37,7 @@ public class FutureTravelMechanics
 						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreCoal.blockID)
 						{
 							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer(Integer.toString(currentScanningChunk.getBlockID(x + 1, y, z)));
+							
 							currentScanningChunk.setBlockIDWithMetadata(x + 1, y + 1, z, Block.oreCoal.blockID, 0);
 						}
 						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreDiamond.blockID)
