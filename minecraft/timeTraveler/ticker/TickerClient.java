@@ -1,8 +1,12 @@
-package timeTraveler;
+package timeTraveler.ticker;
 import java.util.EnumSet;
 
 
 import org.lwjgl.opengl.GL11;
+
+import timeTraveler.gui.GuiTimeTravel;
+import timeTraveler.mechanics.CopyFile;
+import timeTraveler.mechanics.PastMechanics;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

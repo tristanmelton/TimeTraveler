@@ -1,4 +1,4 @@
-package timeTraveler;
+package timeTraveler.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiSlot;

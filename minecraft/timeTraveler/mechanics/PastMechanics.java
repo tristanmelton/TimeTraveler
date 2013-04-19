@@ -1,4 +1,4 @@
-package timeTraveler;
+package timeTraveler.mechanics;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
+
+import timeTraveler.gui.GuiTimeTravel;
 
 import cpw.mods.fml.client.FMLClientHandler;
 

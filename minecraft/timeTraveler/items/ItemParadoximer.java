@@ -1,8 +1,10 @@
-package timeTraveler;
+package timeTraveler.items;
 
-import java.io.File;
-
-import net.minecraft.client.Minecraft;
+import timeTraveler.core.mod_Time;
+import timeTraveler.entities.EntityPlayerPast;
+import timeTraveler.gui.GuiFutureTravel;
+import timeTraveler.gui.GuiTimeTravel;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -39,8 +41,9 @@ public class ItemParadoximer extends Item {
     	
     	return true;
     }
-	public String getTextureFile()
-	{
-		return ClientProxy.TIME_TRAVELER_ITEM_TEX;
-	}
+    public void registerIcons(IconRegister par1IconRegister)
+ {
+     this.itemIcon = par1IconRegister.registerIcon(mod_Time.modid + ":" + this.getUnlocalizedName());
+ }
+
 }

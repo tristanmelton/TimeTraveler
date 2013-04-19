@@ -1,5 +1,12 @@
-package timeTraveler;
+package timeTraveler.core;
 import java.io.File;
+
+import timeTraveler.blocks.BlockTimeTraveler;
+import timeTraveler.entities.EntityPlayerPast;
+import timeTraveler.items.ItemParadoximer;
+import timeTraveler.proxies.CommonProxy;
+import timeTraveler.structures.StructureGenerator;
+import timeTraveler.ticker.TickerClient;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -20,7 +27,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 
-@Mod(modid = "TimeTraveler", name = "Time Traveler", version = "0.1")
+@Mod(modid = "Charsmud_TimeTraveler", name = "Time Traveler", version = "0.1")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
 /**
  * Main laucher for TimeTraveler
@@ -29,12 +36,17 @@ import cpw.mods.fml.relauncher.Side;
  */
 public class mod_Time
 {
-	@SidedProxy(clientSide = "timeTraveler.ClientProxy", serverSide = "timeTraveler.CommonProxy")
+	@SidedProxy(clientSide = "timeTraveler.proxies.ClientProxy", serverSide = "timeTraveler.proxies.CommonProxy")
+	
+	
 	public static CommonProxy proxy;
 
 	public static Block travelTime;
 	public static Item paradoximer;
 
+	public static final String modid = "Charsmud_TimeTraveler";
+
+	
 	/*public static final void zip( String origDir, File dirObj, ZipOutputStream out )
                 throws IOException {
   File[] files = dirObj.listFiles();
@@ -99,8 +111,8 @@ public boolean onTickInGUI(Minecraft minecraft, GuiScreen guiscreen)
 		File presentCreation = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present");
 		presentCreation.mkdirs();
 
-		paradoximer = new ItemParadoximer(2330).setIconIndex(0).setItemName("paradoximer");	
-		travelTime = new BlockTimeTraveler(255, 0).setBlockName("travelTime");
+		paradoximer = new ItemParadoximer(2330).setUnlocalizedName("ItemParadoximer");	
+		travelTime = new BlockTimeTraveler(255).setUnlocalizedName("BlockTimeTraveler");
 		GameRegistry.registerBlock(travelTime, "travelTime");
 
 		LanguageRegistry.addName(travelTime, "Paradox Cube");

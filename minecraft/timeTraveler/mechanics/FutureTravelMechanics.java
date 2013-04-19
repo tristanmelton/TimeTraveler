@@ -1,4 +1,4 @@
-package timeTraveler;
+package timeTraveler.mechanics;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -37,8 +37,12 @@ public class FutureTravelMechanics
 						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreCoal.blockID)
 						{
 							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer(Integer.toString(currentScanningChunk.getBlockID(x + 1, y, z)));
-							
+							System.out.println(x*16 + " " + y + " " + z*16);
 							currentScanningChunk.setBlockIDWithMetadata(x + 1, y + 1, z, Block.oreCoal.blockID, 0);
+							if(currentScanningChunk.getBlockID(x + 1, y + 1, z) == Block.oreCoal.blockID)
+							{
+								System.out.println("SUCESS!");
+							}
 						}
 						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreDiamond.blockID)
 						{

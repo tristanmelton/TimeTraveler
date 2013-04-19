@@ -1,4 +1,4 @@
-package timeTraveler;
+package timeTraveler.structures;
 
 import java.util.Random;
 

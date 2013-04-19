@@ -1,4 +1,4 @@
-package timeTraveler;
+package timeTraveler.mechanics;
 
 import java.io.*;
 import java.nio.ByteBuffer;

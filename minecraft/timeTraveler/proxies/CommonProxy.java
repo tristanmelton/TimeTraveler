@@ -1,4 +1,4 @@
-package timeTraveler;
+package timeTraveler.proxies;
 
 public class CommonProxy {
 

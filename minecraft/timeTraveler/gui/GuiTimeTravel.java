@@ -1,8 +1,10 @@
-package timeTraveler;
+package timeTraveler.gui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import timeTraveler.mechanics.CopyFile;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -68,13 +70,13 @@ private GuiButton buttonSelect;
             StringTranslate var1 = StringTranslate.getInstance();
             this.localizedWorldText = var1.translateKey("selectWorld.world");
             
-            this.controlList.add(this.buttonSelect = new GuiButton(1, this.width / 2 - 154, this.height - 52, 150, 20, "Travel"));
-            this.controlList.add(new GuiButton(0, this.width / 2 - 154, this.height - 28, 150, 20, var1.translateKey("Cancel")));
+            this.buttonList.add(this.buttonSelect = new GuiButton(1, this.width / 2 - 154, this.height - 52, 150, 20, "Travel"));
+            this.buttonList.add(new GuiButton(0, this.width / 2 - 154, this.height - 28, 150, 20, var1.translateKey("Cancel")));
           
             this.buttonSelect.enabled = false;
             
             this.timeSlotContainer = new GuiTimeSlot(this);
-            this.timeSlotContainer.registerScrollButtons(this.controlList, 4, 5);
+            this.timeSlotContainer.registerScrollButtons(this.buttonList, 4, 5);
             this.loadSaves();
 
                 

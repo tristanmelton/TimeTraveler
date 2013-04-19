@@ -1,11 +1,14 @@
-package timeTraveler;
+package timeTraveler.gui;
 //
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.input.Keyboard;
+
+import timeTraveler.mechanics.FutureTravelMechanics;
 
 import cpw.mods.fml.client.FMLClientHandler;
 
@@ -43,9 +46,9 @@ public class GuiFutureTravel extends GuiScreen{
     {
         StringTranslate var1 = StringTranslate.getInstance();
         Keyboard.enableRepeatEvents(true);
-        this.controlList.clear();
-        this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, var1.translateKey("Travel Into the Future!")));
-        this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, var1.translateKey("gui.cancel")));
+        this.buttonList.clear();
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, var1.translateKey("Travel Into the Future!")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, var1.translateKey("gui.cancel")));
         this.theGuiTextField = new GuiTextField(this.fontRenderer, this.width / 2 - 100, 60, 200, 20);
         this.theGuiTextField.setFocused(true);
         this.theGuiTextField.setText(yearsIntoFuture);
@@ -72,11 +75,20 @@ public class GuiFutureTravel extends GuiScreen{
             }
             else if (par1GuiButton.id == 0)
             {
+            	int run = Integer.parseInt(theGuiTextField.getText());
+        		FutureTravelMechanics ftm = new FutureTravelMechanics();
+        	
+        		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
+            	System.out.println(run);
+        		for (int i = 0; i < run; i++)
+            	{
+            		ftm.expandOres(world);
+            	}
                 //var2.renameWorld(this.worldName, this.theGuiTextField.getText().trim()); //What happens when you hit "Rename"
                 //this.mc.displayGuiScreen(null);
             	//TODO: ADD IN FUTURE STUFFS
-            	FutureTravelMechanics mechanics = new FutureTravelMechanics();
-            	mechanics.expandOres(FMLClientHandler.instance().getClient().theWorld);
+            	//FutureTravelMechanics mechanics = new FutureTravelMechanics();
+            	//mechanics.expandOres(FMLClientHandler.instance().getClient().theWorld);
             }
         }
     }
@@ -91,10 +103,10 @@ public class GuiFutureTravel extends GuiScreen{
     		{
 	            this.theGuiTextField.textboxKeyTyped(par1, par2);
     		}
-        ((GuiButton)this.controlList.get(0)).enabled = this.theGuiTextField.getText().trim().length() > 0;
+        ((GuiButton)this.buttonList.get(0)).enabled = this.theGuiTextField.getText().trim().length() > 0;
         if (par1 == 13)
         {
-            this.actionPerformed((GuiButton)this.controlList.get(0));
+            this.actionPerformed((GuiButton)this.buttonList.get(0));
         }
     }
 
