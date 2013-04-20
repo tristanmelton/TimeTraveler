@@ -1,5 +1,7 @@
 package timeTraveler.mechanics;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -16,65 +18,282 @@ public class FutureTravelMechanics
 {
 	EntityPlayer ep;
 	WorldClient world;
+	
+	/**
+	 * Constructor
+	 */
 	public FutureTravelMechanics()
 	{
 		ep = FMLClientHandler.instance().getClient().thePlayer;
 		world = FMLClientHandler.instance().getClient().theWorld;
 	}
-	public void expandOres(WorldClient world)
+	/**
+	 * Main expanding ores method
+	 * @param world
+	 * @param coal
+	 * @param diamond
+	 * @param emerald
+	 * @param gold
+	 * @param iron
+	 * @param lapis
+	 * @param redstone
+	 */
+	public void expandOres(WorldClient world, int coal, int diamond, int emerald, int gold, int iron, int lapis, int redstone)
 	{
-		System.out.println("CHECK");
-		Chunk currentScanningChunk = world.getChunkFromChunkCoords((int)ep.posX / 16, (int) ep.posZ / 16);
-		System.out.println("CHECK1");
-		for(int x = 0; x < 15; x++)
+		Chunk currentScanningChunk = world.getChunkFromBlockCoords((int)ep.posX, (int) ep.posZ);
+		expandRedstone(world, currentScanningChunk, redstone);
+		expandDiamond(world, currentScanningChunk, diamond);
+		expandCoal(world, currentScanningChunk, coal);
+		expandEmerald(world, currentScanningChunk, emerald);
+		expandGold(world, currentScanningChunk, gold);
+		expandIron(world, currentScanningChunk, iron);
+		expandLapis(world, currentScanningChunk, lapis);
+	}
+	/**
+	 * Coal ore expansion helper method
+	 * @param world
+	 * @param currentScanningChunk
+	 * @param size
+	 */
+	public void expandCoal(WorldClient world, Chunk currentScanningChunk, int size)
+	{
+		for(int i = 0; i < size; i++)
 		{
-			for(int y = 0; y < 255; y++)
+			for(int x = 0; x < 15; x++)
 			{
-				for(int z = 0; z < 15; z++)
+				for(int y = 0; y < 255; y++)
 				{
-					if(world.blockExists(x, y, z))
+					for(int z = 0; z < 15; z++)
 					{
-						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreCoal.blockID)
+						if(world.blockExists(x, y, z))
 						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer(Integer.toString(currentScanningChunk.getBlockID(x + 1, y, z)));
-							System.out.println(x*16 + " " + y + " " + z*16);
-							currentScanningChunk.setBlockIDWithMetadata(x + 1, y + 1, z, Block.oreCoal.blockID, 0);
-							if(currentScanningChunk.getBlockID(x + 1, y + 1, z) == Block.oreCoal.blockID)
+							if(currentScanningChunk.getBlockID(x, y, z) == Block.oreCoal.blockID)
 							{
-								System.out.println("SUCESS!");
+								Random rand = new Random();
+								int expandX = rand.nextInt(2);
+								int expandY = rand.nextInt(2);
+								int expandZ = rand.nextInt(2);
+								System.out.println(x*16 + " " + y + " " + z*16);
+								currentScanningChunk.setBlockIDWithMetadata(x + expandX, y + expandY, z + expandZ, Block.oreCoal.blockID, 0);
 							}
 						}
-						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreDiamond.blockID)
-						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer("DIAMOND");
-						}
-						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreEmerald.blockID)
-						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer("EMERALD");
-						}
-						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreGold.blockID)
-						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer("GOLD");
-						}
-						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreIron.blockID)
-						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer("IRON");
-						}
-						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreLapis.blockID)
-						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer("LAPIS");
-						}
-						if(currentScanningChunk.getBlockID(x, y, z) == Block.oreRedstone.blockID)
-						{
-							FMLClientHandler.instance().getClient().thePlayer.sendChatToPlayer("REDSTONE");
-						}
-
-
-
-
 					}
 				}
 			}
 		}
 	}
+	/**
+	 * Diamond ore expansion helper method
+	 * @param world
+	 * @param currentScanningChunk
+	 * @param size
+	 */
+	public void expandDiamond(WorldClient world, Chunk currentScanningChunk, int size)
+	{
+		for(int i = 0; i < size; i++)
+		{
+			for(int x = 0; x < 15; x++)
+			{
+				for(int y = 0; y < 255; y++)
+				{
+					for(int z = 0; z < 15; z++)
+					{
+						if(world.blockExists(x, y, z))
+						{
+							if(currentScanningChunk.getBlockID(x, y, z) == Block.oreDiamond.blockID)
+							{
+								Random rand = new Random();
+								int expandX = rand.nextInt(2);
+								int expandY = rand.nextInt(2);
+								int expandZ = rand.nextInt(2);
+								System.out.println(x*16 + " " + y + " " + z*16);
+								currentScanningChunk.setBlockIDWithMetadata(x + expandX, y + expandY, z + expandZ, Block.oreDiamond.blockID, 0);
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Emerald ore expansion helper method
+	 * @param world
+	 * @param currentScanningChunk
+	 * @param size
+	 */
+	public void expandEmerald(WorldClient world, Chunk currentScanningChunk, int size)
+	{
+		for(int i = 0; i < size; i++)
+		{
+			for(int x = 0; x < 15; x++)
+			{
+				for(int y = 0; y < 255; y++)
+				{
+					for(int z = 0; z < 15; z++)
+					{
+						if(world.blockExists(x, y, z))
+						{
+							if(currentScanningChunk.getBlockID(x, y, z) == Block.oreEmerald.blockID)
+							{
+								Random rand = new Random();
+								int expandX = rand.nextInt(2);
+								int expandY = rand.nextInt(2);
+								int expandZ = rand.nextInt(2);
+								System.out.println(x*16 + " " + y + " " + z*16);
+								currentScanningChunk.setBlockIDWithMetadata(x + expandX, y + expandY, z + expandZ, Block.oreEmerald.blockID, 0);
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Gold ore expansion helper method
+	 * @param world
+	 * @param currentScanningChunk
+	 * @param size
+	 */
+	public void expandGold(WorldClient world, Chunk currentScanningChunk, int size)
+	{
+		for(int i = 0; i < size; i++)
+		{
+			for(int x = 0; x < 15; x++)
+			{
+				for(int y = 0; y < 255; y++)
+				{
+					for(int z = 0; z < 15; z++)
+					{
+						if(world.blockExists(x, y, z))
+						{
+							if(currentScanningChunk.getBlockID(x, y, z) == Block.oreGold.blockID)
+							{
+								Random rand = new Random();
+								int expandX = rand.nextInt(2);
+								int expandY = rand.nextInt(2);
+								int expandZ = rand.nextInt(2);
+								System.out.println(x*16 + " " + y + " " + z*16);
+								currentScanningChunk.setBlockIDWithMetadata(x + expandX, y + expandY, z + expandZ, Block.oreGold.blockID, 0);
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Iron ore expansion helper method
+	 * @param world
+	 * @param currentScanningChunk
+	 * @param size
+	 */
+	public void expandIron(WorldClient world, Chunk currentScanningChunk, int size)
+	{
+		for(int i = 0; i < size; i++)
+		{
+			for(int x = 0; x < 15; x++)
+			{
+				for(int y = 0; y < 255; y++)
+				{
+					for(int z = 0; z < 15; z++)
+					{
+						if(world.blockExists(x, y, z))
+						{
+							if(currentScanningChunk.getBlockID(x, y, z) == Block.oreIron.blockID)
+							{
+								Random rand = new Random();
+								int expandX = rand.nextInt(2);
+								int expandY = rand.nextInt(2);
+								int expandZ = rand.nextInt(2);
+								System.out.println(x*16 + " " + y + " " + z*16);
+								currentScanningChunk.setBlockIDWithMetadata(x + expandX, y + expandY, z + expandZ, Block.oreIron.blockID, 0);
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Lapis ore expansion helper method
+	 * @param world
+	 * @param currentScanningChunk
+	 * @param size
+	 */
+	public void expandLapis(WorldClient world, Chunk currentScanningChunk, int size)
+	{
+		for(int i = 0; i < size; i++)
+		{
+			for(int x = 0; x < 15; x++)
+			{
+				for(int y = 0; y < 255; y++)
+				{
+					for(int z = 0; z < 15; z++)
+					{
+						if(world.blockExists(x, y, z))
+						{
+							if(currentScanningChunk.getBlockID(x, y, z) == Block.oreLapis.blockID)
+							{
+								Random rand = new Random();
+								int expandX = rand.nextInt(2);
+								int expandY = rand.nextInt(2);
+								int expandZ = rand.nextInt(2);
+								System.out.println(x*16 + " " + y + " " + z*16);
+								currentScanningChunk.setBlockIDWithMetadata(x + expandX, y + expandY, z + expandZ, Block.oreLapis.blockID, 0);
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Redstone ore expansion helper method
+	 * @param world
+	 * @param currentScanningChunk
+	 * @param size
+	 */
+	public void expandRedstone(WorldClient world, Chunk currentScanningChunk, int size)
+	{
+		for(int i = 0; i < size; i++)
+		{
+			for(int x = 0; x < 15; x++)
+			{
+				for(int y = 0; y < 255; y++)
+				{
+					for(int z = 0; z < 15; z++)
+					{
+						if(world.blockExists(x, y, z))
+						{
+							if(currentScanningChunk.getBlockID(x, y, z) == Block.oreRedstone.blockID)
+							{
+								Random rand = new Random();
+								int expandX = rand.nextInt(2);
+								int expandY = rand.nextInt(2);
+								int expandZ = rand.nextInt(2);
+								System.out.println(x*16 + " " + y + " " + z*16);
+								currentScanningChunk.setBlockIDWithMetadata(x + expandX, y + expandY, z + expandZ, Block.oreRedstone.blockID, 0);
+							}
+							if(currentScanningChunk.getBlockID(x, y, z) == Block.oreRedstoneGlowing.blockID)
+							{
+								Random rand = new Random();
+								int expandX = rand.nextInt(2);
+								int expandY = rand.nextInt(2);
+								int expandZ = rand.nextInt(2);
+								System.out.println(x*16 + " " + y + " " + z*16);
+								currentScanningChunk.setBlockIDWithMetadata(x + expandX, y + expandY, z + expandZ, Block.oreRedstone.blockID, 0);
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
+
 }

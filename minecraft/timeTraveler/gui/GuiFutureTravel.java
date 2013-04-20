@@ -82,13 +82,8 @@ public class GuiFutureTravel extends GuiScreen{
             	System.out.println(run);
         		for (int i = 0; i < run; i++)
             	{
-            		ftm.expandOres(world);
+            		ftm.expandOres(world, 5, 2, 2, 1, 5, 3, 4);
             	}
-                //var2.renameWorld(this.worldName, this.theGuiTextField.getText().trim()); //What happens when you hit "Rename"
-                //this.mc.displayGuiScreen(null);
-            	//TODO: ADD IN FUTURE STUFFS
-            	//FutureTravelMechanics mechanics = new FutureTravelMechanics();
-            	//mechanics.expandOres(FMLClientHandler.instance().getClient().theWorld);
             }
         }
     }
