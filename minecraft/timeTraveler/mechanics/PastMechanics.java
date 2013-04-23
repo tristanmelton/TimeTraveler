@@ -55,7 +55,6 @@ public class PastMechanics {
 	 */
 	public void addPlayerLoc(MinecraftServer ms, Minecraft minecraft, String special)
 	{
-	    File beginningOfWorld = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
 		File playerLoc = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
 	    
 	    playerLoc(playerLoc, minecraft, special);

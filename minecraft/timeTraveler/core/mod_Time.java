@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.PreInit;
@@ -46,48 +47,10 @@ public class mod_Time
 
 	public static final String modid = "Charsmud_TimeTraveler";
 
-	
-	/*public static final void zip( String origDir, File dirObj, ZipOutputStream out )
-                throws IOException {
-  File[] files = dirObj.listFiles();
-  byte[] tmpBuf = new byte[1024];
-  for ( int i = 0; i < files.length; i++ ) {
-   if ( files[i].isDirectory() ) {
-        zip( origDir, files[i], out );
-        continue;
-   }
-   String wAbsolutePath =
-         files[i].getAbsolutePath().substring( origDir.length(),
-           files[i].getAbsolutePath().length() );
-   FileInputStream in =
-         new FileInputStream( files[i].getAbsolutePath() );
-   out.putNextEntry( new ZipEntry( wAbsolutePath ) );
-   int len;
-   while ( (len = in.read( tmpBuf )) > 0 ) {
-        out.write( tmpBuf, 0, len );
-   }
-   out.closeEntry();
-   in.close();
-  }
-}*/
-
-	/*
-public boolean onTickInGUI(Minecraft minecraft, GuiScreen guiscreen)
-
-{
-	GuiTimeTravel gtt = new GuiTimeTravel();
-        if(minecraft.theWorld!=null){
-        	 if(!timerCountDown) {
-        		 if(minutes == 0) {
-        			 text =  "Time Remaining: " + seconds + " Seconds";
-        		 }
-            	 testGUIElement=new GuiButton(0,0,5, text);
-                 testGUIElement.drawButton(minecraft,0,0);
-        	 }
-
-        }
-        return true;
-}*/
+	/**
+	 * Initializes DeveloperCapes
+	 * @param event
+	 */
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event)
 	{
@@ -103,13 +66,10 @@ public boolean onTickInGUI(Minecraft minecraft, GuiScreen guiscreen)
 
 		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);
 
-		Minecraft m = ModLoader.getMinecraftInstance();
+		Minecraft m = FMLClientHandler.instance().getClient();
 		MinecraftServer ms = m.getIntegratedServer();
 
-		File pastCreation = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past");
-		pastCreation.mkdirs();
-		File presentCreation = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/present");
-		presentCreation.mkdirs();
+		mkDirs();
 
 		paradoximer = new ItemParadoximer(2330).setUnlocalizedName("ItemParadoximer");	
 		travelTime = new BlockTimeTraveler(255).setUnlocalizedName("BlockTimeTraveler");
@@ -131,5 +91,14 @@ public boolean onTickInGUI(Minecraft minecraft, GuiScreen guiscreen)
 				});
 		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
 		// ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
+	}
+	public void mkDirs()
+	{
+		File pastCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past");
+		pastCreation.mkdirs();
+		File presentCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/present");
+		presentCreation.mkdirs();
+		File futureCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/future");
+
 	}
 }

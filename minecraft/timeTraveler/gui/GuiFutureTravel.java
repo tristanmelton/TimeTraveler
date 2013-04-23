@@ -75,14 +75,18 @@ public class GuiFutureTravel extends GuiScreen{
             }
             else if (par1GuiButton.id == 0)
             {
-            	int run = Integer.parseInt(theGuiTextField.getText());
-        		FutureTravelMechanics ftm = new FutureTravelMechanics();
-        	
-        		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
-            	System.out.println(run);
-        		for (int i = 0; i < run; i++)
+            	if(theGuiTextField.getText() != "")
             	{
-            		ftm.expandOres(world, 5, 2, 2, 1, 5, 3, 4);
+                	int run = Integer.parseInt(theGuiTextField.getText());
+                	
+            		FutureTravelMechanics ftm = new FutureTravelMechanics();
+            	
+            		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
+                	System.out.println(run);
+            		for (int i = 0; i < run; i++)
+                	{
+                		ftm.expandOres(world, 1, 1, 1, 1, 1, 1, 1);
+                	}
             	}
             }
         }

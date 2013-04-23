@@ -153,6 +153,8 @@ public class TickerClient implements ITickHandler {
 			if(!isInPast)
 			{
 				mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
+				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "stop");
+				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "newtime");
 			}
 			ctr = 0;
 		}
