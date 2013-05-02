@@ -86,6 +86,7 @@ public class GuiFutureTravel extends GuiScreen{
             		for (int i = 0; i < run; i++)
                 	{
                 		ftm.expandOres(world, 1, 1, 1, 1, 1, 1, 1);
+                		ftm.expandForests(world, 2);
                 	}
             	}
             }
