@@ -85,12 +85,12 @@ public class TickerClient implements ITickHandler {
 	int prevZom;
 
 	String text;
-	
+
 	CopyFile copyFile = new CopyFile();
-	
+
 	public boolean hasRun = false;
 	public boolean hasInitMobs = false;
-	
+
 	private boolean isInPast; 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData)
@@ -122,11 +122,11 @@ public class TickerClient implements ITickHandler {
 	{
 		ctr++;
 		ct++;
-		
+
 		PastMechanics mechanics = new PastMechanics();
-		
+
 	    text  = "Time Remaining: " + minutes + " Minute, " + seconds + " Seconds";
-		
+
 		isInPast = GuiTimeTravel.isInPast;
 
 		if(ct == 20)
@@ -368,7 +368,7 @@ public class TickerClient implements ITickHandler {
 					paradoxLevel = paradoxLevel + 20;
 					prevZom = w.countEntities(ez.getClass());
 				}
-				
+
 				if(prevSheep < w.countEntities(es.getClass()))
 				{
 					prevSheep = w.countEntities(es.getClass());

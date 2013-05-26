@@ -1,17 +1,14 @@
 package timeTraveler.mechanics;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.MinecraftException;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.IChunkLoader;
-import net.minecraft.world.storage.ISaveHandler;
 import cpw.mods.fml.client.FMLClientHandler;
 /**
  * Contains information about the future mechanics
@@ -21,7 +18,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 public class FutureTravelMechanics
 {
 	EntityPlayer ep;
-	WorldClient world;
+	World world;
 	
 	/**
 	 * Constructor
@@ -42,10 +39,10 @@ public class FutureTravelMechanics
 	 * @param lapis
 	 * @param redstone
 	 */
-	public void expandOres(WorldClient world, int coal, int diamond, int emerald, int gold, int iron, int lapis, int redstone)
+	public void expandOres(World world, int coal, int diamond, int emerald, int gold, int iron, int lapis, int redstone)
 	{
 		Iterator<ChunkCoordIntPair> iterator = world.activeChunkSet.iterator();
-		
+		System.out.println("EXPANDORES");
 		while(iterator.hasNext())
 		{
 			ChunkCoordIntPair coords = iterator.next();
@@ -59,7 +56,7 @@ public class FutureTravelMechanics
 			expandIron(world, currentScanningChunk, iron);
 			expandLapis(world, currentScanningChunk, lapis);
 
-			ISaveHandler save = world.getSaveHandler();
+			/*ISaveHandler save = world.getSaveHandler();
 			IChunkLoader saver = save.getChunkLoader(world.provider);
 			try
 			{
@@ -76,7 +73,7 @@ public class FutureTravelMechanics
 			{
 				ex.printStackTrace();
 				System.out.println("FAILED TO SAVE IO");
-			}
+			}*/
 
 		}
 	}
@@ -85,17 +82,17 @@ public class FutureTravelMechanics
 	 * @param world
 	 * @param size
 	 */
-	public void expandForests(WorldClient world, int size)
+	public void expandForests(World world, int size)
 	{
 		Iterator<ChunkCoordIntPair> iterator = world.activeChunkSet.iterator();
-		
+		System.out.println("EXPANDFORESTS");
 		while(iterator.hasNext())
 		{
 			ChunkCoordIntPair coords = iterator.next();
 			
 			Chunk currentScanningChunk = world.getChunkFromChunkCoords(coords.chunkXPos, coords.chunkZPos);
 			expandForest(world, currentScanningChunk, size);
-			
+			/*
 			ISaveHandler save = world.getSaveHandler();
 			IChunkLoader saver = save.getChunkLoader(world.provider);
 			try
@@ -111,7 +108,7 @@ public class FutureTravelMechanics
 			{
 				ex.printStackTrace();
 				System.out.println("FAILED TO SAVE IO");
-			}
+			}*/
 		}
 	}
 	//BELOW ARE HELPER METHODS
@@ -122,7 +119,7 @@ public class FutureTravelMechanics
 	 * @param currentScanningChunk
 	 * @param size
 	 */
-	public void expandCoal(WorldClient world, Chunk currentScanningChunk, int size)
+	public void expandCoal(World world, Chunk currentScanningChunk, int size)
 	{
 		for(int i = 0; i < size; i++)
 		{
@@ -158,7 +155,7 @@ public class FutureTravelMechanics
 	 * @param currentScanningChunk
 	 * @param size
 	 */
-	public void expandDiamond(WorldClient world, Chunk currentScanningChunk, int size)
+	public void expandDiamond(World world, Chunk currentScanningChunk, int size)
 	{
 		for(int i = 0; i < size; i++)
 		{
@@ -194,7 +191,7 @@ public class FutureTravelMechanics
 	 * @param currentScanningChunk
 	 * @param size
 	 */
-	public void expandEmerald(WorldClient world, Chunk currentScanningChunk, int size)
+	public void expandEmerald(World world, Chunk currentScanningChunk, int size)
 	{
 		for(int i = 0; i < size; i++)
 		{
@@ -230,7 +227,7 @@ public class FutureTravelMechanics
 	 * @param currentScanningChunk
 	 * @param size
 	 */
-	public void expandGold(WorldClient world, Chunk currentScanningChunk, int size)
+	public void expandGold(World world, Chunk currentScanningChunk, int size)
 	{
 		for(int i = 0; i < size; i++)
 		{
@@ -266,7 +263,7 @@ public class FutureTravelMechanics
 	 * @param currentScanningChunk
 	 * @param size
 	 */
-	public void expandIron(WorldClient world, Chunk currentScanningChunk, int size)
+	public void expandIron(World world, Chunk currentScanningChunk, int size)
 	{
 		for(int i = 0; i < size; i++)
 		{
@@ -303,7 +300,7 @@ public class FutureTravelMechanics
 	 * @param currentScanningChunk
 	 * @param size
 	 */
-	public void expandLapis(WorldClient world, Chunk currentScanningChunk, int size)
+	public void expandLapis(World world, Chunk currentScanningChunk, int size)
 	{
 		for(int i = 0; i < size; i++)
 		{
@@ -340,7 +337,7 @@ public class FutureTravelMechanics
 	 * @param currentScanningChunk
 	 * @param size
 	 */
-	public void expandRedstone(WorldClient world, Chunk currentScanningChunk, int size)
+	public void expandRedstone(World world, Chunk currentScanningChunk, int size)
 	{
 		for(int i = 0; i < size; i++)
 		{
@@ -388,7 +385,7 @@ public class FutureTravelMechanics
 	 * @param currentScanningChunk
 	 * @param size
 	 */
-	public void expandForest(WorldClient world, Chunk currentScanningChunk, int size)
+	public void expandForest(World world, Chunk currentScanningChunk, int size)
 	{
 		for(int i = 0; i < size; i++)
 		{
@@ -412,9 +409,8 @@ public class FutureTravelMechanics
 									//if(currentScanningChunk.canBlockSeeTheSky(Math.abs(x + expandX), Math.abs(y + expandY), Math.abs(z + expandZ)))
 									//{
 										currentScanningChunk.setBlockIDWithMetadata(Math.abs(x + expandX), Math.abs(y + expandY + 1), Math.abs(z + expandZ), Block.sapling.blockID, 0);
-										//BlockSapling bs = (BlockSapling) Block.sapling;
-										//bs.growTree(world, Math.abs(x + expandX), Math.abs(y + expandY + 1), Math.abs(z + expandZ), rand);
 										//}
+										((BlockSapling)Block.sapling).growTree(world, Math.abs(x + expandX), Math.abs(y + expandY + 1), Math.abs(z + expandZ), rand);
 								}
 
 							}

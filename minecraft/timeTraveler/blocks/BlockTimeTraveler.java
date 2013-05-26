@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import timeTraveler.core.mod_Time;
+import timeTraveler.core.TimeTraveler;
 import timeTraveler.gui.GuiTimeTravel;
 
 

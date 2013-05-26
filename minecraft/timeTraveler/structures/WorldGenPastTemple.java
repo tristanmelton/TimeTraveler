@@ -1,7 +1,7 @@
 package timeTraveler.structures;
 import java.util.Random;
 
-import timeTraveler.core.mod_Time;
+import timeTraveler.core.TimeTraveler;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -26,7 +26,7 @@ public class WorldGenPastTemple extends WorldGenerator
 		}
 		System.out.println("GENERATING STRUCUTRE");
         TileEntityChest tileentitychest = new TileEntityChest();
-        tileentitychest.setInventorySlotContents(0, new ItemStack(mod_Time.paradoximer.itemID, 1, 1));
+        tileentitychest.setInventorySlotContents(0, new ItemStack(TimeTraveler.paradoximer.itemID, 1, 1));
 		world.setBlock(i + 0, j + 0, k + 0, Block.grass.blockID);
 		world.setBlock(i + 0, j + 0, k + 1, Block.grass.blockID);
 		world.setBlock(i + 0, j + 0, k + 2, Block.grass.blockID);
@@ -106,7 +106,7 @@ public class WorldGenPastTemple extends WorldGenerator
 		world.setBlock(i + 4, j + 1, k + 7, Block.stoneBrick.blockID);
 		world.setBlock(i + 4, j + 2, k + 1, Block.stoneBrick.blockID, 2, 1);
 		world.setBlock(i + 4, j + 2, k + 3, Block.stairsStoneBrick.blockID, 2, 1);
-		world.setBlock(i + 4, j + 2, k + 4, mod_Time.travelTime.blockID);
+		world.setBlock(i + 4, j + 2, k + 4, TimeTraveler.travelTime.blockID);
 		world.setBlock(i + 4, j + 2, k + 5, Block.stairsStoneBrick.blockID, 3, 1);
 		world.setBlock(i + 4, j + 2, k + 7, Block.stoneBrick.blockID);
 		world.setBlock(i + 4, j + 3, k + 1, Block.stoneBrick.blockID);

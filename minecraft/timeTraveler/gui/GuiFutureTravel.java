@@ -1,16 +1,20 @@
 package timeTraveler.gui;
 //
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.input.Keyboard;
 
 import timeTraveler.mechanics.FutureTravelMechanics;
-
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 /**
  * GUI for the paradoximer
@@ -83,11 +87,27 @@ public class GuiFutureTravel extends GuiScreen{
             	
             		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
                 	System.out.println(run);
-            		for (int i = 0; i < run; i++)
+            		/*for (int i = 0; i < run; i++)
                 	{
                 		ftm.expandOres(world, 1, 1, 1, 1, 1, 1, 1);
                 		ftm.expandForests(world, 2);
-                	}
+                	}*/
+                    ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+                    DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
+                    try
+                    {
+                    	System.out.println(dataoutputstream + " :)");
+                            dataoutputstream.writeInt(run);
+                            System.out.println(":) :)");
+                            PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("futuretravel", bytearrayoutputstream.toByteArray()));
+                            System.out.println(":) :) :)");
+                    }
+                    
+                    catch (Exception exception)
+                    {
+                            exception.printStackTrace();
+                    }
+
             	}
             }
         }

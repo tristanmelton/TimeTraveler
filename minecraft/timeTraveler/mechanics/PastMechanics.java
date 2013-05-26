@@ -142,9 +142,9 @@ public class PastMechanics {
 			fil.mkdir();
 		}
 		int counterstart = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName()).listFiles().length;
-	    int counter = counterstart;
-		          
-		try
+	    int counter = counterstart - 1;
+
+	    try
 		{
 			WorldInfo worldinfo = minecraft.theWorld.getWorldInfo();
 		  

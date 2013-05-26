@@ -1,6 +1,6 @@
 package timeTraveler.items;
 
-import timeTraveler.core.mod_Time;
+import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiFutureTravel;
 import timeTraveler.gui.GuiTimeTravel;
@@ -43,7 +43,7 @@ public class ItemParadoximer extends Item {
     }
     public void registerIcons(IconRegister par1IconRegister)
  {
-     this.itemIcon = par1IconRegister.registerIcon(mod_Time.modid + ":" + this.getUnlocalizedName());
+     this.itemIcon = par1IconRegister.registerIcon(TimeTraveler.modid + ":" + this.getUnlocalizedName());
  }
 
 }
