@@ -21,7 +21,6 @@ import timeTraveler.mechanics.FutureTravelMechanics;
 import timeTraveler.proxies.CommonProxy;
 import timeTraveler.structures.StructureGenerator;
 import timeTraveler.ticker.TickerClient;
-import timeTraveler.world.WorldProviderTime;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -63,8 +62,6 @@ public class TimeTraveler
 	
 	FutureTravelMechanics ftm;
 	
-	public static int dimensionID = 20;
-
 
 	/**
 	 * Initializes DeveloperCapes
@@ -112,8 +109,6 @@ public class TimeTraveler
 				});
 		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
 		// ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
-		DimensionManager.registerProviderType(dimensionID, WorldProviderTime.class, false);
-		DimensionManager.registerDimension(dimensionID, dimensionID);
 
 		
 		ftm = new FutureTravelMechanics();		
