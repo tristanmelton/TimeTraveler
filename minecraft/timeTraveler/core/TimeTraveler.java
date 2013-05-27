@@ -14,7 +14,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import timeTraveler.blocks.BlockPortalTime;
 import timeTraveler.blocks.BlockTimeTraveler;
 import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.items.ItemParadoximer;
@@ -57,7 +56,6 @@ public class TimeTraveler
 	public static CommonProxy proxy;
 
 	public static Block travelTime;
-	public static Block timePortal;
 	
 	public static Item paradoximer;
 
@@ -95,14 +93,11 @@ public class TimeTraveler
 		paradoximer = new ItemParadoximer(2330).setUnlocalizedName("ItemParadoximer");	
 		
 		travelTime = new BlockTimeTraveler(255).setUnlocalizedName("BlockTimeTraveler");
-		timePortal = new BlockPortalTime(254).setUnlocalizedName("BlockPortalTime");
 		
 		GameRegistry.registerBlock(travelTime, "travelTime");
-		GameRegistry.registerBlock(timePortal, "timePortal");
 		
 		LanguageRegistry.addName(travelTime, "Paradox Cube");
 		LanguageRegistry.addName(paradoximer, "Paradoximer");
-		LanguageRegistry.addName(timePortal, "Time Portal");
 		
 		GameRegistry.registerWorldGenerator(new StructureGenerator());
 
