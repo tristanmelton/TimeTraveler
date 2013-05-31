@@ -87,11 +87,7 @@ public class GuiFutureTravel extends GuiScreen{
             	
             		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
                 	System.out.println(run);
-            		/*for (int i = 0; i < run; i++)
-                	{
-                		ftm.expandOres(world, 1, 1, 1, 1, 1, 1, 1);
-                		ftm.expandForests(world, 2);
-                	}*/
+
                     ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
                     DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
                     try
