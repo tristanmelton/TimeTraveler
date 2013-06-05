@@ -55,9 +55,14 @@ public class PastMechanics {
 	 */
 	public void addPlayerLoc(MinecraftServer ms, Minecraft minecraft, String special)
 	{
-		File playerLoc = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
-	    
-	    playerLoc(playerLoc, minecraft, special);
+		if(ClientMethods.isSinglePlayer())
+		{
+			System.out.println("REMOTE");
+			File playerLoc = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
+		    
+		    playerLoc(playerLoc, minecraft, special);
+
+		}
 
 	}
 	/**
@@ -102,28 +107,31 @@ public class PastMechanics {
 	/**
 	 * Saves the first timezone when world is created
 	 * @param ms
-	 * @param minecraft
 	 */
 	public void firstTime(MinecraftServer ms, Minecraft minecraft)
 	{
-		CopyFile cf = new CopyFile();
-	    File beginningOfWorld = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
-	    
-	    if(beginningOfWorld.length() == 0)
-	    {
-	    	File initWorldGen = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName());
-	    	initWorldGen.mkdirs();
-	        File fi = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
-	        File moveTo = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/Time 001");
-	        try
-	        {
-	            cf.copyDirectory(fi, moveTo);
-	        }
-	        catch(IOException ex)
-	        {
-	        	ex.printStackTrace();
-	        }
-	    }
+		if(ClientMethods.isSinglePlayer())
+		{
+			CopyFile cf = new CopyFile();
+		    File beginningOfWorld = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
+		    
+		    if(beginningOfWorld.length() == 0)
+		    {
+		    	File initWorldGen = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName());
+		    	initWorldGen.mkdirs();
+		        File fi = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
+		        File moveTo = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/Time 001");
+		        try
+		        {
+		            cf.copyDirectory(fi, moveTo);
+		        }
+		        catch(IOException ex)
+		        {
+		        	ex.printStackTrace();
+		        }
+		    }
+
+		}
 	}
 	/**
 	 * Creates a Past Timezone
@@ -133,42 +141,46 @@ public class PastMechanics {
 	 */
 	public void saveTime(MinecraftServer ms, Minecraft minecraft, CopyFile cf)
 	{
-		WorldInfo we = minecraft.theWorld.getWorldInfo();
-		   
-		File fil = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName());
-		   
-		if(!fil.exists())
+		if(ClientMethods.isSinglePlayer())
 		{
-			fil.mkdir();
-		}
-		int counterstart = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName()).listFiles().length;
-	    int counter = counterstart - 1;
+			WorldInfo we = minecraft.theWorld.getWorldInfo();
+			   
+			File fil = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName());
+			   
+			if(!fil.exists())
+			{
+				fil.mkdir();
+			}
+			int counterstart = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName()).listFiles().length;
+		    int counter = counterstart - 1;
 
-	    try
-		{
-			WorldInfo worldinfo = minecraft.theWorld.getWorldInfo();
-		  
-			File fi = new File(minecraft.getMinecraftDir() + "\\saves\\" + ms.getWorldName() + "\\region");
-			File f2 = new File (minecraft.getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName());
-			f2.mkdir();
+		    try
+			{
+				WorldInfo worldinfo = minecraft.theWorld.getWorldInfo();
+			  
+				File fi = new File(minecraft.getMinecraftDir() + "\\saves\\" + ms.getWorldName() + "\\region");
+				File f2 = new File (minecraft.getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName());
+				f2.mkdir();
 
-			String fname = minecraft.getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName() + "\\Time ";
-			counter = counter + 1;
-			fname = fname.concat(String.format("%03d",counter));
-		          
-			File directoryToMoveTo = new File(fname);
-		                		   
-			cf.copyDirectory(fi, directoryToMoveTo);
-		          
-			System.out.println("Created a time!");       
-			//File destination = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past");
-			//File zipped = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/w1.zip");
-		           
-			// copyfiletime.unzip(zipped, destination);  
-		}
-		catch(Exception ex)
-		{
-			ex.printStackTrace();
+				String fname = minecraft.getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName() + "\\Time ";
+				counter = counter + 1;
+				fname = fname.concat(String.format("%03d",counter));
+			          
+				File directoryToMoveTo = new File(fname);
+			                		   
+				cf.copyDirectory(fi, directoryToMoveTo);
+			          
+				System.out.println("Created a time!");       
+				//File destination = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past");
+				//File zipped = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/w1.zip");
+			           
+				// copyfiletime.unzip(zipped, destination);  
+			}
+			catch(Exception ex)
+			{
+				ex.printStackTrace();
+			}
+
 		}
 	}
 	/**
@@ -181,39 +193,42 @@ public class PastMechanics {
 	 */
 	public void returnToPresent(Minecraft minecraft, int paradoxLevel, MinecraftServer ms, int minutes, int seconds)
 	{
-		GuiTimeTravel gtt = new GuiTimeTravel();
-		EntityPlayer ep = minecraft.thePlayer;
-		ep.setDead();
-		
-		paradoxLevel = 0;
-		
-		
-        minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
-        minecraft.theWorld.sendQuittingDisconnectingPacket();
-        minecraft.loadWorld((WorldClient)null);
-        //minecraft.displayGuiScreen(new GuiMainMenu());
-        
-        //minecraft.loadWorld(w);
-        
-        File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
-        File worldFileDest = GuiTimeTravel.staticsource;
-        File worldFile = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
-        
-        System.out.println(present);
-        System.out.println(worldFileDest);
-        System.out.println(worldFile);
-        try {
-        	Thread.sleep(3000);
-        	CopyFile.moveMultipleFiles(worldFile, worldFileDest);
-            Thread.sleep(2000);
-        	CopyFile.moveMultipleFiles(present, worldFile);
-            gtt.isInPast = false;
-        }
-        catch (Exception ex) {
-        	ex.printStackTrace();
-        }
-        minutes = 1;
-        seconds = 30;   
+		if(ClientMethods.isSinglePlayer())
+		{
+			GuiTimeTravel gtt = new GuiTimeTravel();
+			EntityPlayer ep = minecraft.thePlayer;
+			ep.setDead();
+			
+			paradoxLevel = 0;
+			
+			
+	        minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
+	        minecraft.theWorld.sendQuittingDisconnectingPacket();
+	        minecraft.loadWorld((WorldClient)null);
+	        //minecraft.displayGuiScreen(new GuiMainMenu());
+	        
+	        //minecraft.loadWorld(w);
+	        
+	        File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
+	        File worldFileDest = GuiTimeTravel.staticsource;
+	        File worldFile = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
+	        
+	        System.out.println(present);
+	        System.out.println(worldFileDest);
+	        System.out.println(worldFile);
+	        try {
+	        	Thread.sleep(3000);
+	        	CopyFile.moveMultipleFiles(worldFile, worldFileDest);
+	            Thread.sleep(2000);
+	        	CopyFile.moveMultipleFiles(present, worldFile);
+	            gtt.isInPast = false;
+	        }
+	        catch (Exception ex) {
+	        	ex.printStackTrace();
+	        }
+	        minutes = 1;
+	        seconds = 30;   
+		}
 	}
 	/**
 	 * Draws the time left button
@@ -235,40 +250,42 @@ public class PastMechanics {
 	 */
 	public void outOfTime(Minecraft minecraft, MinecraftServer ms, int minutes, int seconds, String text)
 	{
-		System.out.println(1);
-		GuiTimeTravel gtt = new GuiTimeTravel();
-		System.out.println(2);
-		text = "Time Remaining: " + seconds + " Seconds";	
-		System.out.println(3);
-	    minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
-	    minecraft.theWorld.sendQuittingDisconnectingPacket();
-	    minecraft.loadWorld((WorldClient)null);
-	    minecraft.displayGuiScreen(new GuiMainMenu());
-	           
-	    //minecraft.loadWorld(w);
-	    File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
-	    File worldFileDest = GuiTimeTravel.staticsource;
-	    File worldFile = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
-	           
-	    System.out.println(worldFileDest + " " + gtt.getSaveNumber());
-	    System.out.println(present);
-	    System.out.println(worldFileDest);
-	    System.out.println(worldFile);
-	    
-	    try 
-	    {
-	    	Thread.sleep(3000);
-	    	CopyFile.moveMultipleFiles(worldFile, worldFileDest);
-	    	Thread.sleep(1000);
-	    	CopyFile.moveMultipleFiles(present, worldFile);
-	    	gtt.isInPast = false;
-	    }  
-	    catch (Exception ex)
-	    {
-	    	ex.printStackTrace();
-		}	
-    	minutes = 1;
-    	seconds = 10;
-
+		if(ClientMethods.isSinglePlayer())
+		{
+			System.out.println(1);
+			GuiTimeTravel gtt = new GuiTimeTravel();
+			System.out.println(2);
+			text = "Time Remaining: " + seconds + " Seconds";	
+			System.out.println(3);
+		    minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
+		    minecraft.theWorld.sendQuittingDisconnectingPacket();
+		    minecraft.loadWorld((WorldClient)null);
+		    minecraft.displayGuiScreen(new GuiMainMenu());
+		           
+		    //minecraft.loadWorld(w);
+		    File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
+		    File worldFileDest = GuiTimeTravel.staticsource;
+		    File worldFile = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
+		           
+		    System.out.println(worldFileDest + " " + gtt.getSaveNumber());
+		    System.out.println(present);
+		    System.out.println(worldFileDest);
+		    System.out.println(worldFile);
+		    
+		    try 
+		    {
+		    	Thread.sleep(3000);
+		    	CopyFile.moveMultipleFiles(worldFile, worldFileDest);
+		    	Thread.sleep(1000);
+		    	CopyFile.moveMultipleFiles(present, worldFile);
+		    	gtt.isInPast = false;
+		    }  
+		    catch (Exception ex)
+		    {
+		    	ex.printStackTrace();
+			}	
+	    	minutes = 1;
+	    	seconds = 10;
+		}
 	}
 }

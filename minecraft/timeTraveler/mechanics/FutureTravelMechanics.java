@@ -92,6 +92,8 @@ public class FutureTravelMechanics
 	 */
 	public void expandForests(World world, int size)
 	{
+		if(ClientMethods.isSinglePlayer())
+		{
 	         Iterator<ChunkCoordIntPair> iterator = world.activeChunkSet.iterator();
 	         ArrayList<ChunkCoordinates> list = new ArrayList<ChunkCoordinates>();
 	         ArrayList<Integer> treeTypes = new ArrayList<Integer>();
@@ -121,12 +123,14 @@ public class FutureTravelMechanics
 	         }
 	         System.out.println(">> " + list.size());
 	         Iterator<Integer> typeIterator = treeTypes.iterator();
-	         for (ChunkCoordinates coord : list) {
-	                 if (typeIterator.hasNext())
-	                 {
-	                         growTree(typeIterator.next() & 3, world, coord.posX, coord.posY, coord.posZ, random);
-	                 }
+	         for (ChunkCoordinates coord : list)
+	         {
+	        	 if (typeIterator.hasNext())
+	             {
+	        		 growTree(typeIterator.next() & 3, world, coord.posX, coord.posY, coord.posZ, random);
+	             }
 	         }
+		}
 	}
 	/**
 	 * Grows the trees
@@ -200,7 +204,10 @@ public class FutureTravelMechanics
      * Expands ores
      * @param world
      */
-    public void expandOres(World world) {
+    public void expandOres(World world)
+    {
+    	if(ClientMethods.isSinglePlayer())
+    	{
             Iterator<ChunkCoordIntPair> iterator = world.activeChunkSet.iterator();
             
             Map<ChunkCoordinates, Integer> placements = new HashMap();
@@ -295,6 +302,7 @@ public class FutureTravelMechanics
             }
     }
 
+    	}
 }
 	
 
