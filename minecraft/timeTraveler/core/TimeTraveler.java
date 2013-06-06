@@ -7,23 +7,28 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
+import timeTraveler.blocks.BlockParadoxCondenser;
 import timeTraveler.blocks.BlockTimeTraveler;
 import timeTraveler.entities.EntityPlayerPast;
+import timeTraveler.gui.GuiHandler;
+import timeTraveler.items.BottledParadox;
 import timeTraveler.items.ItemParadoximer;
 import timeTraveler.mechanics.FutureTravelMechanics;
-import timeTraveler.network.FutureTravelPacketHandlerServer;
+import timeTraveler.network.TimeTravelerPacketHandler;
 import timeTraveler.proxies.CommonProxy;
 import timeTraveler.structures.StructureGenerator;
 import timeTraveler.ticker.TickerClient;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -31,7 +36,7 @@ import cpw.mods.fml.relauncher.Side;
 
 
 @Mod(modid = "Charsmud_TimeTraveler", name = "Time Traveler", version = "0.1")
-@NetworkMod(clientSideRequired = true, serverSideRequired = false, serverPacketHandlerSpec = @SidedPacketHandler (channels = {"futuretravel"}, packetHandler = FutureTravelPacketHandlerServer.class))
+@NetworkMod(clientSideRequired = true, serverSideRequired = false, serverPacketHandlerSpec = @SidedPacketHandler (channels = {"futuretravel", "paradoxgui"}, packetHandler = TimeTravelerPacketHandler.class))
 
 /**
  * Main laucher for TimeTraveler
@@ -45,14 +50,20 @@ public class TimeTraveler
 	
 	public static CommonProxy proxy;
 
+	@Instance
+	public static TimeTraveler instance = new TimeTraveler();
+	
 	public static Block travelTime;
+	public static Block paradoxCondenser;
 	
 	public static Item paradoximer;
-
+	public static Item bottledParadox;
+	
 	public static final String modid = "Charsmud_TimeTraveler";
 	
 	FutureTravelMechanics ftm;
 	
+	private GuiHandler guihandler;
 
 	/**
 	 * Initializes DeveloperCapes
@@ -79,16 +90,24 @@ public class TimeTraveler
 		mkDirs();
 
 		paradoximer = new ItemParadoximer(2330).setUnlocalizedName("ItemParadoximer");	
+		bottledParadox = new BottledParadox(2331).setUnlocalizedName("BottledParadox");
 		
 		travelTime = new BlockTimeTraveler(255).setUnlocalizedName("BlockTimeTraveler");
+		paradoxCondenser = new BlockParadoxCondenser(254, true).setUnlocalizedName("BlockParadoxCondenser");
 		
 		GameRegistry.registerBlock(travelTime, "travelTime");
+		GameRegistry.registerBlock(paradoxCondenser, "paradoxCondenser");
 		
 		LanguageRegistry.addName(travelTime, "Paradox Cube");
 		LanguageRegistry.addName(paradoximer, "Paradoximer");
+		LanguageRegistry.addName(paradoxCondenser, "Paradox Condenser");
+		LanguageRegistry.addName(bottledParadox, "Bottled Paradox");
 		
 		GameRegistry.registerWorldGenerator(new StructureGenerator());
-
+		
+		guihandler = new GuiHandler();
+		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
+		
 		GameRegistry.addRecipe(new ItemStack(travelTime,  13), new Object[] 
 				{
 			//

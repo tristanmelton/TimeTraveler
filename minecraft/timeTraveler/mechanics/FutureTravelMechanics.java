@@ -44,46 +44,6 @@ public class FutureTravelMechanics
 		ep = FMLClientHandler.instance().getClient().thePlayer;
 		world = FMLClientHandler.instance().getClient().theWorld;
 	}
-	/*
-	public void expandOres(World world, int coal, int diamond, int emerald, int gold, int iron, int lapis, int redstone)
-	{
-		Iterator<ChunkCoordIntPair> iterator = world.activeChunkSet.iterator();
-		System.out.println("EXPANDORES");
-		while(iterator.hasNext())
-		{
-			ChunkCoordIntPair coords = iterator.next();
-			//Chunk currentScanningChunk = world.getChunkFromBlockCoords((int)ep.posX, (int) ep.posZ);
-			Chunk currentScanningChunk = world.getChunkFromChunkCoords(coords.chunkXPos, coords.chunkZPos);
-			expandRedstone(world, currentScanningChunk, redstone);
-			expandDiamond(world, currentScanningChunk, diamond);
-			expandCoal(world, currentScanningChunk, coal);
-			expandEmerald(world, currentScanningChunk, emerald);
-			expandGold(world, currentScanningChunk, gold);
-			expandIron(world, currentScanningChunk, iron);
-			expandLapis(world, currentScanningChunk, lapis);
-
-			/*ISaveHandler save = world.getSaveHandler();
-			IChunkLoader saver = save.getChunkLoader(world.provider);
-			try
-			{
-				System.out.println(world);
-				System.out.println(currentScanningChunk);
-				saver.saveChunk(world, currentScanningChunk);
-			}
-			catch(MinecraftException ex)
-			{
-				ex.printStackTrace();
-				System.out.println("FAILED TO SAVE MINE");
-			}
-			catch(IOException ex)
-			{
-				ex.printStackTrace();
-				System.out.println("FAILED TO SAVE IO");
-			}
-
-		}
-	}
-*/
 	Random random = new Random();
 	/**
 	 * Main expanding forests method
