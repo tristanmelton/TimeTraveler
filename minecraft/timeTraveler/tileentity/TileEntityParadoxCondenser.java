@@ -1,6 +1,7 @@
 package timeTraveler.tileentity;
 
 import timeTraveler.blocks.BlockParadoxCondenser;
+import timeTraveler.core.TimeTraveler;
 import timeTraveler.crafting.ParadoxRecipes;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -42,6 +43,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
 
     /** The number of ticks that the current item has been cooking for */
     public int paradoxCookTime = 0;
+    public int paradoxFormTime = 0;
     private String field_94130_e;
 
     /**
@@ -169,6 +171,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
 
         this.paradoxBurnTime = par1NBTTagCompound.getShort("BurnTime");
         this.paradoxCookTime = par1NBTTagCompound.getShort("CookTime");
+        this.paradoxFormTime = par1NBTTagCompound.getShort("FormTime");
         this.currentItemBurnTime = getItemBurnTime(this.paradoxItemStacks[1]);
 
         if (par1NBTTagCompound.hasKey("Tut Furnace"))
@@ -185,6 +188,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
         super.writeToNBT(par1NBTTagCompound);
         par1NBTTagCompound.setShort("BurnTime", (short)this.paradoxBurnTime);
         par1NBTTagCompound.setShort("CookTime", (short)this.paradoxCookTime);
+        par1NBTTagCompound.setShort("FormTime", (short)this.paradoxFormTime);
         NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.paradoxItemStacks.length; ++i)
@@ -226,6 +230,11 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
         return this.paradoxCookTime * par1 / 200;
     }
 
+    public int getFormProgressScaled(int par1)
+    {
+    	return this.paradoxFormTime * par1 / 200;
+    }
+    
     @SideOnly(Side.CLIENT)
 
     /**
@@ -255,7 +264,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
      * ticks and creates a new spawn inside its implementation.
      */
     public void updateEntity()
-    {
+    {	
         boolean flag = this.paradoxBurnTime > 0;
         boolean flag1 = false;
 
@@ -276,8 +285,6 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
 
                     if (this.paradoxItemStacks[1] != null)
                     {
-                        --this.paradoxItemStacks[1].stackSize;
-
                         if (this.paradoxItemStacks[1].stackSize == 0)
                         {
                             this.paradoxItemStacks[1] = this.paradoxItemStacks[1].getItem().getContainerItemStack(paradoxItemStacks[1]);
@@ -285,22 +292,49 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
                     }
                 }
             }
+            if(this.paradoxItemStacks[0] == null && this.paradoxItemStacks[1] != null)
+            {
+            	int paradoxAmount = this.paradoxItemStacks[1].getTagCompound().getInteger("paradoxLevel") - 1;
+            	if(paradoxAmount > 0)
+            	{
+                	++this.paradoxFormTime;
+                	this.paradoxItemStacks[1].getTagCompound().setInteger("paradoxLevel", paradoxAmount);
+                	//Time it takes to form
+                	if(this.paradoxFormTime == 200)
+                	{
+                		this.paradoxFormTime = 0;
+                		this.formItem();
+                		flag1 = true;
+                	}
 
-            if (this.isBurning() && this.canSmelt())
+            	}
+            }
+            if(this.paradoxItemStacks[0] != null && this.paradoxItemStacks[1] != null)
             {
-                ++this.paradoxCookTime;
-                //Time it takes to Condense an item
-                if (this.paradoxCookTime == 200)
-                {
-                    this.paradoxCookTime = 0;
-                    this.smeltItem();
-                    flag1 = true;
+                if (this.isBurning() && this.canSmelt())
+                {                
+                    if(this.paradoxItemStacks[1] != null)
+                    {
+                        ++this.paradoxCookTime;
+                        int paradoxAmount = this.paradoxItemStacks[1].getTagCompound().getInteger("paradoxLevel") - 1;
+                        
+                        this.paradoxItemStacks[1].getTagCompound().setInteger("paradoxLevel", paradoxAmount);
+                        //Time it takes to Condense an item
+                        if (this.paradoxCookTime == 200)
+                        {
+                            this.paradoxCookTime = 0;
+                            this.smeltItem();
+                            flag1 = true;
+                        }
+
+                    }
                 }
+
             }
-            else
+            /*else
             {
-                this.paradoxCookTime = 0;
-            }
+                //this.paradoxCookTime = 0;
+            }*/
 
             if (flag != this.paradoxBurnTime > 0)
             {
@@ -363,6 +397,22 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     }
 
     /**
+     * Forms condensed Paradox
+     */
+    public void formItem()
+    {
+    	ItemStack itemstack = new ItemStack(TimeTraveler.condensedParadox);
+    	if (this.paradoxItemStacks[2] == null)
+    	{
+    		this.paradoxItemStacks[2] = itemstack.copy();
+    	}
+    	else if (this.paradoxItemStacks[2].isItemEqual(itemstack))
+    	{
+    		paradoxItemStacks[2].stackSize += itemstack.stackSize;
+    	}        
+    }
+
+    /**
      * Returns the number of ticks that the supplied fuel item will keep the furnace burning, or 0 if the item isn't
      * fuel
      */
@@ -376,8 +426,18 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
         {
             int i = par0ItemStack.getItem().itemID;
             Item item = par0ItemStack.getItem();
-
-            if (par0ItemStack.getItem() instanceof ItemBlock && Block.blocksList[i] != null)
+            if(item.equals(TimeTraveler.bottledParadox))
+            {
+            	if(par0ItemStack.getTagCompound() != null)
+            	{
+            		return par0ItemStack.getTagCompound().getInteger("paradoxLevel");
+            	}
+            	else
+            	{
+            		return 0;
+            	}
+            }
+            /*if (par0ItemStack.getItem() instanceof ItemBlock && Block.blocksList[i] != null)
             {
                 Block block = Block.blocksList[i];
 
@@ -397,8 +457,9 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
             if (item instanceof ItemHoe && ((ItemHoe) item).getMaterialName().equals("WOOD")) return 200;
             //if (i == mod_MainClass.TutItem.itemID) return 100;
             if (i == Item.coal.itemID) return 1600;
-            return GameRegistry.getFuelValue(par0ItemStack);
+            return GameRegistry.getFuelValue(par0ItemStack);*/
         }
+		return 0;
     }
 
     /**
@@ -435,16 +496,6 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     public int[] getSizeInventorySide(int par1)
     {
         return par1 == 0 ? field_102011_e : (par1 == 1 ? field_102010_d : field_102009_f);
-    }
-
-    public boolean func_102007_a(int par1, ItemStack par2ItemStack, int par3)
-    {
-        return this.isStackValidForSlot(par1, par2ItemStack);
-    }
-
-    public boolean func_102008_b(int par1, ItemStack par2ItemStack, int par3)
-    {
-        return par3 != 0 || par1 != 1 || par2ItemStack.itemID == Item.bucketEmpty.itemID;
     }
 
     /***********************************************************************************

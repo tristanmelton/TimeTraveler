@@ -164,9 +164,11 @@ public class TickerClient implements ITickHandler {
 			mechanics.firstTime(mc.getIntegratedServer(), mc);
 		}
 		if(isInPast)
-		{	
+		{
+			
 			count++;
-			if(paradoxLevel < 0) {
+			if(paradoxLevel < 0)
+			{
 				paradoxLevel = 0;
 			}
 			if(paradoxLevel <= 128)

@@ -51,6 +51,6 @@ public class GuiParadoxCondenser extends GuiContainer
         }
 
         i1 = this.paradoxInventory.getCookProgressScaled(24);
-        this.drawTexturedModalRect(k + 62, l + 15, 180, 6, 21, i1);
+        this.drawTexturedModalRect(k + 59, l + 32, 176, 0, i1, 17);
     }	
 }

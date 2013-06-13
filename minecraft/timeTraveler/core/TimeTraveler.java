@@ -2,22 +2,26 @@ package timeTraveler.core;
 import java.io.File;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import timeTraveler.blocks.BlockParadoxCondenser;
 import timeTraveler.blocks.BlockTimeTraveler;
+import timeTraveler.blocks.Collision;
+import timeTraveler.blocks.ParadoxExtractor;
 import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiHandler;
 import timeTraveler.items.BottledParadox;
+import timeTraveler.items.CondensedParadox;
 import timeTraveler.items.ItemParadoximer;
 import timeTraveler.mechanics.FutureTravelMechanics;
 import timeTraveler.network.TimeTravelerPacketHandler;
 import timeTraveler.proxies.CommonProxy;
 import timeTraveler.structures.StructureGenerator;
 import timeTraveler.ticker.TickerClient;
+import timeTraveler.tileentity.TileEntityCollision;
+import timeTraveler.tileentity.TileEntityExtractor;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -55,9 +59,12 @@ public class TimeTraveler
 	
 	public static Block travelTime;
 	public static Block paradoxCondenser;
+	public static Block paradoxExtractor;
+	public static Block collisionBlock;
 	
 	public static Item paradoximer;
 	public static Item bottledParadox;
+	public static Item condensedParadox;
 	
 	public static final String modid = "Charsmud_TimeTraveler";
 	
@@ -81,50 +88,76 @@ public class TimeTraveler
 	public void load(FMLInitializationEvent event)
 	{  	
 		proxy.registerRenderThings();
-
-		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);
-
-		Minecraft m = FMLClientHandler.instance().getClient();
-		MinecraftServer ms = m.getIntegratedServer();
-
+		initialize();
+		registerBlocks();
+		addNames();
+		addRecipes();
 		mkDirs();
 
+		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");
+		GameRegistry.registerTileEntity(TileEntityExtractor.class, "extractor");
+		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
+		GameRegistry.registerWorldGenerator(new StructureGenerator());
+		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
+		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
+		// ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
+	}
+
+	/**
+	 * Initializes Variables
+	 */
+	public void initialize()
+	{
 		paradoximer = new ItemParadoximer(2330).setUnlocalizedName("ItemParadoximer");	
 		bottledParadox = new BottledParadox(2331).setUnlocalizedName("BottledParadox");
+		condensedParadox = new CondensedParadox(2332).setUnlocalizedName("CondensedParadox");
 		
 		travelTime = new BlockTimeTraveler(255).setUnlocalizedName("BlockTimeTraveler");
 		paradoxCondenser = new BlockParadoxCondenser(254, true).setUnlocalizedName("BlockParadoxCondenser");
+		paradoxExtractor = new ParadoxExtractor(253, Material.iron).setUnlocalizedName("ParadoxExtractor");
+		collisionBlock = new Collision(252, Material.air).setUnlocalizedName("collisionBlock");
 		
+		ftm = new FutureTravelMechanics();		
+		guihandler = new GuiHandler();
+	}
+	/**
+	 * Registers Blocks
+	 */
+	public void registerBlocks()
+	{
 		GameRegistry.registerBlock(travelTime, "travelTime");
 		GameRegistry.registerBlock(paradoxCondenser, "paradoxCondenser");
-		
+		GameRegistry.registerBlock(paradoxExtractor, "paradoxExtractor");
+		GameRegistry.registerBlock(collisionBlock, "collisionBlock");
+	}
+	/**
+	 * Adds Names
+	 */
+	public void addNames()
+	{
 		LanguageRegistry.addName(travelTime, "Paradox Cube");
 		LanguageRegistry.addName(paradoximer, "Paradoximer");
 		LanguageRegistry.addName(paradoxCondenser, "Paradox Condenser");
 		LanguageRegistry.addName(bottledParadox, "Bottled Paradox");
-		
-		GameRegistry.registerWorldGenerator(new StructureGenerator());
-		
-		guihandler = new GuiHandler();
-		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
-		
+		LanguageRegistry.addName(condensedParadox, "Condensed Paradox");
+		LanguageRegistry.addName(paradoxExtractor, "Paradox Extractor");
+	}
+	/**
+	 * Adds Recipes
+	 */
+	public void addRecipes()
+	{
 		GameRegistry.addRecipe(new ItemStack(travelTime,  13), new Object[] 
 				{
-			//
-			"x", Character.valueOf('x'), Block.dirt
+			"xxx", "xox", "xxx", Character.valueOf('x'), TimeTraveler.condensedParadox, Character.valueOf('o'), Item.pocketSundial
 				});
 		GameRegistry.addRecipe(new ItemStack(paradoximer,  13), new Object[] 
 				{
 			"x", "s", Character.valueOf('x'), Block.wood, Character.valueOf('s'), Block.dirt
 				});
-		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
-		// ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
-
-		
-		ftm = new FutureTravelMechanics();		
-
 	}
-
+	
+	
 	/**
 	 * Makes the Directories needed
 	 */

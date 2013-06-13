@@ -16,6 +16,7 @@ public class ContainerParadox extends Container
 {
     private TileEntityParadoxCondenser paradox;
     private int lastCookTime = 0;
+    private int lastFormTime = 0;
     private int lastBurnTime = 0;
     private int lastItemBurnTime = 0;
 
@@ -47,6 +48,8 @@ public class ContainerParadox extends Container
         par1ICrafting.sendProgressBarUpdate(this, 0, this.paradox.paradoxCookTime);
         par1ICrafting.sendProgressBarUpdate(this, 1, this.paradox.paradoxBurnTime);
         par1ICrafting.sendProgressBarUpdate(this, 2, this.paradox.currentItemBurnTime);
+        par1ICrafting.sendProgressBarUpdate(this, 3, this.paradox.paradoxFormTime);
+
     }
 
     /**
@@ -74,10 +77,16 @@ public class ContainerParadox extends Container
             {
                 icrafting.sendProgressBarUpdate(this, 2, this.paradox.currentItemBurnTime);
             }
+            if (this.lastFormTime != this.paradox.paradoxFormTime)
+            {
+                icrafting.sendProgressBarUpdate(this, 0, this.paradox.paradoxFormTime);
+            }
+
         }
 
         this.lastCookTime = this.paradox.paradoxCookTime;
         this.lastBurnTime = this.paradox.paradoxBurnTime;
+        this.lastFormTime = this.paradox.paradoxFormTime;
         this.lastItemBurnTime = this.paradox.currentItemBurnTime;
     }
 
@@ -97,6 +106,10 @@ public class ContainerParadox extends Container
         if (par1 == 2)
         {
             this.paradox.currentItemBurnTime = par2;
+        }
+        if(par1 == 3)
+        {
+        	this.paradox.paradoxFormTime = par2;
         }
     }
 
