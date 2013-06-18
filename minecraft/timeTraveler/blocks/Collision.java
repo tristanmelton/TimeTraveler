@@ -25,17 +25,6 @@ public class Collision extends BlockContainer
         @Override
         public void onNeighborBlockChange(World world, int i, int j, int k, int par5)
         {
-                /*TileEntityCollision tileEntity = (TileEntityCollision)world.getBlockTileEntity(i, j, k);
-                if (tileEntity != null){
-                        //No need to check if block's Id matches the Id of our primary block, 
-                        //because if a player want to change a block, he needs to brake it first, 
-                        //and in this case block will be set to Air (Id = 0)
-                        if(world.getBlockId(tileEntity.primary_x, tileEntity.primary_y, 
-                                        tileEntity.primary_z) != TimeTraveler.paradoxExtractor.blockID){
-                                world.destroyBlock(i, j, k, false);
-                                world.removeBlockTileEntity(i, j, k);
-                        }
-                }*/
         }
         //This makes our gag invisible.
         @Override

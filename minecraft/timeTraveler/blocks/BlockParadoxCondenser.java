@@ -42,10 +42,6 @@ public class BlockParadoxCondenser extends BlockContainer
      * furnace block changes from idle to active and vice-versa.
      */
     private static boolean keepInventory = false;
-    @SideOnly(Side.CLIENT)
-    private Icon field_94458_cO;
-    @SideOnly(Side.CLIENT)
-    private Icon field_94459_cP;
 
     public BlockParadoxCondenser(int par1, boolean par2)
     {

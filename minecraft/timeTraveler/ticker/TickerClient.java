@@ -52,7 +52,7 @@ public class TickerClient implements ITickHandler {
 	public int ctr;
 	public int ct;
 	public int count;
-	public int paradoxLevel;
+	public static int paradoxLevel;
 	public int seconds = 10;
 	public int minutes = 1;
 	public int invisPotTime = 0;

@@ -1,6 +1,8 @@
 package timeTraveler.gui;
 
+import timeTraveler.container.ContainerExtractor;
 import timeTraveler.container.ContainerParadox;
+import timeTraveler.tileentity.TileEntityExtractor;
 import timeTraveler.tileentity.TileEntityParadoxCondenser;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -19,6 +21,10 @@ public class GuiHandler implements IGuiHandler
 		{
 			return new ContainerParadox(player.inventory, (TileEntityParadoxCondenser) tile_entity);
 		}
+		if(tile_entity instanceof TileEntityExtractor)
+		{
+			return new ContainerExtractor(player.inventory, (TileEntityExtractor) tile_entity);
+		}
 		
 		return null;
 	}
@@ -31,7 +37,10 @@ public class GuiHandler implements IGuiHandler
 		{
 			return new GuiParadoxCondenser(player.inventory, (TileEntityParadoxCondenser) tile_entity);
 		}
-		
+		if(tile_entity instanceof TileEntityExtractor)
+		{
+			return new GuiExtractor(player.inventory, (TileEntityExtractor)tile_entity);
+		}
 		return null;
 	}
 
