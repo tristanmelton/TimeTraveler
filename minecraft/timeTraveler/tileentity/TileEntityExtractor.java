@@ -1,11 +1,16 @@
 package timeTraveler.tileentity;
 
 import timeTraveler.blocks.BlockParadoxCondenser;
+import timeTraveler.blocks.ParadoxExtractor;
 import timeTraveler.core.TimeTraveler;
+import timeTraveler.crafting.ExtractingRecipes;
 import timeTraveler.crafting.ParadoxRecipes;
+import timeTraveler.gui.GuiExtractor;
 import timeTraveler.ticker.TickerClient;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
@@ -19,6 +24,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ForgeDummyContainer;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -276,12 +282,8 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory, 
 
         if (!this.worldObj.isRemote)
         {
-            if (this.paradoxBurnTime == 0 && this.canSmelt())
+            if (this.canSmelt())
             {
-                this.currentItemBurnTime = this.paradoxBurnTime = getItemBurnTime(this.paradoxItemStacks[1]);
-
-                if (this.paradoxBurnTime > 0)
-                {
                     flag1 = true;
 
                     if (this.paradoxItemStacks[1] != null)
@@ -291,47 +293,51 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory, 
                             this.paradoxItemStacks[1] = this.paradoxItemStacks[1].getItem().getContainerItemStack(paradoxItemStacks[1]);
                         }
                     }
-                }
             }
-            if(this.paradoxItemStacks[1] != null || this.paradoxItemStacks[2] != null)
+            if(this.paradoxItemStacks[1] != null && this.paradoxItemStacks[2] == null)
             {
-            	System.out.println(":D");
-            	if(this.paradoxItemStacks[1] != null)
-            	{
-                	System.out.println(":D :D");
-                	this.formItem();
-
-            	}
-            	if(this.paradoxItemStacks[2] != null)
-            	{
-            		System.out.println(":D :D :D");
-                	int paradoxAmount = TickerClient.paradoxLevel - 1;
-                	if(paradoxAmount >= 0)
-                	{
-                		System.out.println(":D :D :D :D");
-                    	//Time it takes to form
-                    	if(this.paradoxItemStacks[2].getItem().equals(TimeTraveler.bottledParadox))
-                    	{
-                        	int paraLevel = this.paradoxItemStacks[2].getTagCompound().getInteger("paradoxLevel") + 1;
-                        	if(paraLevel != 0)
-                        	{
-                            	this.paradoxItemStacks[2].getTagCompound().setInteger("paradoxLevel", paraLevel);
-                            	TickerClient.paradoxLevel = paradoxAmount;
-                        	}
-                        	else
-                        	{
-                        		this.paradoxItemStacks[2].getTagCompound().setInteger("paradoxLevel", 1);
-                        	}
-                    	}
-                	}
-
-            	}
-
+            	System.out.println("BEGINNING");
+            	this.formItem();
             }
+            if(this.paradoxItemStacks[1] == null && this.paradoxItemStacks[2] != null)
+            {
+            	System.out.println(1);
+            	if(this.paradoxItemStacks[2].getTagCompound() != null)
+            	{
+            		System.out.println(2);
+                	int paradoxCurrent = this.paradoxItemStacks[2].getTagCompound().getInteger("paradoxLevel");
+                	System.out.println(paradoxCurrent);
+                	paradoxCurrent++;
+                	System.out.println(paradoxCurrent);
+                	int paradoxPlayerAmt = TickerClient.paradoxLevel;
+                	System.out.println(3);
+                	if(paradoxPlayerAmt >= 0)
+                	{
+       			     	GuiScreen curScreen = Minecraft.getMinecraft().currentScreen;
+                		if(curScreen instanceof GuiExtractor)
+                		{
+                    		System.out.println(4);
+                    		TickerClient.paradoxLevel--;
+                    		this.paradoxItemStacks[2].getTagCompound().setInteger("paradoxLevel", paradoxCurrent);
+                    		System.out.println(5);
+                		}
+                	}
+            	}
+            	else
+            	{
+            		this.paradoxItemStacks[2].setTagCompound(new NBTTagCompound());
+            		this.paradoxItemStacks[2].getTagCompound().setInteger("paradoxLevel", 0);
+            	}
+            }
+            /*else
+            {
+                //this.paradoxCookTime = 0;
+            }*/
+
             if (flag != this.paradoxBurnTime > 0)
             {
                 flag1 = true;
-                BlockParadoxCondenser.updateFurnaceBlockState(this.paradoxBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+                ParadoxExtractor.updateFurnaceBlockState(this.paradoxBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
             }
         }
 
@@ -346,13 +352,13 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory, 
      */
     private boolean canSmelt()
     {
-        if (this.paradoxItemStacks[0] == null)
+        if (this.paradoxItemStacks[1] == null)
         {
             return false;
         }
         else
         {
-            ItemStack itemstack = ParadoxRecipes.condensing().getCondensingResult(this.paradoxItemStacks[0]);
+            ItemStack itemstack = ExtractingRecipes.extracting().getExtractingResult(this.paradoxItemStacks[1]);
             if (itemstack == null) return false;
             if (this.paradoxItemStacks[2] == null) return true;
             if (!this.paradoxItemStacks[2].isItemEqual(itemstack)) return false;
@@ -365,13 +371,25 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory, 
      */
     public void formItem()
     {
-    	
-    	ItemStack itemstack = new ItemStack(TimeTraveler.bottledParadox);
-    	if (this.paradoxItemStacks[2] == null)
-    	{           
-    		this.paradoxItemStacks[2] = itemstack.copy();
-    		this.paradoxItemStacks[1] = this.decrStackSize(1, 1);
-    	}
+        if (this.canSmelt())
+        {
+        	ItemStack itemstack = new ItemStack(TimeTraveler.bottledParadox);
+            if (this.paradoxItemStacks[2] == null)
+            {
+                this.paradoxItemStacks[2] = itemstack.copy();
+            }
+            else if (this.paradoxItemStacks[2].isItemEqual(itemstack))
+            {
+                paradoxItemStacks[2].stackSize += itemstack.stackSize;
+            }
+
+            --this.paradoxItemStacks[1].stackSize;
+
+            if (this.paradoxItemStacks[1].stackSize <= 0)
+            {
+                this.paradoxItemStacks[1] = null;
+            }
+        }
     }
 
     /**

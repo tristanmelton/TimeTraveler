@@ -3,14 +3,20 @@ import java.io.File;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityEggInfo;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.src.ModLoader;
+import net.minecraft.world.biome.BiomeGenBase;
 import timeTraveler.blocks.BlockParadoxCondenser;
 import timeTraveler.blocks.BlockTimeTraveler;
 import timeTraveler.blocks.Collision;
 import timeTraveler.blocks.ParadoxExtractor;
+import timeTraveler.entities.EntityParadoxHunter;
 import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiHandler;
 import timeTraveler.items.BottledParadox;
@@ -35,6 +41,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -75,6 +82,9 @@ public class TimeTraveler
 	
 	private GuiHandler guihandler;
 
+	static int startEntityId = 300;
+
+	
 	/**
 	 * Initializes DeveloperCapes
 	 * @param event
@@ -97,7 +107,8 @@ public class TimeTraveler
 		addRecipes();
 		addSmelt();
 		mkDirs();
-
+		registerEntities();
+		
 		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");
 		GameRegistry.registerTileEntity(TileEntityExtractor.class, "extractor");
 		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
@@ -106,6 +117,24 @@ public class TimeTraveler
 		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
 		// ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
 	}
+	public static int getUniqueEntityId() 
+	{
+		do 
+	  	{
+			startEntityId++;
+	  	} 
+		while (EntityList.getStringFromID(startEntityId) != null);
+
+		return startEntityId;
+	}
+	public static void registerEntityEgg(Class<? extends Entity> entity, int primaryColor, int secondaryColor) 
+	{
+		int id = getUniqueEntityId();
+		EntityList.IDtoClassMapping.put(id, entity);
+		EntityList.entityEggs.put(id, new EntityEggInfo(id, primaryColor, secondaryColor));
+	}
+
+
 
 	/**
 	 * Initializes Variables
@@ -153,14 +182,10 @@ public class TimeTraveler
 	 */
 	public void addRecipes()
 	{
-		GameRegistry.addRecipe(new ItemStack(travelTime,  13), new Object[] 
+		/*GameRegistry.addRecipe(new ItemStack(emptyBottle,  1), new Object[] 
 				{
-			"xxx", "xox", "xxx", Character.valueOf('x'), TimeTraveler.condensedParadox, Character.valueOf('o'), Item.pocketSundial
-				});
-		GameRegistry.addRecipe(new ItemStack(paradoximer,  13), new Object[] 
-				{
-			"x", "s", Character.valueOf('x'), Block.wood, Character.valueOf('s'), Block.dirt
-				});
+			" o ", "x x", " x ", Character.valueOf('x'), Block.glass.blockID, Character.valueOf('o'), Item.clay.itemID
+				});*/
 	}
 	/**
 	 * Adds Smelting Recipes
@@ -181,5 +206,17 @@ public class TimeTraveler
 		presentCreation.mkdirs();
 		File futureCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/future");
 
+	}
+	/**
+	 * Registers Entities
+	 */
+	public void registerEntities()
+	{
+		EntityRegistry.registerModEntity(EntityParadoxHunter.class, "ParadoxHunter", 1, this, 80, 1, true);
+		EntityRegistry.addSpawn(EntityParadoxHunter.class, 10, 2, 4, EnumCreatureType.creature, BiomeGenBase.beach, BiomeGenBase.extremeHills, BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.jungle, BiomeGenBase.jungleHills, BiomeGenBase.mushroomIsland, BiomeGenBase.mushroomIslandShore, BiomeGenBase.ocean, BiomeGenBase.plains, BiomeGenBase.river, BiomeGenBase.swampland);
+		LanguageRegistry.instance().addStringLocalization("entity.Charsmud_TimeTraveler.ParadoxHunter.name", "Paradox Hunter");
+
+		
+		registerEntityEgg(EntityParadoxHunter.class, 0xffffff, 0x000000);
 	}
 }

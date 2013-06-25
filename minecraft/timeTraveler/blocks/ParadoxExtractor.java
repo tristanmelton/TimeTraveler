@@ -185,7 +185,7 @@ public class ParadoxExtractor extends BlockContainer
 			return false;
 		}
 
-		//player.openGui(TimeTraveler.instance, 0, world, x, y, z);
+		player.openGui(TimeTraveler.instance, 0, world, x, y, z);
 
 		return true;
 	}

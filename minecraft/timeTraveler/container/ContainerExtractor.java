@@ -6,7 +6,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import timeTraveler.crafting.ParadoxRecipes;
+import timeTraveler.crafting.ExtractingRecipes;
 import timeTraveler.gui.SlotParadox;
 import timeTraveler.tileentity.TileEntityExtractor;
 import timeTraveler.tileentity.TileEntityParadoxCondenser;
@@ -142,7 +142,7 @@ public class ContainerExtractor extends Container
             }
             else if (par2 != 1 && par2 != 0)
             {
-                if (ParadoxRecipes.condensing().getCondensingResult(itemstack1) != null)
+                if (ExtractingRecipes.extracting().getExtractingResult(itemstack1) != null)
                 {
                     if (!this.mergeItemStack(itemstack1, 0, 1, false))
                     {
