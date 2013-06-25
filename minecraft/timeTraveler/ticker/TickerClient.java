@@ -1,9 +1,11 @@
 package timeTraveler.ticker;
 import java.util.EnumSet;
+import java.util.List;
 
 
 import org.lwjgl.opengl.GL11;
 
+import timeTraveler.core.TimeTraveler;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.mechanics.CopyFile;
 import timeTraveler.mechanics.PastMechanics;
@@ -14,6 +16,7 @@ import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.monster.EntityCaveSpider;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -133,7 +136,18 @@ public class TickerClient implements ITickHandler {
 		{
 			if(!isInPast)
 			{
-				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "");
+				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "");
+				mechanics.addEntityData(mc.thePlayer, TimeTraveler.vars.getEntiyLocData());
+				
+				List<EntityLiving> allEntities = mc.theWorld.loadedEntityList;
+				
+				for(int i = 0; i < allEntities.size(); i++)
+				{
+					if(allEntities.get(i) instanceof EntityLiving)
+					{
+						mechanics.addEntityData(allEntities.get(i), TimeTraveler.vars.getEntiyLocData());
+					}
+				}
 				ct = 0;
 			}
 		}
@@ -141,20 +155,21 @@ public class TickerClient implements ITickHandler {
 		{
 			if(mc.thePlayer.isJumping)
 			{
-				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "jump");
+				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "jump");
 			}
 			if(mc.thePlayer.isSneaking())
 			{
-				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "sneak");
+				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "sneak");
 			}
 		}
 		if(ctr == 20 * 60)
 		{
 			if(!isInPast)
 			{
-				mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
-				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "stop");
-				mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "newtime");
+				//mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
+				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "stop");
+				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "newtime");
+				mechanics.saveEntityData(TimeTraveler.vars.getEntiyLocData());
 			}
 			ctr = 0;
 		}

@@ -4,12 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import org.lwjgl.opengl.GL11;
-
-import timeTraveler.gui.GuiTimeTravel;
-
-import cpw.mods.fml.client.FMLClientHandler;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -17,11 +12,15 @@ import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.WorldInfo;
+
+import org.lwjgl.opengl.GL11;
+
+import timeTraveler.gui.GuiTimeTravel;
 
 /**
  * Contains information about the new Mechanics for the past
@@ -53,6 +52,7 @@ public class PastMechanics {
 	 * @param ms
 	 * @param minecraft
 	 */
+	@Deprecated
 	public void addPlayerLoc(MinecraftServer ms, Minecraft minecraft, String special)
 	{
 		if(ClientMethods.isSinglePlayer())
@@ -66,10 +66,53 @@ public class PastMechanics {
 
 	}
 	/**
+	 * adds an EntityLiving's name and coordinates to a List.
+	 * @param par1EntityLiving
+	 * @param par2List
+	 */
+	public void addEntityData(EntityLiving par1EntityLiving, List<String> par2List)
+	{
+		String entityName = par1EntityLiving.getEntityName();
+		int xCoord = (int) par1EntityLiving.posX;
+		int yCoord = (int) par1EntityLiving.posY;
+		int zCoord = (int) par1EntityLiving.posZ;
+		par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord + ";");		
+	}
+	/**
+	 * Saves the list input as a .epd file (entity position data).
+	 * Also clears the list once it's done writing to the file.
+	 * @param par1List
+	 */
+	public void saveEntityData(List<String> par1List)
+	{
+		  FileWriter fstream;
+		try
+		{
+			fstream = new FileWriter("text.epd");
+			BufferedWriter out = new BufferedWriter(fstream);
+			for(int i = 0; i < par1List.size(); i++)
+			{
+				out.write(par1List.get(i));
+				out.newLine();
+
+			}
+			out.close();
+			out.flush();
+			par1List.clear();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
 	 * Actual player loc saving method, get's player's x, y and z and writes to a file. (Helper Method)
 	 * @param destToSave
 	 * @param minecraft
 	 */
+	@Deprecated
 	public void playerLoc(File destToSave, Minecraft minecraft, String special)
 	{
 		EntityPlayer ep = minecraft.thePlayer;

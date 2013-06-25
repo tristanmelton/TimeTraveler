@@ -84,6 +84,7 @@ public class TimeTraveler
 
 	static int startEntityId = 300;
 
+	public static UnchangingVars vars = new UnchangingVars();
 	
 	/**
 	 * Initializes DeveloperCapes
