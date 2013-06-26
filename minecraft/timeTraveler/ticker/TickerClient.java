@@ -41,6 +41,7 @@ import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ITickHandler;
@@ -56,10 +57,12 @@ public class TickerClient implements ITickHandler {
 	public int ct;
 	public int count;
 	public static int paradoxLevel;
-	public int seconds = 10;
-	public int minutes = 1;
+	public static int seconds = 10;
+	public static int minutes = 1;
 	public int invisPotTime = 0;
 	public int sneakTime = 0;
+	NBTTagCompound paradox = new NBTTagCompound();
+
 
 	int prevSheep;
 	int prevPig;
@@ -123,6 +126,9 @@ public class TickerClient implements ITickHandler {
 	}
 	private void onTickInGame(Minecraft mc)
 	{
+		
+
+		paradoxLevel = paradox.getInteger("AmtOfParadox");
 		ctr++;
 		ct++;
 
@@ -136,18 +142,8 @@ public class TickerClient implements ITickHandler {
 		{
 			if(!isInPast)
 			{
-				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "");
-				mechanics.addEntityData(mc.thePlayer, TimeTraveler.vars.getEntiyLocData());
+				mechanics.addEntityData(TimeTraveler.vars.getEntiyLocData());
 				
-				List<EntityLiving> allEntities = mc.theWorld.loadedEntityList;
-				
-				for(int i = 0; i < allEntities.size(); i++)
-				{
-					if(allEntities.get(i) instanceof EntityLiving)
-					{
-						mechanics.addEntityData(allEntities.get(i), TimeTraveler.vars.getEntiyLocData());
-					}
-				}
 				ct = 0;
 			}
 		}
@@ -155,21 +151,19 @@ public class TickerClient implements ITickHandler {
 		{
 			if(mc.thePlayer.isJumping)
 			{
-				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "jump");
 			}
 			if(mc.thePlayer.isSneaking())
 			{
-				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "sneak");
 			}
 		}
 		if(ctr == 20 * 60)
 		{
 			if(!isInPast)
 			{
-				//mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
+				mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
 				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "stop");
 				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "newtime");
-				mechanics.saveEntityData(TimeTraveler.vars.getEntiyLocData());
+				mechanics.saveEntityData(TimeTraveler.vars.getEntiyLocData(), mc.getIntegratedServer());
 			}
 			ctr = 0;
 		}
@@ -485,7 +479,7 @@ public class TickerClient implements ITickHandler {
 			}
 			else
 			{
-				mechanics.returnToPresent(mc, paradoxLevel, mc.getIntegratedServer(), minutes, seconds);
+				mechanics.returnToPresent(mc, paradoxLevel, mc.getIntegratedServer());
 			}
 		}
 		if(isInPast)
@@ -506,9 +500,12 @@ public class TickerClient implements ITickHandler {
 			}
 			if(minutes <= 0 && seconds <= 1)
 			{
-				mechanics.outOfTime(mc, mc.getIntegratedServer(), minutes, seconds, text);
+				mechanics.outOfTime(mc, mc.getIntegratedServer(), text);
 			}
 		}
+		paradox.setInteger("AmtOfParadox", paradoxLevel);
+
+		
 	}
 	private void onTickInGui(Minecraft mc, GuiScreen gui)
 	{

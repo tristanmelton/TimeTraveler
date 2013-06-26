@@ -14,6 +14,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.world.WorldSettings;
@@ -103,6 +104,10 @@ private GuiButton buttonSelect;
             				try {
             					WorldClient wc = minecraft.theWorld;
             					WorldInfo worldi = mc.theWorld.getWorldInfo();
+            					
+            					String worldName = ms.getWorldName();
+            					String folderName = ms.getFolderName();
+            					
             					mc.thePlayer.addChatMessage("Loading...");
             					File present = new File(Minecraft.getMinecraftDir(), "saves/" + ms.getWorldName() + "/region");
             					String fname = ModLoader.getMinecraftInstance().getMinecraftDir() + "\\mods\\TimeMod\\present\\" + ms.getWorldName();
@@ -118,7 +123,7 @@ private GuiButton buttonSelect;
             					System.out.println(files[i].getName());
             					EntityPlayer player = minecraft.thePlayer;
 
-            					minecraft.theWorld.sendQuittingDisconnectingPacket();
+            				    minecraft.theWorld.sendQuittingDisconnectingPacket();
             					minecraft.loadWorld((WorldClient)null);
             					minecraft.displayGuiScreen(new GuiMainMenu());
                            
@@ -130,10 +135,15 @@ private GuiButton buttonSelect;
                             
                             	try 
                             	{
-                            		Thread.sleep(files.length * 750 * 2);
-                            		System.out.println("Completed 1");
-                            		System.out.println(files.length * 750 * 2);
-                            		CopyFile.moveMultipleFiles(source, dest);
+                    		        if (minecraft.getSaveLoader().canLoadWorld(worldName))
+                    		        {
+                                		Thread.sleep(files.length * 750 * 2);
+                                		System.out.println("Completed 1");
+                                		System.out.println(files.length * 750 * 2);
+                                		CopyFile.moveMultipleFiles(source, dest);
+                    			        minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
+
+                    		        }
                             	}
                             catch (Exception ex)
                             {

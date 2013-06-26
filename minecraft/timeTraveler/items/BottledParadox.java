@@ -27,17 +27,6 @@ public class BottledParadox extends Item
 		this.setCreativeTab(CreativeTabs.tabMisc);
 		
 	}
-	/**
-	 * Opens the future travel GUI
-	 */
-	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
-    {    	
-		containedParadox++;
-		tag.setInteger("paradoxLevel", containedParadox);
-
-		
-    	return true;
-    }
     public void registerIcons(IconRegister par1IconRegister)
     {
      this.itemIcon = par1IconRegister.registerIcon(TimeTraveler.modid + ":" + this.getUnlocalizedName());

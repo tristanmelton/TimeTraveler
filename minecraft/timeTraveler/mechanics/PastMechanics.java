@@ -16,18 +16,24 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
+import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.FMLClientHandler;
+
+import timeTraveler.core.TimeTraveler;
 import timeTraveler.gui.GuiTimeTravel;
+import timeTraveler.ticker.TickerClient;
 
 /**
  * Contains information about the new Mechanics for the past
  * @author Charsmud
  *
  */
-public class PastMechanics {
+public class PastMechanics
+{
 	/**
 	 * Updates Paradox Bar and Renders
 	 * @param minecraft
@@ -48,47 +54,46 @@ public class PastMechanics {
 		gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 8, amtOfParadox, 8);
 	}
 	/**
-	 * Adds a Player Location
-	 * @param ms
-	 * @param minecraft
-	 */
-	@Deprecated
-	public void addPlayerLoc(MinecraftServer ms, Minecraft minecraft, String special)
-	{
-		if(ClientMethods.isSinglePlayer())
-		{
-			System.out.println("REMOTE");
-			File playerLoc = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
-		    
-		    playerLoc(playerLoc, minecraft, special);
-
-		}
-
-	}
-	/**
 	 * adds an EntityLiving's name and coordinates to a List.
 	 * @param par1EntityLiving
 	 * @param par2List
 	 */
-	public void addEntityData(EntityLiving par1EntityLiving, List<String> par2List)
+	public void addEntityData(List<String> par2List)
 	{
-		String entityName = par1EntityLiving.getEntityName();
-		int xCoord = (int) par1EntityLiving.posX;
-		int yCoord = (int) par1EntityLiving.posY;
-		int zCoord = (int) par1EntityLiving.posZ;
-		par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord + ";");		
+		
+		List<EntityLiving> allEntities = FMLClientHandler.instance().getClient().theWorld.loadedEntityList;
+		
+		for(int i = 0; i < allEntities.size(); i++)
+		{
+			if(allEntities.get(i) instanceof EntityLiving)
+			{
+				String entityName = allEntities.get(i).getEntityName();
+				int xCoord = (int) allEntities.get(i).posX;
+				int yCoord = (int) allEntities.get(i).posY;
+				int zCoord = (int) allEntities.get(i).posZ;
+
+				par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord + ";");
+			}
+		}
+		par2List.add("====================");
 	}
 	/**
 	 * Saves the list input as a .epd file (entity position data).
 	 * Also clears the list once it's done writing to the file.
 	 * @param par1List
 	 */
-	public void saveEntityData(List<String> par1List)
+	public void saveEntityData(List<String> par1List, MinecraftServer par2MinecraftServer)
 	{
 		  FileWriter fstream;
 		try
 		{
-			fstream = new FileWriter("text.epd");
+			File init = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName());
+			if(!init.exists())
+			{
+				init.mkdirs();
+			}
+			int fNumbers = new File(FMLClientHandler.instance().getClient().getMinecraftDir(), "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName()).listFiles().length + 1;
+			fstream = new FileWriter(FMLClientHandler.instance().getClient().getMinecraftDir() + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\Time " + fNumbers + ".epd");
 			BufferedWriter out = new BufferedWriter(fstream);
 			for(int i = 0; i < par1List.size(); i++)
 			{
@@ -96,8 +101,8 @@ public class PastMechanics {
 				out.newLine();
 
 			}
-			out.close();
 			out.flush();
+			out.close();
 			par1List.clear();
 		}
 		catch (IOException e)
@@ -107,46 +112,6 @@ public class PastMechanics {
 
 	}
 
-	/**
-	 * Actual player loc saving method, get's player's x, y and z and writes to a file. (Helper Method)
-	 * @param destToSave
-	 * @param minecraft
-	 */
-	@Deprecated
-	public void playerLoc(File destToSave, Minecraft minecraft, String special)
-	{
-		EntityPlayer ep = minecraft.thePlayer;
-		
-		int playerX = (int)ep.posX;
-		int playerY = (int)ep.posY;
-		int playerZ = (int)ep.posZ;
-		
-		System.out.println(playerX + " " + playerY + " " + playerZ);
-		
-		if(!destToSave.exists())
-		{
-			destToSave.mkdirs();
-			
-		}
-		File nextLoc = new File(destToSave + "/loc" + ((destToSave.listFiles().length) + 1) + ".txt");
-		try
-		{			
-			BufferedWriter out = new BufferedWriter(new FileWriter(nextLoc));
-			out.write(Integer.toString(playerX));
-			out.newLine();
-			out.write(Integer.toString(playerY));
-			out.newLine();
-			out.write(Integer.toString(playerZ));
-			out.newLine();
-			out.write(special);
-			out.flush();
-			out.close();
-		}
-		catch(IOException ex)
-		{
-			ex.printStackTrace();
-		}
-	}
 	/**
 	 * Saves the first timezone when world is created
 	 * @param ms
@@ -181,6 +146,7 @@ public class PastMechanics {
 	 * @param ms
 	 * @param minecraft
 	 * @param cf
+	 * 
 	 */
 	public void saveTime(MinecraftServer ms, Minecraft minecraft, CopyFile cf)
 	{
@@ -194,8 +160,8 @@ public class PastMechanics {
 			{
 				fil.mkdir();
 			}
-			int counterstart = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName()).listFiles().length;
-		    int counter = counterstart - 1;
+			int counter = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName()).listFiles().length + 1;
+		    //int counter = counterstart - 1;
 
 		    try
 			{
@@ -206,7 +172,7 @@ public class PastMechanics {
 				f2.mkdir();
 
 				String fname = minecraft.getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName() + "\\Time ";
-				counter = counter + 1;
+				//counter = counter + 1;
 				fname = fname.concat(String.format("%03d",counter));
 			          
 				File directoryToMoveTo = new File(fname);
@@ -234,10 +200,13 @@ public class PastMechanics {
 	 * @param minutes
 	 * @param seconds
 	 */
-	public void returnToPresent(Minecraft minecraft, int paradoxLevel, MinecraftServer ms, int minutes, int seconds)
+	public void returnToPresent(Minecraft minecraft, int paradoxLevel, MinecraftServer ms)
 	{
 		if(ClientMethods.isSinglePlayer())
 		{
+			String worldName = ms.getWorldName();
+			String folderName = ms.getFolderName();
+			WorldClient worldClient = minecraft.theWorld;
 			GuiTimeTravel gtt = new GuiTimeTravel();
 			EntityPlayer ep = minecraft.thePlayer;
 			ep.setDead();
@@ -250,7 +219,6 @@ public class PastMechanics {
 	        minecraft.loadWorld((WorldClient)null);
 	        //minecraft.displayGuiScreen(new GuiMainMenu());
 	        
-	        //minecraft.loadWorld(w);
 	        
 	        File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
 	        File worldFileDest = GuiTimeTravel.staticsource;
@@ -260,17 +228,28 @@ public class PastMechanics {
 	        System.out.println(worldFileDest);
 	        System.out.println(worldFile);
 	        try {
-	        	Thread.sleep(3000);
-	        	CopyFile.moveMultipleFiles(worldFile, worldFileDest);
-	            Thread.sleep(2000);
-	        	CopyFile.moveMultipleFiles(present, worldFile);
-	            gtt.isInPast = false;
+	            if (minecraft.getSaveLoader().canLoadWorld(worldName))
+	            { 	
+		        	Thread.sleep(3000);
+		        	CopyFile.moveMultipleFiles(worldFile, worldFileDest);
+		            Thread.sleep(2000);
+		        	CopyFile.moveMultipleFiles(present, worldFile);
+		            gtt.isInPast = false;
+		            TickerClient.minutes = 1;
+		            TickerClient.seconds = 10;
+				    TickerClient.paradoxLevel = 0;
+			        minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
+			        //minecraft.loadWorld(worldClient);
+	            }
+	            else
+	            {
+	            	System.out.println("COULD NOT LOAD WORLD!  :(");
+	            }
+
 	        }
 	        catch (Exception ex) {
 	        	ex.printStackTrace();
 	        }
-	        minutes = 1;
-	        seconds = 30;   
 		}
 	}
 	/**
@@ -291,21 +270,23 @@ public class PastMechanics {
 	 * @param seconds
 	 * @param text
 	 */
-	public void outOfTime(Minecraft minecraft, MinecraftServer ms, int minutes, int seconds, String text)
+	public void outOfTime(Minecraft minecraft, MinecraftServer ms, String text)
 	{
 		if(ClientMethods.isSinglePlayer())
 		{
 			System.out.println(1);
 			GuiTimeTravel gtt = new GuiTimeTravel();
+			WorldClient worldClient = minecraft.theWorld;
+			String worldName = ms.getWorldName();
+			String folderName = ms.getFolderName();
+			
 			System.out.println(2);
-			text = "Time Remaining: " + seconds + " Seconds";	
 			System.out.println(3);
 		    minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
 		    minecraft.theWorld.sendQuittingDisconnectingPacket();
 		    minecraft.loadWorld((WorldClient)null);
 		    minecraft.displayGuiScreen(new GuiMainMenu());
 		           
-		    //minecraft.loadWorld(w);
 		    File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
 		    File worldFileDest = GuiTimeTravel.staticsource;
 		    File worldFile = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
@@ -317,18 +298,23 @@ public class PastMechanics {
 		    
 		    try 
 		    {
-		    	Thread.sleep(3000);
-		    	CopyFile.moveMultipleFiles(worldFile, worldFileDest);
-		    	Thread.sleep(1000);
-		    	CopyFile.moveMultipleFiles(present, worldFile);
-		    	gtt.isInPast = false;
+		        if (minecraft.getSaveLoader().canLoadWorld(worldName))
+		        {
+				    Thread.sleep(3000);
+				    CopyFile.moveMultipleFiles(worldFile, worldFileDest);
+				    Thread.sleep(1000);
+				    CopyFile.moveMultipleFiles(present, worldFile);
+				    gtt.isInPast = false;
+				    TickerClient.minutes = 1;
+				    TickerClient.seconds = 10;
+				    minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
+			        //minecraft.loadWorld(worldClient);
+	            }
 		    }  
 		    catch (Exception ex)
 		    {
 		    	ex.printStackTrace();
 			}	
-	    	minutes = 1;
-	    	seconds = 10;
 		}
 	}
 }
