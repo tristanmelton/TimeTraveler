@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import timeTraveler.mechanics.EntityMechanics;
+
+import cpw.mods.fml.client.FMLClientHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.passive.EntityAnimal;
@@ -23,8 +27,6 @@ import net.minecraft.world.World;
 public class EntityPlayerPast extends EntityAnimal
 {
 	private PathEntity pathToEntity;
-	Minecraft minecraft = ModLoader.getMinecraftInstance();
-	World w = minecraft.theWorld;
 	
 	int i;
 	
@@ -99,17 +101,25 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     @Override
     public void setPathToEntity(PathEntity pathentity)
     {
-    	Minecraft m = ModLoader.getMinecraftInstance();
+    	EntityMechanics mechanics = new EntityMechanics();
+    	mechanics.setPathToEntity(this, pathentity, i);
+    	/*Minecraft m = FMLClientHandler.instance().getClient();
     	MinecraftServer ms = m.getIntegratedServer();
-    	File locDirectory = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/playerLoc");
+    	File locDirectory = new File(m.getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + ms.getWorldName() + "/Time " + i + ".epd");
     	
-    	File locs = new File(locDirectory + "/loc" + i + ".txt");
     	
     	try
     	{
-    		if(locs.exists())
+    		if(locDirectory.exists())
     		{
-            	reader = new BufferedReader(new FileReader(locs));
+    			String[] entityInformation = reader.readLine().split(",");
+    			String entityName = entityInformation[0];
+    			String entityX = entityInformation[1];
+    			String entityY = entityInformation[2];
+    			String entityZ = entityInformation[3];
+    			
+    			
+            	 reader = new BufferedReader(new FileReader(locDirectory));
             	
             	playerX = Integer.parseInt(reader.readLine());
             	playerY = Integer.parseInt(reader.readLine());
@@ -152,7 +162,7 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     	catch(IOException ex)
     	{
     		ex.printStackTrace();
-    	}
+    	}*/
     }
     /**
      * Checks if path is complete (or near to)

@@ -1,70 +1,41 @@
 package timeTraveler.ticker;
+
 import java.util.EnumSet;
-import java.util.List;
 
-
-import org.lwjgl.opengl.GL11;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.potion.Potion;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.mechanics.CopyFile;
 import timeTraveler.mechanics.PastMechanics;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiIngame;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.monster.EntityCaveSpider;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.monster.EntityMagmaCube;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.entity.monster.EntitySpider;
-import net.minecraft.entity.monster.EntityWitch;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityCow;
-import net.minecraft.entity.passive.EntityMooshroom;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.entity.passive.EntitySquid;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.passive.EntityWolf;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+
 /**
  * Ticker
  * @author Charsmud
  *
  */
-public class TickerClient implements ITickHandler {
+public class TickerClient implements ITickHandler 
+{
 
 	public int ctr;
 	public int ct;
 	public int count;
+	
 	public static int paradoxLevel;
+	
 	public static int seconds = 10;
 	public static int minutes = 1;
+	
 	public int invisPotTime = 0;
 	public int sneakTime = 0;
-	NBTTagCompound paradox = new NBTTagCompound();
 
 
-	int prevSheep;
+	/*int prevSheep;
 	int prevPig;
 	int prevCow;
 	int prevChick;
@@ -88,7 +59,7 @@ public class TickerClient implements ITickHandler {
 	int prevSli;
 	int prevSpi;
 	int prevWit;
-	int prevZom;
+	int prevZom;*/
 
 	String text;
 
@@ -97,7 +68,8 @@ public class TickerClient implements ITickHandler {
 	public boolean hasRun = false;
 	public boolean hasInitMobs = false;
 
-	private boolean isInPast; 	
+	private boolean isInPast;
+	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData)
 	{
@@ -126,9 +98,6 @@ public class TickerClient implements ITickHandler {
 	}
 	private void onTickInGame(Minecraft mc)
 	{
-		
-
-		paradoxLevel = paradox.getInteger("AmtOfParadox");
 		ctr++;
 		ct++;
 
@@ -136,17 +105,7 @@ public class TickerClient implements ITickHandler {
 
 	    text  = "Time Remaining: " + minutes + " Minute, " + seconds + " Seconds";
 
-		isInPast = GuiTimeTravel.isInPast;
-
-		if(ct == 20)
-		{
-			if(!isInPast)
-			{
-				mechanics.addEntityData(TimeTraveler.vars.getEntiyLocData());
-				
-				ct = 0;
-			}
-		}
+		isInPast = GuiTimeTravel.isInPast;		
 		if(!isInPast)
 		{
 			if(mc.thePlayer.isJumping)
@@ -156,6 +115,17 @@ public class TickerClient implements ITickHandler {
 			{
 			}
 		}
+		
+		if(ct == 20)
+		{
+			if(!isInPast)
+			{
+				mechanics.addEntityData(TimeTraveler.vars.getEntiyLocData());
+				
+				ct = 0;
+			}
+		}
+		
 		if(ctr == 20 * 60)
 		{
 			if(!isInPast)
@@ -206,7 +176,7 @@ public class TickerClient implements ITickHandler {
 						sneakTime = 0;
 					}
 				}
-				WorldClient w = mc.theWorld;
+				/*WorldClient w = mc.theWorld;
 				//Passive Mobs
 				EntitySheep es = new EntitySheep(w);
 				EntityPig ep = new EntityPig(w);
@@ -475,7 +445,7 @@ public class TickerClient implements ITickHandler {
 				if(prevZom < w.countEntities(ez.getClass()))
 				{
 					prevZom = w.countEntities(ez.getClass());
-				}
+				}*/
 			}
 			else
 			{
@@ -502,10 +472,7 @@ public class TickerClient implements ITickHandler {
 			{
 				mechanics.outOfTime(mc, mc.getIntegratedServer(), text);
 			}
-		}
-		paradox.setInteger("AmtOfParadox", paradoxLevel);
-
-		
+		}		
 	}
 	private void onTickInGui(Minecraft mc, GuiScreen gui)
 	{

@@ -239,7 +239,6 @@ public class PastMechanics
 		            TickerClient.seconds = 10;
 				    TickerClient.paradoxLevel = 0;
 			        minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
-			        //minecraft.loadWorld(worldClient);
 	            }
 	            else
 	            {
@@ -274,15 +273,11 @@ public class PastMechanics
 	{
 		if(ClientMethods.isSinglePlayer())
 		{
-			System.out.println(1);
 			GuiTimeTravel gtt = new GuiTimeTravel();
 			WorldClient worldClient = minecraft.theWorld;
 			String worldName = ms.getWorldName();
 			String folderName = ms.getFolderName();
 			
-			System.out.println(2);
-			System.out.println(3);
-		    minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
 		    minecraft.theWorld.sendQuittingDisconnectingPacket();
 		    minecraft.loadWorld((WorldClient)null);
 		    minecraft.displayGuiScreen(new GuiMainMenu());
@@ -290,11 +285,6 @@ public class PastMechanics
 		    File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
 		    File worldFileDest = GuiTimeTravel.staticsource;
 		    File worldFile = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
-		           
-		    System.out.println(worldFileDest + " " + gtt.getSaveNumber());
-		    System.out.println(present);
-		    System.out.println(worldFileDest);
-		    System.out.println(worldFile);
 		    
 		    try 
 		    {

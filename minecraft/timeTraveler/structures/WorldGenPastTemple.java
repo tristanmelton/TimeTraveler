@@ -24,7 +24,6 @@ public class WorldGenPastTemple extends WorldGenerator
 		{
 			return false;
 		}
-		System.out.println("GENERATING STRUCUTRE");
         TileEntityChest tileentitychest = new TileEntityChest();
         tileentitychest.setInventorySlotContents(0, new ItemStack(TimeTraveler.paradoximer.itemID, 1, 1));
 		world.setBlock(i + 0, j + 0, k + 0, Block.grass.blockID);

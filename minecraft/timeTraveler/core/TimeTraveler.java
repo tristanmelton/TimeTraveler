@@ -24,6 +24,7 @@ import timeTraveler.items.CondensedParadox;
 import timeTraveler.items.EmptyBottle;
 import timeTraveler.items.ItemParadoximer;
 import timeTraveler.mechanics.FutureTravelMechanics;
+import timeTraveler.mechanics.VillageTradeHandler;
 import timeTraveler.network.TimeTravelerPacketHandler;
 import timeTraveler.proxies.CommonProxy;
 import timeTraveler.structures.StructureGenerator;
@@ -45,6 +46,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 
@@ -109,6 +111,7 @@ public class TimeTraveler
 		addSmelt();
 		mkDirs();
 		registerEntities();
+		//villageStuff();
 		
 		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");
 		GameRegistry.registerTileEntity(TileEntityExtractor.class, "extractor");
@@ -202,10 +205,12 @@ public class TimeTraveler
 	public void mkDirs()
 	{
 		File pastCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past");
-		pastCreation.mkdirs();
 		File presentCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/present");
-		presentCreation.mkdirs();
 		File futureCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/future");
+
+		pastCreation.mkdirs();
+		presentCreation.mkdirs();
+		futureCreation.mkdirs();
 
 	}
 	/**
@@ -220,4 +225,13 @@ public class TimeTraveler
 		
 		registerEntityEgg(EntityParadoxHunter.class, 0xffffff, 0x000000);
 	}
+	/**
+	 * Village Stuff
+	 */
+	/*public void villageStuff()
+	{		
+		VillagerRegistry.instance().registerVillagerType(8765, "/yourmodGFX/newvillager.png"); //id must be greater than 6
+		VillageTradeHandler newTradeHandler = new VillageTradeHandler();
+		VillagerRegistry.instance().registerVillageTradeHandler(8765, newTradeHandler);
+	}*/
 }
