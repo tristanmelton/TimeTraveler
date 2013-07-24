@@ -1,5 +1,10 @@
 package timeTraveler.core;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -24,7 +29,6 @@ import timeTraveler.items.CondensedParadox;
 import timeTraveler.items.EmptyBottle;
 import timeTraveler.items.ItemParadoximer;
 import timeTraveler.mechanics.FutureTravelMechanics;
-import timeTraveler.mechanics.VillageTradeHandler;
 import timeTraveler.network.TimeTravelerPacketHandler;
 import timeTraveler.proxies.CommonProxy;
 import timeTraveler.structures.StructureGenerator;
@@ -46,7 +50,6 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.common.registry.VillagerRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 
@@ -111,6 +114,7 @@ public class TimeTraveler
 		addSmelt();
 		mkDirs();
 		registerEntities();
+		sqlLite();
 		//villageStuff();
 		
 		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");
@@ -225,13 +229,62 @@ public class TimeTraveler
 		
 		registerEntityEgg(EntityParadoxHunter.class, 0xffffff, 0x000000);
 	}
-	/**
-	 * Village Stuff
-	 */
-	/*public void villageStuff()
-	{		
-		VillagerRegistry.instance().registerVillagerType(8765, "/yourmodGFX/newvillager.png"); //id must be greater than 6
-		VillageTradeHandler newTradeHandler = new VillageTradeHandler();
-		VillagerRegistry.instance().registerVillageTradeHandler(8765, newTradeHandler);
-	}*/
+
+	public void sqlLite()
+	{
+		try
+		{
+			Class.forName("org.sqlite.JDBC");
+			Connection connection = null;
+			try 
+			{
+	
+				// create a database connection
+				connection = DriverManager.getConnection("jdbc:sqlite:" + FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/database.db");
+				Statement statement = connection.createStatement();
+				statement.setQueryTimeout(30); // set timeout to 30 sec.
+	
+				//statement.executeUpdate("drop table if exists person");
+				statement.executeUpdate("create table MobData (name string, x int, y int, z int)");
+				statement.executeUpdate("insert into MobData values('Test', 1, 2, 3)");
+				statement.executeUpdate("insert into MobData values('Test 2', 4, 5, 6)");
+				ResultSet rs = statement.executeQuery("select * from MobData");
+				while (rs.next()) 
+				{
+					
+					// read the result set
+					System.out.println("name = " + rs.getString("name"));
+					System.out.println("x = " + rs.getInt("x"));
+					System.out.println("x = " + rs.getInt("y"));
+					System.out.println("x = " + rs.getInt("z"));
+
+				}
+			} 
+			catch (SQLException e) 
+			{
+				// if the error message is "out of memory",
+				// it probably means no database file is found
+				System.err.println(e.getMessage());
+			}
+			finally 
+			{
+				try 
+				{
+					if (connection != null)
+					{
+						connection.close();
+					}
+				}
+				catch (SQLException e)
+				{
+					// connection close failed.
+					System.err.println(e);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			System.err.println(e);
+		}
+	}
 }

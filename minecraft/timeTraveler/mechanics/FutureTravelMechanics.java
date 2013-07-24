@@ -11,10 +11,11 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Tuple;
+import net.minecraft.village.Village;
+import net.minecraft.village.VillageCollection;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -25,7 +26,7 @@ import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 import net.minecraft.world.gen.feature.WorldGenTaiga2;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.world.gen.structure.StructureVillagePieces;
 /**
  * Contains information about the future mechanics
  * @author Charsmud
@@ -33,16 +34,12 @@ import cpw.mods.fml.client.FMLClientHandler;
  */
 public class FutureTravelMechanics
 {
-	EntityPlayer ep;
-	World world;
 	
 	/**
 	 * Constructor
 	 */
 	public FutureTravelMechanics()
 	{
-		ep = FMLClientHandler.instance().getClient().thePlayer;
-		world = FMLClientHandler.instance().getClient().theWorld;
 	}
 	Random random = new Random();
 	/**
@@ -261,6 +258,23 @@ public class FutureTravelMechanics
                 }
             }
     	}
+    }
+
+    
+    public void expandVillages(World world)
+    {
+    	VillageCollection worldVillages = world.villageCollectionObj;
+    	List<VillageCollection> villageList = worldVillages.getVillageList();
+    
+        Iterator iterator = villageList.iterator();
+        //StructureVillagePieces villagePieces = new StructureVillagePieces();
+        while(iterator.hasNext())
+        {
+        	Village village = (Village)iterator.next();
+        	//village.
+        	//ArrayList listOfPieces = villagePieces.getStructureVillageWeightedPieceList(new Random(), 9);
+               
+        }
     }
 }
 	

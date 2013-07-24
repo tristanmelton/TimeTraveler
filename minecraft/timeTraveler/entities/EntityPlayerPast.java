@@ -102,8 +102,7 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     public void setPathToEntity(PathEntity pathentity)
     {
     	EntityMechanics mechanics = new EntityMechanics();
-    	mechanics.setPathToEntity(this, pathentity, i);
-    	/*Minecraft m = FMLClientHandler.instance().getClient();
+    	Minecraft m = FMLClientHandler.instance().getClient();
     	MinecraftServer ms = m.getIntegratedServer();
     	File locDirectory = new File(m.getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + ms.getWorldName() + "/Time " + i + ".epd");
     	
@@ -162,7 +161,7 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     	catch(IOException ex)
     	{
     		ex.printStackTrace();
-    	}*/
+    	}
     }
     /**
      * Checks if path is complete (or near to)

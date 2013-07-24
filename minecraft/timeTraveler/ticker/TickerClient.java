@@ -1,14 +1,24 @@
 package timeTraveler.ticker;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.potion.Potion;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.mechanics.CopyFile;
+import timeTraveler.mechanics.EntityMechanics;
 import timeTraveler.mechanics.PastMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ITickHandler;
@@ -33,6 +43,8 @@ public class TickerClient implements ITickHandler
 	
 	public int invisPotTime = 0;
 	public int sneakTime = 0;
+	
+	private int timeNumber = 1;
 
 
 	/*int prevSheep;
@@ -67,7 +79,9 @@ public class TickerClient implements ITickHandler
 
 	public boolean hasRun = false;
 	public boolean hasInitMobs = false;
-
+	
+	private boolean nextSet = true;
+ 
 	private boolean isInPast;
 	
 	@Override
@@ -102,7 +116,8 @@ public class TickerClient implements ITickHandler
 		ct++;
 
 		PastMechanics mechanics = new PastMechanics();
-
+		EntityMechanics entityMechanics = new EntityMechanics();
+		
 	    text  = "Time Remaining: " + minutes + " Minute, " + seconds + " Seconds";
 
 		isInPast = GuiTimeTravel.isInPast;		
@@ -144,7 +159,60 @@ public class TickerClient implements ITickHandler
 		}
 		if(isInPast)
 		{
+			List entities = mc.theWorld.loadedEntityList;
 			
+			for(int i = 0; i < entities.size(); i++)
+			{
+				if(entities.get(i) instanceof EntityLiving && (!(entities.get(i) instanceof EntityClientPlayerMP)))
+				{
+					
+
+					EntityLiving entity = (EntityLiving)entities.get(i);
+					PathEntity path = entity.getNavigator().getPath();
+					
+					File allEntityData = new File(mc.getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+					try 
+					{
+						BufferedReader reader = new BufferedReader(new FileReader(allEntityData));
+						String line;
+						if(nextSet == true)
+						{
+
+							while ((line = reader.readLine()) != null) 
+							{
+								if(line.contains("="))
+								{
+									System.out.println("DONE");
+									nextSet = false;
+								}
+								else 
+								{
+									System.out.println("GOING");
+									String[] entityData = line.split(",");
+									
+									String entityName = entityData[0];
+									int entityX = Integer.parseInt(entityData[1]);
+									int entityY = Integer.parseInt(entityData[2]);
+									int entityZ = Integer.parseInt(entityData[3]);
+									
+				            		path = mc.theWorld.getEntityPathToXYZ((Entity)entities.get(i), entityX, entityY, entityZ, 2.0F, true, true, false, false);
+								
+				            		path = entity.getNavigator().getPathToXYZ((double)entityX, (double)entityY, (double)entityZ);
+				            		
+				            		entity.getNavigator().setPath(path, 1.0F);
+
+								}
+
+							}
+						}
+						reader.close();
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+			}
 			count++;
 			if(paradoxLevel < 0)
 			{
@@ -176,7 +244,7 @@ public class TickerClient implements ITickHandler
 						sneakTime = 0;
 					}
 				}
-				/*WorldClient w = mc.theWorld;
+								/*WorldClient w = mc.theWorld;
 				//Passive Mobs
 				EntitySheep es = new EntitySheep(w);
 				EntityPig ep = new EntityPig(w);

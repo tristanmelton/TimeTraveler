@@ -72,7 +72,7 @@ public class PastMechanics
 				int yCoord = (int) allEntities.get(i).posY;
 				int zCoord = (int) allEntities.get(i).posZ;
 
-				par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord + ";");
+				par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord);
 			}
 		}
 		par2List.add("====================");
@@ -93,7 +93,11 @@ public class PastMechanics
 				init.mkdirs();
 			}
 			int fNumbers = new File(FMLClientHandler.instance().getClient().getMinecraftDir(), "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName()).listFiles().length + 1;
-			fstream = new FileWriter(FMLClientHandler.instance().getClient().getMinecraftDir() + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\Time " + fNumbers + ".epd");
+			
+			String time = "Time ";
+			time = time.concat(String.format("%03d",fNumbers));
+			fstream = new FileWriter(FMLClientHandler.instance().getClient().getMinecraftDir() + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\" + time + ".epd");
+			
 			BufferedWriter out = new BufferedWriter(fstream);
 			for(int i = 0; i < par1List.size(); i++)
 			{

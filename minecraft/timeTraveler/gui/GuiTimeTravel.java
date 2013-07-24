@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import timeTraveler.core.TimeTraveler;
 import timeTraveler.mechanics.CopyFile;
 
 import net.minecraft.client.Minecraft;
@@ -107,6 +108,8 @@ private GuiButton buttonSelect;
             					
             					String worldName = ms.getWorldName();
             					String folderName = ms.getFolderName();
+            					
+            					TimeTraveler.vars.setPastTime(nameOfTime);
             					
             					mc.thePlayer.addChatMessage("Loading...");
             					File present = new File(Minecraft.getMinecraftDir(), "saves/" + ms.getWorldName() + "/region");
