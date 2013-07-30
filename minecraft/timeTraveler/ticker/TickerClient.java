@@ -11,11 +11,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.potion.Potion;
+import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
+import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.mechanics.CopyFile;
 import timeTraveler.mechanics.EntityMechanics;
@@ -158,61 +162,74 @@ public class TickerClient implements ITickHandler
 			mechanics.firstTime(mc.getIntegratedServer(), mc);
 		}
 		if(isInPast)
-		{
-			List entities = mc.theWorld.loadedEntityList;
+		{			
 			
-			for(int i = 0; i < entities.size(); i++)
+			mc.theWorld.getGameRules().setOrCreateGameRule("doMobSpawning", "false");
+			
+			
+			File allEntityData = new File(mc.getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+					
+			try 
 			{
-				if(entities.get(i) instanceof EntityLiving && (!(entities.get(i) instanceof EntityClientPlayerMP)))
+				BufferedReader reader = new BufferedReader(new FileReader(allEntityData));
+				String line;
+				while (((line = reader.readLine()) != null) && nextSet) 
 				{
-					
-
-					EntityLiving entity = (EntityLiving)entities.get(i);
-					PathEntity path = entity.getNavigator().getPath();
-					
-					File allEntityData = new File(mc.getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
-					try 
+					if(line.equals("===================="))
 					{
-						BufferedReader reader = new BufferedReader(new FileReader(allEntityData));
-						String line;
-						if(nextSet == true)
-						{
-
-							while ((line = reader.readLine()) != null) 
-							{
-								if(line.contains("="))
-								{
-									System.out.println("DONE");
-									nextSet = false;
-								}
-								else 
-								{
-									System.out.println("GOING");
-									String[] entityData = line.split(",");
-									
-									String entityName = entityData[0];
-									int entityX = Integer.parseInt(entityData[1]);
-									int entityY = Integer.parseInt(entityData[2]);
-									int entityZ = Integer.parseInt(entityData[3]);
-									
-				            		path = mc.theWorld.getEntityPathToXYZ((Entity)entities.get(i), entityX, entityY, entityZ, 2.0F, true, true, false, false);
-								
-				            		path = entity.getNavigator().getPathToXYZ((double)entityX, (double)entityY, (double)entityZ);
-				            		
-				            		entity.getNavigator().setPath(path, 1.0F);
-
-								}
-
-							}
-						}
-						reader.close();
-					} 
-					catch (IOException e) 
-					{
-						e.printStackTrace();
+						nextSet = false;
 					}
+					else 
+					{
+						String[] entityData = line.split(",");
+									
+						String entityName = entityData[0];
+						int entityX = Integer.parseInt(entityData[1]);
+						int entityY = Integer.parseInt(entityData[2]);
+						int entityZ = Integer.parseInt(entityData[3]);
+									
+						//System.out.println(entityName + " " + entityX + " " + entityY + " " + entityZ);
+						Entity pastEntity = EntityList.createEntityByName(entityName, mc.thePlayer.worldObj);
+							
+						if(pastEntity != null)
+						{
+							PathEntity path = ((EntityLiving)pastEntity).getNavigator().getPath();
+							if(pastEntity != null)
+							{
+								pastEntity.posX = (double)entityX;
+								pastEntity.posY = (double)entityY;
+								pastEntity.posZ = (double)entityZ;
+											
+								System.out.println(pastEntity);
+								mc.thePlayer.worldObj.spawnEntityInWorld(pastEntity);
+							}
+
+						}
+						else
+						{
+							EntityPlayerPast pastPlayer = new EntityPlayerPast(mc.thePlayer.worldObj);
+							pastPlayer.posX = (double)entityX;
+							pastPlayer.posY = (double)entityY;
+							pastPlayer.posZ = (double)entityZ;
+							System.out.println(pastPlayer);
+							mc.thePlayer.worldObj.spawnEntityInWorld(pastPlayer);
+						}
+																	
+				        //path = ((EntityLiving)pastEntity).getNavigator().getPathToXYZ((double)entityX, (double)entityY, (double)entityZ);
+				            		
+				        //((EntityLiving)pastEntity).getNavigator().setPath(path, 1.0F);
+				        //((EntityLiving)pastEntity).getNavigator().tryMoveToXYZ((double)entityX, (double)entityY, (double)entityZ, 0.5F);
+
+					}
+					System.out.println(nextSet);
 				}
-			}
+				reader.close();	
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			} 
+			
 			count++;
 			if(paradoxLevel < 0)
 			{

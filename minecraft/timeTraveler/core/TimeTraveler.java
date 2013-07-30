@@ -114,7 +114,7 @@ public class TimeTraveler
 		addSmelt();
 		mkDirs();
 		registerEntities();
-		sqlLite();
+		//sqlLite();
 		//villageStuff();
 		
 		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");

@@ -7,11 +7,13 @@ import java.io.IOException;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
  /**
   * Entity Mechanics
@@ -80,5 +82,4 @@ public class EntityMechanics
 		return i;
 
 	}
-
 }
