@@ -1,6 +1,8 @@
 package timeTraveler.ticker;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,9 +17,11 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiTimeTravel;
@@ -27,6 +31,7 @@ import timeTraveler.mechanics.PastMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 /**
  * Ticker
@@ -49,7 +54,8 @@ public class TickerClient implements ITickHandler
 	public int sneakTime = 0;
 	
 	private int timeNumber = 1;
-
+	private int pathFileLine = 0;
+	
 
 	/*int prevSheep;
 	int prevPig;
@@ -84,9 +90,9 @@ public class TickerClient implements ITickHandler
 	public boolean hasRun = false;
 	public boolean hasInitMobs = false;
 	
-	private boolean nextSet = true;
- 
+	private boolean mobsInitSpawned = false; 
 	private boolean isInPast;
+	private boolean skipLines = true;
 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData)
@@ -162,74 +168,98 @@ public class TickerClient implements ITickHandler
 			mechanics.firstTime(mc.getIntegratedServer(), mc);
 		}
 		if(isInPast)
-		{			
-			
-			mc.theWorld.getGameRules().setOrCreateGameRule("doMobSpawning", "false");
-			
-			
-			File allEntityData = new File(mc.getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
-					
-			try 
+		{	
+			if(TimeTraveler.vars.getNextSet())
 			{
-				BufferedReader reader = new BufferedReader(new FileReader(allEntityData));
-				String line;
-				while (((line = reader.readLine()) != null) && nextSet) 
+				if(mobsInitSpawned)
 				{
-					if(line.equals("===================="))
+					File allEntityData = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+					
+					try 
 					{
-						nextSet = false;
-					}
-					else 
-					{
-						String[] entityData = line.split(",");
-									
-						String entityName = entityData[0];
-						int entityX = Integer.parseInt(entityData[1]);
-						int entityY = Integer.parseInt(entityData[2]);
-						int entityZ = Integer.parseInt(entityData[3]);
-									
-						//System.out.println(entityName + " " + entityX + " " + entityY + " " + entityZ);
-						Entity pastEntity = EntityList.createEntityByName(entityName, mc.thePlayer.worldObj);
-							
-						if(pastEntity != null)
+						BufferedReader reader = new BufferedReader(new FileReader(allEntityData));
+						String line;
+						for(int i = 0; i < pathFileLine + 1; i++)
 						{
-							PathEntity path = ((EntityLiving)pastEntity).getNavigator().getPath();
-							if(pastEntity != null)
-							{
-								pastEntity.posX = (double)entityX;
-								pastEntity.posY = (double)entityY;
-								pastEntity.posZ = (double)entityZ;
+							line = reader.readLine();
+						}
+						while (((line = reader.readLine()) != null) && TimeTraveler.vars.getNextSet()) 
+						{
+							pathFileLine++;
+			                ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+			                DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
+		
+								
+			                String[] entityData = line.split(",");
 											
-								System.out.println(pastEntity);
-								mc.thePlayer.worldObj.spawnEntityInWorld(pastEntity);
-							}
-
+							String entityName = entityData[0];
+							int entityX = Integer.parseInt(entityData[1]);
+							int entityY = Integer.parseInt(entityData[2]);
+							int entityZ = Integer.parseInt(entityData[3]);
+											
+							dataoutputstream.writeUTF(entityName);
+							dataoutputstream.writeInt(entityX);
+							dataoutputstream.writeInt(entityY);
+							dataoutputstream.writeInt(entityZ);
+								
+		                    PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("entitypathupdate", bytearrayoutputstream.toByteArray()));
 						}
-						else
-						{
-							EntityPlayerPast pastPlayer = new EntityPlayerPast(mc.thePlayer.worldObj);
-							pastPlayer.posX = (double)entityX;
-							pastPlayer.posY = (double)entityY;
-							pastPlayer.posZ = (double)entityZ;
-							System.out.println(pastPlayer);
-							mc.thePlayer.worldObj.spawnEntityInWorld(pastPlayer);
-						}
-																	
-				        //path = ((EntityLiving)pastEntity).getNavigator().getPathToXYZ((double)entityX, (double)entityY, (double)entityZ);
-				            		
-				        //((EntityLiving)pastEntity).getNavigator().setPath(path, 1.0F);
-				        //((EntityLiving)pastEntity).getNavigator().tryMoveToXYZ((double)entityX, (double)entityY, (double)entityZ, 0.5F);
-
+						reader.close();	
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
 					}
-					System.out.println(nextSet);
+					TimeTraveler.vars.setNextSet(true);
+
 				}
-				reader.close();	
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			} 
-			
+				if(!mobsInitSpawned)
+				{
+					File allEntityData = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+					
+					try 
+					{
+						BufferedReader reader = new BufferedReader(new FileReader(allEntityData));
+						String line;
+						while (((line = reader.readLine()) != null) && TimeTraveler.vars.getNextSet()) 
+						{
+							pathFileLine++;
+							if(line.equals("===================="))
+							{
+								TimeTraveler.vars.setNextSet(false);
+							}
+							else 
+							{
+			                    ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+			                    DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
+		
+								
+								String[] entityData = line.split(",");
+											
+								String entityName = entityData[0];
+								int entityX = Integer.parseInt(entityData[1]);
+								int entityY = Integer.parseInt(entityData[2]);
+								int entityZ = Integer.parseInt(entityData[3]);
+											
+								dataoutputstream.writeUTF(entityName);
+								dataoutputstream.writeInt(entityX);
+								dataoutputstream.writeInt(entityY);
+								dataoutputstream.writeInt(entityZ);
+								
+		                        PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("entityspawn", bytearrayoutputstream.toByteArray()));
+							}
+						}
+						reader.close();	
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+					mobsInitSpawned = true;
+					TimeTraveler.vars.setNextSet(true);
+				}
+				
+			}
 			count++;
 			if(paradoxLevel < 0)
 			{
@@ -535,6 +565,9 @@ public class TickerClient implements ITickHandler
 			else
 			{
 				mechanics.returnToPresent(mc, paradoxLevel, mc.getIntegratedServer());
+				mobsInitSpawned = false;
+				isInPast = false;
+				TimeTraveler.vars.setNextSet(true);
 			}
 		}
 		if(isInPast)
@@ -556,6 +589,10 @@ public class TickerClient implements ITickHandler
 			if(minutes <= 0 && seconds <= 1)
 			{
 				mechanics.outOfTime(mc, mc.getIntegratedServer(), text);
+				mobsInitSpawned = false;
+				isInPast = false;
+				TimeTraveler.vars.setNextSet(true);
+
 			}
 		}		
 	}

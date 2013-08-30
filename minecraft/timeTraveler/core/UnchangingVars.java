@@ -11,11 +11,13 @@ public class UnchangingVars
 {
 	static List<String> entityLocationData;
 	static String pastTime;
+	static boolean nextSet;
 	
 	public UnchangingVars()
 	{
 		entityLocationData = new ArrayList<String>();
 		pastTime = null;
+		nextSet = true;
 	}
 	
 	public List<String> getEntiyLocData()
@@ -31,9 +33,17 @@ public class UnchangingVars
 	{
 		return pastTime;
 	}
-	
 	public void setPastTime(String pastTime)
 	{
 		this.pastTime = pastTime;
+	}
+	
+	public boolean getNextSet()
+	{
+		return nextSet;
+	}
+	public void setNextSet(boolean goToNextSet)
+	{
+		nextSet = goToNextSet;
 	}
 }

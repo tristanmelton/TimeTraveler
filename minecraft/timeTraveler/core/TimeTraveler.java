@@ -54,7 +54,7 @@ import cpw.mods.fml.relauncher.Side;
 
 
 @Mod(modid = "Charsmud_TimeTraveler", name = "Time Traveler", version = "0.1")
-@NetworkMod(clientSideRequired = true, serverSideRequired = false, serverPacketHandlerSpec = @SidedPacketHandler (channels = {"futuretravel", "paradoxgui"}, packetHandler = TimeTravelerPacketHandler.class))
+@NetworkMod(clientSideRequired = true, serverSideRequired = false, serverPacketHandlerSpec = @SidedPacketHandler (channels = {"futuretravel", "paradoxgui", "entityspawn"}, packetHandler = TimeTravelerPacketHandler.class))
 
 /**
  * Main laucher for TimeTraveler
