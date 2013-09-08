@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -196,12 +197,14 @@ public class TickerClient implements ITickHandler
 							int entityX = Integer.parseInt(entityData[1]);
 							int entityY = Integer.parseInt(entityData[2]);
 							int entityZ = Integer.parseInt(entityData[3]);
-											
+							String uuidEntityUniqueId = entityData[4];	
+							
 							dataoutputstream.writeUTF(entityName);
 							dataoutputstream.writeInt(entityX);
 							dataoutputstream.writeInt(entityY);
 							dataoutputstream.writeInt(entityZ);
-								
+							dataoutputstream.writeUTF(uuidEntityUniqueId);	
+							
 		                    PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("entitypathupdate", bytearrayoutputstream.toByteArray()));
 						}
 						reader.close();	
@@ -240,11 +243,13 @@ public class TickerClient implements ITickHandler
 								int entityX = Integer.parseInt(entityData[1]);
 								int entityY = Integer.parseInt(entityData[2]);
 								int entityZ = Integer.parseInt(entityData[3]);
-											
+								String uuidEntityUniqueId = entityData[4];		
+								
 								dataoutputstream.writeUTF(entityName);
 								dataoutputstream.writeInt(entityX);
 								dataoutputstream.writeInt(entityY);
 								dataoutputstream.writeInt(entityZ);
+								dataoutputstream.writeUTF(uuidEntityUniqueId);
 								
 		                        PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("entityspawn", bytearrayoutputstream.toByteArray()));
 							}

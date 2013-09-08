@@ -1,10 +1,15 @@
 package timeTraveler.mechanics;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -16,16 +21,15 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
-
-import timeTraveler.core.TimeTraveler;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.ticker.TickerClient;
+import cpw.mods.fml.client.FMLClientHandler;
 
 /**
  * Contains information about the new Mechanics for the past
@@ -71,8 +75,9 @@ public class PastMechanics
 				int xCoord = (int) allEntities.get(i).posX;
 				int yCoord = (int) allEntities.get(i).posY;
 				int zCoord = (int) allEntities.get(i).posZ;
+				UUID entityUniqueId = allEntities.get(i).getPersistentID();
 
-				par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord);
+				par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord + "," + entityUniqueId);
 			}
 		}
 		par2List.add("====================");

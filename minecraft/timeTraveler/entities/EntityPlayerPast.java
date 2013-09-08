@@ -37,19 +37,21 @@ public class EntityPlayerPast extends EntityAnimal
 	
 	double distFromCoords;
 	private BufferedReader reader;
-	
-    public EntityPlayerPast(World par1World) {
+	public EntityPlayerPast(World par1World)
+	{
 		super(par1World);
-		
 		i = 1;
 		rangeToPoint = 30F;
 		
-        this.entityType = "humanoid";
-        this.texture = "/mob/pigzombie.png";
+        //this.entityType = "humanoid";
+        //this.texture = "/mob/pigzombie.png";
 
-        //this.skinUrl = Minecraft.getMinecraft().thePlayer.skinUrl;
         this.fireResistance = 20;
-        
+
+	}
+	public void setSkin(String usrName)
+	{
+        this.skinUrl = "http://skins.minecraft.net/MinecraftSkins/" + usrName + ".png";
 	}
     /**
      * Gets amount of health (max)
@@ -186,8 +188,8 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     public void onUpdate()
     {
     	super.onUpdate();
-    	setPathToEntity(pathToEntity);
-    	checkPathComplete(pathToEntity);
+    	//setPathToEntity(pathToEntity);
+    	//checkPathComplete(pathToEntity);
     }
 	@Override
 	/**

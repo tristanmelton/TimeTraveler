@@ -123,7 +123,7 @@ public class TimeTraveler
 		GameRegistry.registerWorldGenerator(new StructureGenerator());
 		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
 		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
-		// ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
+		ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
 	}
 	public static int getUniqueEntityId() 
 	{

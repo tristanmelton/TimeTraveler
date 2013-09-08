@@ -7,17 +7,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import timeTraveler.mechanics.PathingData;
+
 public class UnchangingVars 
 {
 	static List<String> entityLocationData;
 	static String pastTime;
 	static boolean nextSet;
+	public static PathingData pathData;
 	
 	public UnchangingVars()
 	{
 		entityLocationData = new ArrayList<String>();
 		pastTime = null;
 		nextSet = true;
+		pathData = new PathingData();
 	}
 	
 	public List<String> getEntiyLocData()
@@ -46,4 +50,5 @@ public class UnchangingVars
 	{
 		nextSet = goToNextSet;
 	}
+	
 }

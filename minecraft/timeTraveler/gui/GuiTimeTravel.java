@@ -1,11 +1,19 @@
 package timeTraveler.gui;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.network.PacketDispatcher;
+
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.mechanics.CopyFile;
+import timeTraveler.mechanics.PastMechanics;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -13,6 +21,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.stats.StatList;
@@ -103,6 +112,8 @@ private GuiButton buttonSelect;
         				if(files[i].toString().contains(nameOfTime)) 
         				{
             				try {
+                        		PastMechanics mechanics = new PastMechanics();
+
             					WorldClient wc = minecraft.theWorld;
             					WorldInfo worldi = mc.theWorld.getWorldInfo();
             					
@@ -144,8 +155,32 @@ private GuiButton buttonSelect;
                                 		System.out.println("Completed 1");
                                 		System.out.println(files.length * 750 * 2);
                                 		CopyFile.moveMultipleFiles(source, dest);
-                    			        minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
+                                		
+                    					File allEntityData = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+                    					
+                    					try 
+                    					{
+                    						BufferedReader reader = new BufferedReader(new FileReader(allEntityData));
+                    						String line;
+                    						while (((line = reader.readLine()) != null) && TimeTraveler.vars.getNextSet()) 
+                    						{
+                    							String[] rawData = line.split(",");
+                    							
+                    							String data = rawData[1] + "," + rawData[2] + "," + rawData[3];
+                    							String uuid = rawData[4];
+                    							                    							
+                    							TimeTraveler.vars.pathData.addEntity(uuid);
+                    							TimeTraveler.vars.pathData.addData(uuid, data);
+                    						}
+                    						reader.close();	
+                    					} 
+                    					catch (IOException e) 
+                    					{
+                    						e.printStackTrace();
+                    					}
 
+                                		
+                                		minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
                     		        }
                             	}
                             catch (Exception ex)

@@ -1,14 +1,16 @@
 package timeTraveler.network;
 
+import java.util.List;
+import java.util.UUID;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -65,13 +67,14 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 				int entityX = datainputstream.readInt();
 				int entityY = datainputstream.readInt();
 				int entityZ = datainputstream.readInt();
-
+				UUID entityUniqueId = UUID.fromString(datainputstream.readUTF());
+				
 				Entity pastEntity = EntityList.createEntityByName(entityName, world);
 				
 				if(pastEntity != null)
 				{
 					//PathEntity path = ((EntityLiving)pastEntity).getNavigator().getPath();
-						
+					
 					pastEntity.posX = (double)entityX;
 					pastEntity.posY = (double)entityY;
 					pastEntity.posZ = (double)entityZ;
@@ -117,43 +120,9 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 				int entityX = datainputstream.readInt();
 				int entityY = datainputstream.readInt();
 				int entityZ = datainputstream.readInt();
-
-				AxisAlignedBB axisAlignedBB1;
-				axisAlignedBB1.addCoord((double)entityX - 1, (double)entityY - 1, (double)entityZ - 1);
-				axisAlignedBB1.addCoord((double)entityX + 1, (double)entityY + 1, (double)entityZ + 1);
-				
-				Entity pastEntity = world.getEntitiesWithinAABB(, axisAlignedBB1);
-				
-				if(pastEntity != null)
-				{
-					//PathEntity path = ((EntityLiving)pastEntity).getNavigator().getPath();
-						
-					pastEntity.posX = (double)entityX;
-					pastEntity.posY = (double)entityY;
-					pastEntity.posZ = (double)entityZ;
-									
-					System.out.println(pastEntity);
-										
-					world.spawnEntityInWorld(pastEntity);
-
-				}
-				else
-				{
-					EntityPlayerPast pastPlayer = new EntityPlayerPast(world);
-					pastPlayer.posX = (double)entityX;
-					pastPlayer.posY = (double)entityY;
-					pastPlayer.posZ = (double)entityZ;
-					System.out.println(pastPlayer);
-				}
-				//System.out.println(entityName + " " + entityX + " " + entityY + " " + entityZ);
-				
-		        //path = ((EntityLiving)pastEntity).getNavigator().getPathToXYZ((double)entityX, (double)entityY, (double)entityZ);
-		            		
-		        //((EntityLiving)pastEntity).getNavigator().setPath(path, 1.0F);
-		        //((EntityLiving)pastEntity).getNavigator().tryMoveToXYZ((double)entityX, (double)entityY, (double)entityZ, 0.5F);
-
-			}			
-			catch(Exception ex)
+				UUID entityUniqueId = UUID.fromString(datainputstream.readUTF());
+			}
+			catch (Exception ex)
 			{
 				ex.printStackTrace();
 			}
