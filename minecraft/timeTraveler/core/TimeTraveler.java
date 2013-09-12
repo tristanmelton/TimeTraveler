@@ -17,10 +17,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.MinecraftForge;
 import timeTraveler.blocks.BlockParadoxCondenser;
 import timeTraveler.blocks.BlockTimeTraveler;
 import timeTraveler.blocks.Collision;
 import timeTraveler.blocks.ParadoxExtractor;
+import timeTraveler.entities.EntityHandler;
 import timeTraveler.entities.EntityParadoxHunter;
 import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiHandler;
@@ -124,6 +126,7 @@ public class TimeTraveler
 		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
 		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
 		ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
+		MinecraftForge.EVENT_BUS.register(new EntityHandler());
 	}
 	public static int getUniqueEntityId() 
 	{

@@ -216,7 +216,7 @@ public class TickerClient implements ITickHandler
 					TimeTraveler.vars.setNextSet(true);
 
 				}
-				if(!mobsInitSpawned)
+				/*if(!mobsInitSpawned)
 				{
 					File allEntityData = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
 					
@@ -262,7 +262,7 @@ public class TickerClient implements ITickHandler
 					}
 					mobsInitSpawned = true;
 					TimeTraveler.vars.setNextSet(true);
-				}
+				}*/
 				
 			}
 			count++;

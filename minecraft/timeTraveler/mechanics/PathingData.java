@@ -8,26 +8,29 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.minecraft.entity.EntityLiving;
+
 public class PathingData 
 {
 	/**
 	 * Entity data array
 	 */
-	private Map<String, List<int[]>> allEntityData;
+	public static Map<String[], List<int[]>> allEntityData;
 	
 	public PathingData()
 	{
-		allEntityData = new HashMap<String, List<int[]>>();
+		allEntityData = new HashMap<String[], List<int[]>>();
 	}
 	/**
 	 * Adds an entity UUID (Unique ID) to the entity data ArrayList.  If the entity already exists inside of the ArrayList, then it skips it.
 	 * @param uuid
 	 */
-	public void addEntity(String uuid)
+	public void addEntity(String[] entityData)
 	{		
-		if(!allEntityData.containsKey(uuid))
+		System.out.println(entityData[0]);
+		if(!allEntityData.containsKey(entityData))
 		{
-			allEntityData.put(uuid, new ArrayList<int[]>());
+			allEntityData.put(entityData, new ArrayList<int[]>());
 		}
 		else
 		{
@@ -39,9 +42,10 @@ public class PathingData
 	 * @param uuid
 	 * @param data
 	 */
-	public void addData(String uuid, String data)
+	public void addData(String[] entityData, String data)
 	{
-		if(allEntityData.containsKey(uuid))
+		System.out.println(entityData[0]);
+		if(allEntityData.containsKey(entityData))
 		{
 			int[] rawData = new int[3];
 			String[] pureData = data.split(",");
@@ -50,13 +54,14 @@ public class PathingData
 			rawData[1] = Integer.parseInt(pureData[1]);
 			rawData[2] = Integer.parseInt(pureData[2]);
 			
-			List<int[]> entityData = allEntityData.get(uuid);
-			entityData.add(rawData);
-			allEntityData.put(uuid, entityData);
+			List<int[]> entityLocData = allEntityData.get(entityData);
+			entityLocData.add(rawData);
+			allEntityData.put(entityData, entityLocData);
 		}
 		else
 		{
-			System.out.println("ENTITY DOES NOT EXIST IN ARRAY!  :(");
+			System.out.println("ENTITY DOES NOT EXIST IN ARRAY! :(");
+			//addEntity(entityData);
 		}
 	}
 	/**
@@ -64,10 +69,10 @@ public class PathingData
 	 * @param uuid
 	 * @return
 	 */
-	public List<int[]> getDataForUUID(String uuid)
+	public List<int[]> getDataForUUID(String[] entityData)
 	{
-		List<int[]> entityData = allEntityData.get(uuid);
-		return entityData;
+		List<int[]> entityLoc = allEntityData.get(entityData);
+		return entityLoc;
 	}
 	/**
 	 * Clears all entities and their corresponding data from the map.
@@ -75,5 +80,20 @@ public class PathingData
 	public void clearAllEntitiesAndData()
 	{
 		allEntityData.clear();
+	}
+	
+	/**
+	 * Checks if entity exists inside of array
+	 * @param uuid
+	 * @return
+	 */
+	public boolean doesEntityExist(String[] entityData)
+	{
+		List<int[]> entityLoc = allEntityData.get(entityData);
+		if(entityData != null)
+		{
+			return true;
+		}
+		return false;
 	}
 }

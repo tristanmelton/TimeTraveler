@@ -10,9 +10,11 @@ import java.util.List;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.server.FMLServerHandler;
 
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.mechanics.CopyFile;
+import timeTraveler.mechanics.EntityMechanics;
 import timeTraveler.mechanics.PastMechanics;
 
 import net.minecraft.client.Minecraft;
@@ -112,8 +114,10 @@ private GuiButton buttonSelect;
         				if(files[i].toString().contains(nameOfTime)) 
         				{
             				try {
-                        		PastMechanics mechanics = new PastMechanics();
-
+            					
+                        		PastMechanics pMechanics = new PastMechanics();
+                        		EntityMechanics eMechanics = new EntityMechanics();
+                        		
             					WorldClient wc = minecraft.theWorld;
             					WorldInfo worldi = mc.theWorld.getWorldInfo();
             					
@@ -121,6 +125,7 @@ private GuiButton buttonSelect;
             					String folderName = ms.getFolderName();
             					
             					TimeTraveler.vars.setPastTime(nameOfTime);
+            					File allEntityData = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
             					
             					mc.thePlayer.addChatMessage("Loading...");
             					File present = new File(Minecraft.getMinecraftDir(), "saves/" + ms.getWorldName() + "/region");
@@ -132,11 +137,11 @@ private GuiButton buttonSelect;
                      
             					cp.copyDirectory(present, directory);                 
             					isInPast = true;
-            					System.out.println(isInPast + " This check is in GUiTimeTravel");
-
-            					System.out.println(files[i].getName());
+            					
             					EntityPlayer player = minecraft.thePlayer;
 
+            					//eMechanics.despawnAllEntities(FMLServerHandler.instance().getServer().worldServerForDimension(0));
+            					
             				    minecraft.theWorld.sendQuittingDisconnectingPacket();
             					minecraft.loadWorld((WorldClient)null);
             					minecraft.displayGuiScreen(new GuiMainMenu());
@@ -156,7 +161,6 @@ private GuiButton buttonSelect;
                                 		System.out.println(files.length * 750 * 2);
                                 		CopyFile.moveMultipleFiles(source, dest);
                                 		
-                    					File allEntityData = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
                     					
                     					try 
                     					{
@@ -168,9 +172,13 @@ private GuiButton buttonSelect;
                     							
                     							String data = rawData[1] + "," + rawData[2] + "," + rawData[3];
                     							String uuid = rawData[4];
-                    							                    							
-                    							TimeTraveler.vars.pathData.addEntity(uuid);
-                    							TimeTraveler.vars.pathData.addData(uuid, data);
+                    							String entityName = rawData[0];
+                    							                    			
+                    							String[] entityData = new String[2];
+                    							entityData[0] = uuid;
+                    							entityData[1] = entityName;
+                    							TimeTraveler.vars.pathData.addEntity(entityData);
+                    							TimeTraveler.vars.pathData.addData(entityData, data);
                     						}
                     						reader.close();	
                     					} 
@@ -178,7 +186,6 @@ private GuiButton buttonSelect;
                     					{
                     						e.printStackTrace();
                     					}
-
                                 		
                                 		minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
                     		        }

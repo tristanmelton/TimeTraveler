@@ -80,7 +80,7 @@ public class PastMechanics
 				par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord + "," + entityUniqueId);
 			}
 		}
-		par2List.add("====================");
+		//par2List.add("====================");
 	}
 	/**
 	 * Saves the list input as a .epd file (entity position data).
