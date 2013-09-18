@@ -2,11 +2,14 @@ package timeTraveler.blocks;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.tileentity.TileEntityCollision;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class Collision extends BlockContainer
 {
@@ -43,4 +46,11 @@ public class Collision extends BlockContainer
         {
                 return new TileEntityCollision();
         }
+        @SideOnly(Side.CLIENT)
+        @Override
+        public void registerIcons(IconRegister par1IconRegister)
+            {
+                this.blockIcon = par1IconRegister.registerIcon(TimeTraveler.modid + ":" + ("collisionBlock"));
+            }
+
 }

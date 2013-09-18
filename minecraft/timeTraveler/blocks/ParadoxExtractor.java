@@ -62,7 +62,7 @@ public class ParadoxExtractor extends BlockContainer
    @Override
    public void registerIcons(IconRegister ires)
    {
-      this.blockIcon = ires.registerIcon("BlockTimeTravelerFront");
+      this.blockIcon = ires.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerFront");
       
    }
    

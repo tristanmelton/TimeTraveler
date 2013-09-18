@@ -21,6 +21,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
@@ -53,8 +54,11 @@ public class PastMechanics
 	    
 	    GuiIngame gig = new GuiIngame(minecraft);
 	    
-	    GL11.glBindTexture(GL11.GL_TEXTURE_2D, minecraft.renderEngine.getTexture("/timeTraveler/textureMap/newGUIElements.png"));
-		gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 0, 128, 8);
+    	ResourceLocation texture = new ResourceLocation("charsmud_timetraveler", "textures/hud/newGUIElements.png");
+
+	   // GL11.glBindTexture(GL11.GL_TEXTURE_2D, minecraft.renderEngine.func_110577_a(new ResourceLocation("/timeTraveler/textureMap/newGUIElements.png")));
+		minecraft.renderEngine.bindTexture(texture);
+	    gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 0, 128, 8);
 		gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 8, amtOfParadox, 8);
 	}
 	/**
@@ -92,16 +96,16 @@ public class PastMechanics
 		  FileWriter fstream;
 		try
 		{
-			File init = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName());
+			File init = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName());
 			if(!init.exists())
 			{
 				init.mkdirs();
 			}
-			int fNumbers = new File(FMLClientHandler.instance().getClient().getMinecraftDir(), "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName()).listFiles().length + 1;
+			int fNumbers = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName()).listFiles().length + 1;
 			
 			String time = "Time ";
 			time = time.concat(String.format("%03d",fNumbers));
-			fstream = new FileWriter(FMLClientHandler.instance().getClient().getMinecraftDir() + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\" + time + ".epd");
+			fstream = new FileWriter(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\" + time + ".epd");
 			
 			BufferedWriter out = new BufferedWriter(fstream);
 			for(int i = 0; i < par1List.size(); i++)
@@ -130,14 +134,14 @@ public class PastMechanics
 		if(ClientMethods.isSinglePlayer())
 		{
 			CopyFile cf = new CopyFile();
-		    File beginningOfWorld = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
+		    File beginningOfWorld = new File(minecraft.mcDataDir + "/mods/TimeMod/present/" + ms.getWorldName());
 		    
 		    if(beginningOfWorld.length() == 0)
 		    {
-		    	File initWorldGen = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName());
+		    	File initWorldGen = new File(minecraft.mcDataDir + "/mods/TimeMod/past/" + ms.getWorldName());
 		    	initWorldGen.mkdirs();
-		        File fi = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
-		        File moveTo = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/Time 001");
+		        File fi = new File(minecraft.mcDataDir + "/saves/" + ms.getWorldName() + "/region");
+		        File moveTo = new File(minecraft.mcDataDir  + "/mods/TimeMod/past/" + ms.getWorldName() + "/Time 001");
 		        try
 		        {
 		            cf.copyDirectory(fi, moveTo);
@@ -163,24 +167,24 @@ public class PastMechanics
 		{
 			WorldInfo we = minecraft.theWorld.getWorldInfo();
 			   
-			File fil = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName());
+			File fil = new File(minecraft.mcDataDir,  "mods/TimeMod/past/" + ms.getWorldName());
 			   
 			if(!fil.exists())
 			{
 				fil.mkdir();
 			}
-			int counter = new File(minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName()).listFiles().length + 1;
+			int counter = new File(minecraft.mcDataDir , "mods/TimeMod/past/" + ms.getWorldName()).listFiles().length + 1;
 		    //int counter = counterstart - 1;
 
 		    try
 			{
 				WorldInfo worldinfo = minecraft.theWorld.getWorldInfo();
 			  
-				File fi = new File(minecraft.getMinecraftDir() + "\\saves\\" + ms.getWorldName() + "\\region");
-				File f2 = new File (minecraft.getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName());
+				File fi = new File(minecraft.mcDataDir  + "\\saves\\" + ms.getWorldName() + "\\region");
+				File f2 = new File (minecraft.mcDataDir  + "\\mods\\TimeMod\\past\\" + ms.getWorldName());
 				f2.mkdir();
 
-				String fname = minecraft.getMinecraftDir() + "\\mods\\TimeMod\\past\\" + ms.getWorldName() + "\\Time ";
+				String fname = minecraft.mcDataDir + "\\mods\\TimeMod\\past\\" + ms.getWorldName() + "\\Time ";
 				//counter = counter + 1;
 				fname = fname.concat(String.format("%03d",counter));
 			          
@@ -229,9 +233,9 @@ public class PastMechanics
 	        //minecraft.displayGuiScreen(new GuiMainMenu());
 	        
 	        
-	        File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
+	        File present = new File(minecraft.mcDataDir + "/mods/TimeMod/present/" + ms.getWorldName());
 	        File worldFileDest = GuiTimeTravel.staticsource;
-	        File worldFile = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
+	        File worldFile = new File(minecraft.mcDataDir + "/saves/" + ms.getWorldName() + "/region");
 	        
 	        System.out.println(present);
 	        System.out.println(worldFileDest);
@@ -291,9 +295,9 @@ public class PastMechanics
 		    minecraft.loadWorld((WorldClient)null);
 		    minecraft.displayGuiScreen(new GuiMainMenu());
 		           
-		    File present = new File(minecraft.getMinecraftDir() + "/mods/TimeMod/present/" + ms.getWorldName());
+		    File present = new File(minecraft.mcDataDir + "/mods/TimeMod/present/" + ms.getWorldName());
 		    File worldFileDest = GuiTimeTravel.staticsource;
-		    File worldFile = new File(minecraft.getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
+		    File worldFile = new File(minecraft.mcDataDir + "/saves/" + ms.getWorldName() + "/region");
 		    
 		    try 
 		    {

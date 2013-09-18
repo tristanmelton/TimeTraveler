@@ -39,6 +39,7 @@ import timeTraveler.tileentity.TileEntityCollision;
 import timeTraveler.tileentity.TileEntityExtractor;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
@@ -55,7 +56,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 
-@Mod(modid = "Charsmud_TimeTraveler", name = "Time Traveler", version = "0.1")
+@Mod(modid = "charsmud_timetraveler", name = "Time Traveler", version = "0.1")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false, serverPacketHandlerSpec = @SidedPacketHandler (channels = {"futuretravel", "paradoxgui", "entityspawn"}, packetHandler = TimeTravelerPacketHandler.class))
 
 /**
@@ -83,7 +84,7 @@ public class TimeTraveler
 	public static Item condensedParadox;
 	public static Item emptyBottle;
 	
-	public static final String modid = "Charsmud_TimeTraveler";
+	public static final String modid = "charsmud_timetraveler";
 	
 	FutureTravelMechanics ftm;
 	
@@ -97,7 +98,7 @@ public class TimeTraveler
 	 * Initializes DeveloperCapes
 	 * @param event
 	 */
-	@PreInit
+	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		proxy.initCapes();
@@ -105,7 +106,7 @@ public class TimeTraveler
 	/**
 	 * Initiates mod, registers block and item for use.  Generates the necessary folders.
 	 */
-	@Init
+	@EventHandler
 	public void load(FMLInitializationEvent event)
 	{  	
 		proxy.registerRenderThings();
@@ -211,10 +212,15 @@ public class TimeTraveler
 	 */
 	public void mkDirs()
 	{
-		File pastCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past");
-		File presentCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/present");
-		File futureCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/future");
+		//File pastCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past");
+		//File presentCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/present");
+		//File futureCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/future");
+		
+		File pastCreation = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past");
+		File presentCreation = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/present");
+		File futureCreation = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/future");
 
+		
 		pastCreation.mkdirs();
 		presentCreation.mkdirs();
 		futureCreation.mkdirs();
@@ -233,7 +239,7 @@ public class TimeTraveler
 		registerEntityEgg(EntityParadoxHunter.class, 0xffffff, 0x000000);
 	}
 
-	public void sqlLite()
+	/*public void sqlLite()
 	{
 		try
 		{
@@ -289,5 +295,5 @@ public class TimeTraveler
 		{
 			System.err.println(e);
 		}
-	}
+	}*/
 }

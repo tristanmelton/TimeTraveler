@@ -107,12 +107,12 @@ public class BlockParadoxCondenser extends BlockContainer
     @Override
     public void registerIcons(IconRegister iconRegistry)
     {
-    	textures[0] = iconRegistry.registerIcon("BlockParadoxCondenserBot");
-    	textures[1] = iconRegistry.registerIcon("BlockParadoxCondenserTop");
-    	textures[2] = iconRegistry.registerIcon("BlockParadoxCondenserBack");
-    	textures[3] = iconRegistry.registerIcon("BLockParadoxCondenserFront");
-    	textures[4] = iconRegistry.registerIcon("BlockParadoxCondenserSide");
-    	textures[5] = iconRegistry.registerIcon("BlockParadoxCondenserSide");
+    	textures[0] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockParadoxCondenserBot");
+    	textures[1] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockParadoxCondenserTop");
+    	textures[2] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockParadoxCondenserBack");
+    	textures[3] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BLockParadoxCondenserFront");
+    	textures[4] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockParadoxCondenserSide");
+    	textures[5] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockParadoxCondenserSide");
     }
 	@Override
 	public Icon getIcon(int i, int j) 

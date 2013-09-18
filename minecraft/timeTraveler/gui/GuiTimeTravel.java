@@ -75,21 +75,20 @@ private GuiButton buttonSelect;
         	Minecraft minecraft = ModLoader.getMinecraftInstance();
         	MinecraftServer ms = minecraft.getIntegratedServer();
         	
-        	directory = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/" + ms.getWorldName());
+        	directory = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past/");
         	directory.mkdir();
         	
         	files = directory.listFiles(); 
             //i is index
-            StringTranslate var1 = StringTranslate.getInstance();
-            this.localizedWorldText = var1.translateKey("selectWorld.world");
+            this.localizedWorldText = ("selectWorld.world");
             
             this.buttonList.add(this.buttonSelect = new GuiButton(1, this.width / 2 - 154, this.height - 52, 150, 20, "Travel"));
-            this.buttonList.add(new GuiButton(0, this.width / 2 - 154, this.height - 28, 150, 20, var1.translateKey("Cancel")));
+            this.buttonList.add(new GuiButton(0, this.width / 2 - 154, this.height - 28, 150, 20, ("Cancel")));
           
             this.buttonSelect.enabled = false;
             
             this.timeSlotContainer = new GuiTimeSlot(this);
-            this.timeSlotContainer.registerScrollButtons(this.buttonList, 4, 5);
+            this.timeSlotContainer.registerScrollButtons(4, 5);
             this.loadSaves();
 
                 
@@ -125,11 +124,11 @@ private GuiButton buttonSelect;
             					String folderName = ms.getFolderName();
             					
             					TimeTraveler.vars.setPastTime(nameOfTime);
-            					File allEntityData = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+            					File allEntityData = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
             					
             					mc.thePlayer.addChatMessage("Loading...");
-            					File present = new File(Minecraft.getMinecraftDir(), "saves/" + ms.getWorldName() + "/region");
-            					String fname = ModLoader.getMinecraftInstance().getMinecraftDir() + "\\mods\\TimeMod\\present\\" + ms.getWorldName();
+            					File present = new File("./saves/" + ms.getWorldName() + "/region").getAbsoluteFile();
+            					String fname = "\\mods\\TimeMod\\present\\" + ms.getWorldName();
                             
             					File directory = new File(fname);
                             
@@ -146,11 +145,11 @@ private GuiButton buttonSelect;
             					minecraft.loadWorld((WorldClient)null);
             					minecraft.displayGuiScreen(new GuiMainMenu());
                            
-            					source =  new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/mods/TimeMod/past/" + ms.getWorldName() + "/" + nameOfTime); 
+            					source =  new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/" + ms.getWorldName() + "/" + nameOfTime); 
             					staticsource = source;
                             	worldInPast = source;
                             	System.out.println(this.getSaveNumber() + "2345678" + source);
-                            	File dest = new File(ModLoader.getMinecraftInstance().getMinecraftDir() + "/saves/" + ms.getWorldName() + "/region");
+                            	File dest = new File(FMLClientHandler.instance().getClient().mcDataDir +"/saves/" + ms.getWorldName() + "/region");
                             
                             	try 
                             	{
@@ -307,8 +306,7 @@ private GuiButton buttonSelect;
 
             if (var2 == null || MathHelper.stringNullOrLengthZero(var2))
             {
-                StringTranslate var3 = StringTranslate.getInstance();
-                var2 = var3.translateKey("selectWorld.world") + " " + (par1 + 1);
+                var2 = ("Select World") + " " + (par1 + 1);
             }
 
             return var2;

@@ -4,10 +4,12 @@ import java.io.File;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.event.FMLLoadEvent;
 
@@ -39,7 +41,9 @@ public class RenderExtractor extends TileEntitySpecialRenderer {
       }*/
 
                   //directory of the model's texture file
-	   bindTextureByName("/textures/blocks/ParadoxExtractor.png");
+   		ResourceLocation texture = new ResourceLocation("charsmud_timetraveler", "textures/blocks/ParadoxExtractor.png");
+
+	   FMLClientHandler.instance().getClient().renderEngine.bindTexture(texture);
 	   GL11.glPushMatrix(); 
 	   GL11.glEnable(GL12.GL_RESCALE_NORMAL);
        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

@@ -51,17 +51,10 @@ public class EntityPlayerPast extends EntityAnimal
 	}
 	public void setSkin(String usrName)
 	{
-        this.skinUrl = "http://skins.minecraft.net/MinecraftSkins/" + usrName + ".png";
+        //this.skinUrl = "http://skins.minecraft.net/MinecraftSkins/" + usrName + ".png";
 	}
-    /**
-     * Gets amount of health (max)
-     */
-    public int getMaxHealth()
-    {
-        return 20;
-    }
 
-public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+	public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     {
         super.writeEntityToNBT(nbttagcompound);
     }
@@ -100,7 +93,7 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     /**
      * Sets pathing to a specific point.  
      */
-    @Override
+   /* @Override
     public void setPathToEntity(PathEntity pathentity)
     {
     	EntityMechanics mechanics = new EntityMechanics();
@@ -164,7 +157,7 @@ public void writeEntityToNBT(NBTTagCompound nbttagcompound)
     	{
     		ex.printStackTrace();
     	}
-    }
+    }*/
     /**
      * Checks if path is complete (or near to)
      * @param pathentity

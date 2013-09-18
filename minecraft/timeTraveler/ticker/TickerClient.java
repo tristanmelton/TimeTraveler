@@ -134,9 +134,6 @@ public class TickerClient implements ITickHandler
 		isInPast = GuiTimeTravel.isInPast;		
 		if(!isInPast)
 		{
-			if(mc.thePlayer.isJumping)
-			{
-			}
 			if(mc.thePlayer.isSneaking())
 			{
 			}
@@ -174,7 +171,7 @@ public class TickerClient implements ITickHandler
 			{
 				if(mobsInitSpawned)
 				{
-					File allEntityData = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+					File allEntityData = new File(mc.mcDataDir + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
 					
 					try 
 					{

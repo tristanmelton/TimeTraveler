@@ -26,7 +26,6 @@ public class EntityMechanics
 {
 	public void spawnEntity(EntityLiving entity, World world, int x, int y, int z)
 	{
-		entity.initCreature();
 		entity.posX = x;
 		entity.posY = y;
 		entity.posZ = z;

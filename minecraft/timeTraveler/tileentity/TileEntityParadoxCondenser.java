@@ -1,28 +1,21 @@
 package timeTraveler.tileentity;
 
-import timeTraveler.blocks.BlockParadoxCondenser;
-import timeTraveler.core.TimeTraveler;
-import timeTraveler.crafting.ParadoxRecipes;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ForgeDummyContainer;
-import cpw.mods.fml.common.registry.GameRegistry;
+import timeTraveler.blocks.BlockParadoxCondenser;
+import timeTraveler.core.TimeTraveler;
+import timeTraveler.crafting.ParadoxRecipes;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileEntityParadoxCondenser extends TileEntity implements ISidedInventory, net.minecraftforge.common.ISidedInventory
+public class TileEntityParadoxCondenser extends TileEntity implements ISidedInventory
 {
     private static final int[] field_102010_d = new int[] {0};
     private static final int[] field_102011_e = new int[] {2, 1};
@@ -521,28 +514,6 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
      * standard.
      */
 
-    @Override
-    public int getStartInventorySide(ForgeDirection side)
-    {
-        if (ForgeDummyContainer.legacyFurnaceSides)
-        {
-            if (side == ForgeDirection.DOWN) return 1;
-            if (side == ForgeDirection.UP) return 0;
-            return 2;
-        }
-        else
-        {
-            if (side == ForgeDirection.DOWN) return 2;
-            if (side == ForgeDirection.UP) return 0;
-            return 1;
-        }
-    }
-
-    @Override
-    public int getSizeInventorySide(ForgeDirection side)
-    {
-        return 1;
-    }
 
 	@Override
 	public int[] getAccessibleSlotsFromSide(int var1) 
@@ -561,6 +532,12 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
 	@Override
 	public boolean canExtractItem(int i, ItemStack itemstack, int j)
 	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
 		return false;
 	}

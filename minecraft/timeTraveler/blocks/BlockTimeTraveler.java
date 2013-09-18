@@ -41,15 +41,16 @@ public class BlockTimeTraveler extends Block
     	 }
     	 return true;
     }
+    
     @Override
     public void registerIcons(IconRegister iconRegistry)
     {
-    	textures[0] = iconRegistry.registerIcon("BlockTimeTravelerBot");
-    	textures[1] = iconRegistry.registerIcon("BlockTimeTravelerTop");
-    	textures[2] = iconRegistry.registerIcon("BlockTimeTravelerSide");
-    	textures[3] = iconRegistry.registerIcon("BlockTimeTravelerFront");
-    	textures[4] = iconRegistry.registerIcon("BlockTimeTravelerSide");
-    	textures[5] = iconRegistry.registerIcon("BlockTimeTravelerSide");
+    	textures[0] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerBot");
+    	textures[1] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerTop");
+    	textures[2] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerSide");
+    	textures[3] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerFront");
+    	textures[4] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerSide");
+    	textures[5] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerSide");
     }
 	@Override
 	public Icon getIcon(int i, int j) 

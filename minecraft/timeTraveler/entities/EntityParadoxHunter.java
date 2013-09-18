@@ -1,7 +1,7 @@
 package timeTraveler.entities;
 
-import timeTraveler.core.TimeTraveler;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -10,23 +10,20 @@ import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import timeTraveler.core.TimeTraveler;
 
-public class EntityParadoxHunter extends EntityMob 
+public class EntityParadoxHunter extends EntityCreature 
 {
 	public EntityParadoxHunter(World par1World)
 	{
 		super(par1World);
-		this.texture = "/mods/Charsmud_TimeTraveler/textures/mobs/ParadoxHunter.png";
-		this.moveSpeed = 0.75F;
+		//this.t = "/mods/Charsmud_TimeTraveler/textures/mobs/ParadoxHunter.png";
 		
 		this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new EntityAIBreakDoor(this));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 100.0F, 0, true));
-        this.tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityPlayer.class, this.moveSpeed, false));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
         this.tasks.addTask(4, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
-        this.tasks.addTask(5, new EntityAIWander(this, this.moveSpeed));
 
 	}
 
@@ -35,17 +32,13 @@ public class EntityParadoxHunter extends EntityMob
 		return 10;
 	}
 
-	public int getMaxHealth()
-	{
-		return 40;
-	}
 	protected boolean isAIEnabled()
 	{
 		return true;
 	}
 	public String getTexture()
     {
-		return "/mods/Charsmud_TimeTraveler/textures/mobs/ParadoxHunter.png";
+		return "/assets/charsmud_timetraveler/textures/mobs/ParadoxHunter.png";
     }
 	public int getTotalArmorValue()
     {

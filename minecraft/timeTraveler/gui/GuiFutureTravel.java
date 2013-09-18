@@ -48,11 +48,10 @@ public class GuiFutureTravel extends GuiScreen{
      */
     public void initGui()
     {
-        StringTranslate var1 = StringTranslate.getInstance();
         Keyboard.enableRepeatEvents(true);
         this.buttonList.clear();
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, var1.translateKey("Travel Into the Future!")));
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, var1.translateKey("gui.cancel")));
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, ("Travel Into the Future!")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, ("Cancel")));
         this.theGuiTextField = new GuiTextField(this.fontRenderer, this.width / 2 - 100, 60, 200, 20);
         this.theGuiTextField.setFocused(true);
         this.theGuiTextField.setText(yearsIntoFuture);
@@ -140,10 +139,9 @@ public class GuiFutureTravel extends GuiScreen{
      */
     public void drawScreen(int par1, int par2, float par3)
     {
-        StringTranslate var4 = StringTranslate.getInstance();
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRenderer, var4.translateKey("Future Travel"), this.width / 2, this.height / 4 - 60 + 20, 16777215);
-        this.drawString(this.fontRenderer, var4.translateKey("Years"), this.width / 2 - 100, 47, 10526880);
+        this.drawCenteredString(this.fontRenderer, ("Future Travel"), this.width / 2, this.height / 4 - 60 + 20, 16777215);
+        this.drawString(this.fontRenderer, ("Years"), this.width / 2 - 100, 47, 10526880);
         this.theGuiTextField.drawTextBox();
         super.drawScreen(par1, par2, par3);
     }
