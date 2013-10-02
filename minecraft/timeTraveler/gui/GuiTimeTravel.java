@@ -12,6 +12,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.server.FMLServerHandler;
 
+import timeTraveler.core.StringArrayHolder;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.mechanics.CopyFile;
 import timeTraveler.mechanics.EntityMechanics;
@@ -77,7 +78,7 @@ private GuiButton buttonSelect;
         	
         	directory = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past/");
         	directory.mkdir();
-        	
+        	directory = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past/" + ms.getWorldName());
         	files = directory.listFiles(); 
             //i is index
             this.localizedWorldText = ("selectWorld.world");
@@ -96,7 +97,8 @@ private GuiButton buttonSelect;
         /**
          * Called whenever a button is pressed.  Handles past travel to different zones
          */ 
-        	public void actionPerformed(GuiButton gButton) {
+        	public void actionPerformed(GuiButton gButton) 
+        	{
         		Minecraft minecraft = ModLoader.getMinecraftInstance();
         		MinecraftServer ms = minecraft.getIntegratedServer();
         		if(gButton.id == 0)
@@ -105,7 +107,7 @@ private GuiButton buttonSelect;
         		}
         		if(gButton.id == 1)
         		{	
-        			String nameOfTime = getSaveFileName(getSelectedWorld(this));
+                    String nameOfTime = (this.timeList.get(this.getSelectedWorld(this)).toString());
         			System.out.println(nameOfTime);
         			for(int i = 0; i < files.length; i++)
         			{
@@ -130,10 +132,12 @@ private GuiButton buttonSelect;
             					File present = new File("./saves/" + ms.getWorldName() + "/region").getAbsoluteFile();
             					String fname = "\\mods\\TimeMod\\present\\" + ms.getWorldName();
                             
-            					File directory = new File(fname);
+            					File directory = new File(mc.mcDataDir + fname);
                             
             					CopyFile cp = new CopyFile();           
                      
+            					System.out.println("Present: " + present);
+            					System.out.println("Directory: " + directory);
             					cp.copyDirectory(present, directory);                 
             					isInPast = true;
             					
@@ -148,7 +152,6 @@ private GuiButton buttonSelect;
             					source =  new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/" + ms.getWorldName() + "/" + nameOfTime); 
             					staticsource = source;
                             	worldInPast = source;
-                            	System.out.println(this.getSaveNumber() + "2345678" + source);
                             	File dest = new File(FMLClientHandler.instance().getClient().mcDataDir +"/saves/" + ms.getWorldName() + "/region");
                             
                             	try 
@@ -156,8 +159,11 @@ private GuiButton buttonSelect;
                     		        if (minecraft.getSaveLoader().canLoadWorld(worldName))
                     		        {
                                 		Thread.sleep(files.length * 750 * 2);
-                                		System.out.println("Completed 1");
-                                		System.out.println(files.length * 750 * 2);
+                                		System.out.println(nameOfTime);
+                                		System.out.println(source);
+                                		System.out.println(source.listFiles());
+                                		System.out.println(dest.listFiles());
+                                		
                                 		CopyFile.moveMultipleFiles(source, dest);
                                 		
                     					
@@ -176,8 +182,10 @@ private GuiButton buttonSelect;
                     							String[] entityData = new String[2];
                     							entityData[0] = uuid;
                     							entityData[1] = entityName;
-                    							TimeTraveler.vars.pathData.addEntity(entityData);
-                    							TimeTraveler.vars.pathData.addData(entityData, data);
+                    							
+                    							StringArrayHolder data2 = new StringArrayHolder(entityData);
+                    							TimeTraveler.vars.pathData.addEntity(data2);
+                    							TimeTraveler.vars.pathData.addData(data2, data);
                     						}
                     						reader.close();	
                     					} 
@@ -234,7 +242,7 @@ private GuiButton buttonSelect;
             System.out.println(files);
             for(File file : files) {
             	System.out.println(files.length + " " + file.getName());
-            	if(!file.getName().contains("player"))
+            	if(!file.getName().contains("Entity"))
             	{
                 	timeList.add(file.getName());
             	}

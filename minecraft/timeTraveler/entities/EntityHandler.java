@@ -2,7 +2,9 @@ package timeTraveler.entities;
 
 import java.util.UUID;
 
+import timeTraveler.core.StringArrayHolder;
 import timeTraveler.core.TimeTraveler;
+import timeTraveler.gui.GuiTimeTravel;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -13,11 +15,19 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 
 public class EntityHandler 
 {
+	boolean inPast;
+
 	@ForgeSubscribe
 	public void onEntityJoin(EntityJoinWorldEvent event)
 	{
+		
+		inPast = GuiTimeTravel.isInPast;
+
+		System.out.println(":)");
+
 		if(event.entity instanceof EntityLiving && !(event.entity instanceof EntityPlayer))
 		{
+			
 			String[] entityData = new String[2];
 			
 			String uuid = event.entity.getPersistentID().toString();
@@ -25,25 +35,23 @@ public class EntityHandler
 			
 			entityData[0] = uuid;
 			entityData[1] = entityName;
-			/*if(event.entity instanceof EntityPlayer)
+			
+			StringArrayHolder data = new StringArrayHolder(entityData);
+			
+			System.out.println(":) :)");
+			
+			if(inPast)
 			{
-				String usr = ((EntityPlayer)event.entity).username;
-				if(usr.equals("Link2006155"))
+				System.out.println(uuid);
+
+				System.out.println(":) :) :)");
+
+				if(!TimeTraveler.vars.pathData.doesEntityExist(data))
 				{
-					EntityWolf sprout = new EntityWolf(event.world);
-					sprout.posX = event.entity.posX;
-					sprout.posY = event.entity.posY;
-					sprout.posZ = event.entity.posZ;
-					sprout.setTamed(true);
+					System.out.println("REMOVING ENTITY");
+
+					event.entity.setDead();
 				}
-			}*/
-			if(TimeTraveler.vars.pathData.doesEntityExist(entityData))
-			{
-				//Do stuff
-			}
-			else
-			{
-				event.entity.setDead();
 			}
 		}
 	}

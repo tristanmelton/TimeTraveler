@@ -1,35 +1,33 @@
 package timeTraveler.mechanics;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import net.minecraft.entity.EntityLiving;
+import timeTraveler.core.StringArrayHolder;
 
 public class PathingData 
 {
 	/**
 	 * Entity data array
 	 */
-	public static Map<String[], List<int[]>> allEntityData;
+    public Map<StringArrayHolder, List<int[]>> allEntityData;
 	
 	public PathingData()
 	{
-		allEntityData = new HashMap<String[], List<int[]>>();
+		allEntityData = new HashMap<StringArrayHolder, List<int[]>>();
 	}
 	/**
-	 * Adds an entity UUID (Unique ID) to the entity data ArrayList.  If the entity already exists inside of the ArrayList, then it skips it.
+	 * Adds an entity UUID (Unique ID)and MobType to the entity data ArrayList.  If the entity already exists inside of the ArrayList, then it skips it.
 	 * @param uuid
 	 */
-	public void addEntity(String[] entityData)
+	public void addEntity(StringArrayHolder entityData)
 	{		
-		System.out.println(entityData[0]);
+		System.out.println(entityData);
 		if(!allEntityData.containsKey(entityData))
 		{
+			System.out.println("Adding entity!");
 			allEntityData.put(entityData, new ArrayList<int[]>());
 		}
 		else
@@ -42,11 +40,12 @@ public class PathingData
 	 * @param uuid
 	 * @param data
 	 */
-	public void addData(String[] entityData, String data)
+	public void addData(StringArrayHolder entityData, String data)
 	{
-		System.out.println(entityData[0]);
+		System.out.println(entityData);
 		if(allEntityData.containsKey(entityData))
 		{
+			System.out.println("Adding data to entity!");
 			int[] rawData = new int[3];
 			String[] pureData = data.split(",");
 			
@@ -69,7 +68,7 @@ public class PathingData
 	 * @param uuid
 	 * @return
 	 */
-	public List<int[]> getDataForUUID(String[] entityData)
+	public List<int[]> getDataForUUID(StringArrayHolder entityData)
 	{
 		List<int[]> entityLoc = allEntityData.get(entityData);
 		return entityLoc;
@@ -87,13 +86,19 @@ public class PathingData
 	 * @param uuid
 	 * @return
 	 */
-	public boolean doesEntityExist(String[] entityData)
+	public boolean doesEntityExist(StringArrayHolder entityData)
 	{
-		List<int[]> entityLoc = allEntityData.get(entityData);
-		if(entityData != null)
+		if(allEntityData.containsKey(entityData))
 		{
 			return true;
 		}
 		return false;
 	}
+	
+    @Override
+    public String toString() 
+    {
+    	return allEntityData.toString();
+    }
+
 }
