@@ -1,58 +1,55 @@
 package timeTraveler.entities;
 
-import java.util.UUID;
+import java.util.Random;
 
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import timeTraveler.core.EntityData;
 import timeTraveler.core.StringArrayHolder;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.gui.GuiTimeTravel;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.passive.EntityWolf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-
 public class EntityHandler 
 {
 	boolean inPast;
-
+	
 	@ForgeSubscribe
-	public void onEntityJoin(EntityJoinWorldEvent event)
+	public void onEntityJoin(EntityJoinWorldEvent event) 
 	{
-		
 		inPast = GuiTimeTravel.isInPast;
 
-		System.out.println(":)");
-
-		if(event.entity instanceof EntityLiving && !(event.entity instanceof EntityPlayer))
+		if(event.entity instanceof EntityLiving)
 		{
-			
-			String[] entityData = new String[2];
-			
-			String uuid = event.entity.getPersistentID().toString();
-			String entityName = event.entity.getEntityName();
-			
-			entityData[0] = uuid;
-			entityData[1] = entityName;
-			
-			StringArrayHolder data = new StringArrayHolder(entityData);
-			
-			System.out.println(":) :)");
-			
-			if(inPast)
+			ExtendedEntity props = ExtendedEntity.get((EntityLiving) event.entity);
+
+			if (inPast) 
 			{
-				System.out.println(uuid);
 
-				System.out.println(":) :) :)");
-
-				if(!TimeTraveler.vars.pathData.doesEntityExist(data))
-				{
-					System.out.println("REMOVING ENTITY");
-
-					event.entity.setDead();
-				}
 			}
+		}
+	}
+
+	@ForgeSubscribe
+	public void onEntityConstructing(EntityConstructing event) 
+	{
+		/*
+		 * Be sure to check if the entity being constructed is the correct type
+		 * for the extended properties about to add! The null check may
+		 * not be necessary - I only use it to make sure properties are only
+		 * registered once per entity.
+		 */
+		if(event.entity instanceof EntityLiving && ExtendedEntity.get((EntityLiving) event.entity) == null)
+		{
+			ExtendedEntity.register((EntityLiving) event.entity);
+		}
+		// That will call the constructor as well as cause the init() method to be called automatically
+		if (event.entity instanceof EntityLiving && event.entity.getExtendedProperties(ExtendedEntity.EXT_PROP_NAME) == null)
+		{
+			event.entity.registerExtendedProperties(ExtendedEntity.EXT_PROP_NAME, new ExtendedEntity((EntityLiving) event.entity));
 		}
 	}
 

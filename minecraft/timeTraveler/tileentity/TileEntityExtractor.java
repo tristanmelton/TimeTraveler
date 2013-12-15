@@ -286,7 +286,6 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
             }
             if(this.paradoxItemStacks[1] != null && this.paradoxItemStacks[2] == null)
             {
-            	System.out.println("BEGINNING");
             	this.formItem();
             }
             if(this.paradoxItemStacks[1] == null && this.paradoxItemStacks[2] != null)

@@ -142,6 +142,7 @@ private GuiButton buttonSelect;
             					isInPast = true;
             					
             					EntityPlayer player = minecraft.thePlayer;
+                        		pMechanics.loadEntityData();
 
             					//eMechanics.despawnAllEntities(FMLServerHandler.instance().getServer().worldServerForDimension(0));
             					
@@ -153,7 +154,7 @@ private GuiButton buttonSelect;
             					staticsource = source;
                             	worldInPast = source;
                             	File dest = new File(FMLClientHandler.instance().getClient().mcDataDir +"/saves/" + ms.getWorldName() + "/region");
-                            
+
                             	try 
                             	{
                     		        if (minecraft.getSaveLoader().canLoadWorld(worldName))
@@ -166,33 +167,6 @@ private GuiButton buttonSelect;
                                 		
                                 		CopyFile.moveMultipleFiles(source, dest);
                                 		
-                    					
-                    					try 
-                    					{
-                    						BufferedReader reader = new BufferedReader(new FileReader(allEntityData));
-                    						String line;
-                    						while (((line = reader.readLine()) != null) && TimeTraveler.vars.getNextSet()) 
-                    						{
-                    							String[] rawData = line.split(",");
-                    							
-                    							String data = rawData[1] + "," + rawData[2] + "," + rawData[3];
-                    							String uuid = rawData[4];
-                    							String entityName = rawData[0];
-                    							                    			
-                    							String[] entityData = new String[2];
-                    							entityData[0] = uuid;
-                    							entityData[1] = entityName;
-                    							
-                    							StringArrayHolder data2 = new StringArrayHolder(entityData);
-                    							TimeTraveler.vars.pathData.addEntity(data2);
-                    							TimeTraveler.vars.pathData.addData(data2, data);
-                    						}
-                    						reader.close();	
-                    					} 
-                    					catch (IOException e) 
-                    					{
-                    						e.printStackTrace();
-                    					}
                                 		
                                 		minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
                     		        }

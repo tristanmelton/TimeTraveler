@@ -2,9 +2,17 @@ package timeTraveler.blocks;
 
 import java.util.Random;
 
+import timeTraveler.core.TimeTraveler;
+import timeTraveler.render.ParadoxParticleFX;
+import timeTraveler.render.ParticleEffects;
+import timeTraveler.tileentity.TileEntityCollision;
+import timeTraveler.tileentity.TileEntityTimeTravel;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
@@ -14,16 +22,17 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import timeTraveler.core.TimeTraveler;
-import timeTraveler.render.ParticleEffects;
-import timeTraveler.tileentity.TileEntityParadoxCondenser;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockParadoxCondenser extends BlockContainer
+public class BlockTime extends BlockContainer
 {
     /**
      * Is the random generator used by furnace to drop the inventory contents in random directions.
@@ -42,34 +51,69 @@ public class BlockParadoxCondenser extends BlockContainer
      */
     private static boolean keepInventory = false;
 
-    public BlockParadoxCondenser(int par1, boolean par2)
+    public BlockTime(int par1, boolean par2)
     {
         super(par1, Material.iron);
         this.isActive = par2;
         this.setCreativeTab(CreativeTabs.tabBlock);
     }
-
+    //This makes our gag invisible.
+    @Override
+    public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l)
+    {
+            return false;
+    }
+    
+    
     /**
      * Returns the ID of the items to drop on destruction.
      */
     public int idDropped(int par1, Random par2Random, int par3)
     {
-        return TimeTraveler.paradoxCondenser.blockID;
+        return 0;
     }
 
     /**
      * Called whenever the block is added into the world. Args: world, x, y, z
+     * @return 
      */
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         super.onBlockAdded(par1World, par2, par3, par4);
-        this.setDefaultDirection(par1World, par2, par3, par4);
+        this.prepareBlock(par1World, par2, par3, par4);
+        
+        for(int i = -1; i < 2; i++)
+        {
+        	for(int j = 0; j < 3; j++)
+        	{
+        		for(int k = -1; k < 2; k++)
+        		{
+        			if((i == 0 && j == 0 && k == 0) || (i == 0 && j == 1 && k == 0))
+        			{
+        			}
+        			else
+        			{
+        				System.out.println("ADDING");
+            			par1World.setBlock(par2 + i, par3 + j, par4 + k, TimeTraveler.collisionBlock.blockID);
+            	        TileEntityCollision collisionTile = (TileEntityCollision)par1World.getBlockTileEntity(par2 + i, par3 + j, par4 + k);
+
+            	        if(collisionTile != null)
+            	        {
+                	        collisionTile.primary_x = par2;
+                            collisionTile.primary_y = par3;
+                            collisionTile.primary_z = par4;
+                            collisionTile.operator = "tt";
+            	        }
+        			}
+        		}
+        	}
+        }
     }
 
     /**
      * set a blocks direction
      */
-    private void setDefaultDirection(World par1World, int par2, int par3, int par4)
+    private void prepareBlock(World par1World, int par2, int par3, int par4)
     {
         if (!par1World.isRemote)
         {
@@ -100,6 +144,9 @@ public class BlockParadoxCondenser extends BlockContainer
             }
 
             par1World.setBlockMetadataWithNotify(par2, par3, par4, b0, 2);
+        
+
+
         }
     }
 /*
@@ -145,21 +192,27 @@ public class BlockParadoxCondenser extends BlockContainer
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i, float f, float g, float t) {
 		TileEntity tile_entity = world.getBlockTileEntity(x, y, z);
 
-		if (tile_entity == null || player.isSneaking())
+		System.out.println(tile_entity);
+		/*EntityChair chair = new EntityChair(world);
+		chair.setPosition((double)x, (double)y, (double)z);
+		world.spawnEntityInWorld(chair);
+*/
+
+	/*	if (tile_entity == null || player.isSneaking())
 		{
 
 			return false;
 		}
 
 		player.openGui(TimeTraveler.instance, 0, world, x, y, z);
-
+*/
 		return true;
 	}
 
     /**
      * Update which block ID the furnace is using depending on whether or not it is burning
      */
-    public static void updateFurnaceBlockState(boolean par0, World par1World, int par2, int par3, int par4)
+   /* public static void updateFurnaceBlockState(boolean par0, World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
         TileEntity tileentity = par1World.getBlockTileEntity(par2, par3, par4);
@@ -182,7 +235,7 @@ public class BlockParadoxCondenser extends BlockContainer
             tileentity.validate();
             par1World.setBlockTileEntity(par2, par3, par4, tileentity);
         }
-    }
+    }*/
 
     @SideOnly(Side.CLIENT)
 
@@ -191,7 +244,7 @@ public class BlockParadoxCondenser extends BlockContainer
      */
     public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-        if (this.isActive)
+        /*if (this.isActive)
         {
             int l = par1World.getBlockMetadata(par2, par3, par4);
             float f = (float)par2 + 0.5F;
@@ -203,7 +256,7 @@ public class BlockParadoxCondenser extends BlockContainer
             ParticleEffects.spawnParticle("paradox", (double)par2 + 0.5, (double)par3 + 0.75, (double)par4 + 0.5, 0.0D, 0.0D, 0.0D);
             ParticleEffects.spawnParticle("paradox", (double)par2 + 0.5, (double)par3 + 0.5, (double)par4 + 0.5, 0.0D, 0.0D, 0.0D);
 
-        }
+        }*/
     }
 
     /**
@@ -211,92 +264,13 @@ public class BlockParadoxCondenser extends BlockContainer
      */
     public TileEntity createNewTileEntity(World par1World)
     {
-        return new TileEntityParadoxCondenser();
+        return new TileEntityTimeTravel();
     }
-
-    /**
-     * Called when the block is placed in the world.
-     */
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving, ItemStack par6ItemStack)
-    {
-        int l = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-
-        if (l == 0)
-        {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 2, 2);
-        }
-
-        if (l == 1)
-        {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 5, 2);
-        }
-
-        if (l == 2)
-        {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 3, 2);
-        }
-
-        if (l == 3)
-        {
-            par1World.setBlockMetadataWithNotify(par2, par3, par4, 4, 2);
-        }
-
-        if (par6ItemStack.hasDisplayName())
-        {
-            ((TileEntityParadoxCondenser)par1World.getBlockTileEntity(par2, par3, par4)).func_94129_a(par6ItemStack.getDisplayName());
-        }
-    }
-
     /**
      * ejects contained items into the world, and notifies neighbours of an update, as appropriate
      */
     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
-        if (!keepInventory)
-        {
-        	TileEntityParadoxCondenser tileEntityParadox = (TileEntityParadoxCondenser)par1World.getBlockTileEntity(par2, par3, par4);
-
-            if (tileEntityParadox != null)
-            {
-                for (int j1 = 0; j1 < tileEntityParadox.getSizeInventory(); ++j1)
-                {
-                    ItemStack itemstack = tileEntityParadox.getStackInSlot(j1);
-
-                    if (itemstack != null)
-                    {
-                        float f = this.paradoxRand.nextFloat() * 0.8F + 0.1F;
-                        float f1 = this.paradoxRand.nextFloat() * 0.8F + 0.1F;
-                        float f2 = this.paradoxRand.nextFloat() * 0.8F + 0.1F;
-
-                        while (itemstack.stackSize > 0)
-                        {
-                            int k1 = this.paradoxRand.nextInt(21) + 10;
-
-                            if (k1 > itemstack.stackSize)
-                            {
-                                k1 = itemstack.stackSize;
-                            }
-
-                            itemstack.stackSize -= k1;
-                            EntityItem entityitem = new EntityItem(par1World, (double)((float)par2 + f), (double)((float)par3 + f1), (double)((float)par4 + f2), new ItemStack(itemstack.itemID, k1, itemstack.getItemDamage()));
-
-                            if (itemstack.hasTagCompound())
-                            {
-                                entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
-                            }
-
-                            float f3 = 0.05F;
-                            entityitem.motionX = (double)((float)this.paradoxRand.nextGaussian() * f3);
-                            entityitem.motionY = (double)((float)this.paradoxRand.nextGaussian() * f3 + 0.2F);
-                            entityitem.motionZ = (double)((float)this.paradoxRand.nextGaussian() * f3);
-                            par1World.spawnEntityInWorld(entityitem);
-                        }
-                    }
-                }
-
-                par1World.func_96440_m(par2, par3, par4, par5);
-            }
-        }
 
         super.breakBlock(par1World, par2, par3, par4, par5, par6);
     }
@@ -324,11 +298,14 @@ public class BlockParadoxCondenser extends BlockContainer
             return -1;
     }
     
-    //It's not an opaque cube, so you need this.
     @Override
     public boolean isOpaqueCube() 
     {
             return false;
+    }
+    public boolean renderAsNormalBlock()
+    {
+        return false;
     }
 
 }

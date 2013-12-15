@@ -88,15 +88,33 @@ public class ParadoxExtractor extends BlockContainer
    {
       return new TileEntityExtractor();
    }
-   @Override
-   public void onBlockAdded(World world, int x, int y, int z)
+   
+   
+   public void onBlockAdded(World par1World, int par2, int par3, int par4)
    {
-	   world.setBlock(x + 1, y, z, TimeTraveler.collisionBlock.blockID);
-	   world.setBlock(x + 1, y + 1, z, TimeTraveler.collisionBlock.blockID);
-	   world.setBlock(x - 1, y, z, TimeTraveler.collisionBlock.blockID);
-	   world.setBlock(x - 1, y + 1, z, TimeTraveler.collisionBlock.blockID);
-	   world.setBlock(x, y + 1, z, TimeTraveler.collisionBlock.blockID);
-	   world.setBlock(x, y + 2, z, TimeTraveler.collisionBlock.blockID);
+		for (int i = -1; i < 2; i++) 
+		{
+			for (int k = 0; k < 3; k++) 
+			{
+				if ((i == 0 && k == 0) || (i == -1 && k == 2) || (i == 1 && k == 2))
+				{
+				} 
+				else
+				{
+					System.out.println("ADDING");
+					par1World.setBlock(par2 + i, par3 + k, par4, TimeTraveler.collisionBlock.blockID);
+					TileEntityCollision collisionTile = (TileEntityCollision)par1World.getBlockTileEntity(par2 + i, par3 + k, par4);
+
+					if (collisionTile != null) {
+						collisionTile.primary_x = par2;
+						collisionTile.primary_y = par3;
+						collisionTile.primary_z = par4;
+						collisionTile.operator = "ext";
+					}
+				}
+			}
+		}
+
    }
    @Override
    public void breakBlock(World world, int x, int y, int z, int par5, int par6)
@@ -235,23 +253,23 @@ public class ParadoxExtractor extends BlockContainer
 
             if (l == 4)
             {
-                par1World.spawnParticle("smoke", (double)(f - f3), (double)f1, (double)(f2 + f4), 0.0D, 0.0D, 0.0D);
-                par1World.spawnParticle("flame", (double)(f - f3), (double)f1, (double)(f2 + f4), 0.0D, 0.0D, 0.0D);
+               // par1World.spawnParticle("smoke", (double)(f - f3), (double)f1, (double)(f2 + f4), 0.0D, 0.0D, 0.0D);
+               // par1World.spawnParticle("flame", (double)(f - f3), (double)f1, (double)(f2 + f4), 0.0D, 0.0D, 0.0D);
             }
             else if (l == 5)
             {
-                par1World.spawnParticle("smoke", (double)(f + f3), (double)f1, (double)(f2 + f4), 0.0D, 0.0D, 0.0D);
-                par1World.spawnParticle("flame", (double)(f + f3), (double)f1, (double)(f2 + f4), 0.0D, 0.0D, 0.0D);
+                //par1World.spawnParticle("smoke", (double)(f + f3), (double)f1, (double)(f2 + f4), 0.0D, 0.0D, 0.0D);
+                //par1World.spawnParticle("flame", (double)(f + f3), (double)f1, (double)(f2 + f4), 0.0D, 0.0D, 0.0D);
             }
             else if (l == 2)
             {
-                par1World.spawnParticle("smoke", (double)(f + f4), (double)f1, (double)(f2 - f3), 0.0D, 0.0D, 0.0D);
-                par1World.spawnParticle("flame", (double)(f + f4), (double)f1, (double)(f2 - f3), 0.0D, 0.0D, 0.0D);
+                //par1World.spawnParticle("smoke", (double)(f + f4), (double)f1, (double)(f2 - f3), 0.0D, 0.0D, 0.0D);
+               // par1World.spawnParticle("flame", (double)(f + f4), (double)f1, (double)(f2 - f3), 0.0D, 0.0D, 0.0D);
             }
             else if (l == 3)
             {
-                par1World.spawnParticle("smoke", (double)(f + f4), (double)f1, (double)(f2 + f3), 0.0D, 0.0D, 0.0D);
-                par1World.spawnParticle("flame", (double)(f + f4), (double)f1, (double)(f2 + f3), 0.0D, 0.0D, 0.0D);
+                //par1World.spawnParticle("smoke", (double)(f + f4), (double)f1, (double)(f2 + f3), 0.0D, 0.0D, 0.0D);
+                //par1World.spawnParticle("flame", (double)(f + f4), (double)f1, (double)(f2 + f3), 0.0D, 0.0D, 0.0D);
             }
         }
     }

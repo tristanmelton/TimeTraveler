@@ -143,7 +143,7 @@ public class TickerClient implements ITickHandler
 		{
 			if(!isInPast)
 			{
-				mechanics.addEntityData(TimeTraveler.vars.getEntiyLocData());
+				mechanics.addEntityData();
 				
 				ct = 0;
 			}
@@ -154,9 +154,7 @@ public class TickerClient implements ITickHandler
 			if(!isInPast)
 			{
 				mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
-				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "stop");
-				//mechanics.addPlayerLoc(mc.getIntegratedServer(), mc, "newtime");
-				mechanics.saveEntityData(TimeTraveler.vars.getEntiyLocData(), mc.getIntegratedServer());
+				mechanics.saveEntityData(mc.getIntegratedServer());
 			}
 			ctr = 0;
 		}

@@ -1,10 +1,5 @@
 package timeTraveler.core;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -19,9 +14,11 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import timeTraveler.blocks.BlockParadoxCondenser;
+import timeTraveler.blocks.BlockTime;
 import timeTraveler.blocks.BlockTimeTraveler;
 import timeTraveler.blocks.Collision;
 import timeTraveler.blocks.ParadoxExtractor;
+import timeTraveler.entities.EntityChair;
 import timeTraveler.entities.EntityHandler;
 import timeTraveler.entities.EntityParadoxHunter;
 import timeTraveler.entities.EntityPlayerPast;
@@ -37,12 +34,12 @@ import timeTraveler.structures.StructureGenerator;
 import timeTraveler.ticker.TickerClient;
 import timeTraveler.tileentity.TileEntityCollision;
 import timeTraveler.tileentity.TileEntityExtractor;
+import timeTraveler.tileentity.TileEntityParadoxCondenser;
+import timeTraveler.tileentity.TileEntityTimeTravel;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -78,6 +75,7 @@ public class TimeTraveler
 	public static Block paradoxCondenser;
 	public static Block paradoxExtractor;
 	public static Block collisionBlock;
+	public static Block timeTravel;
 	
 	public static Item paradoximer;
 	public static Item bottledParadox;
@@ -109,7 +107,6 @@ public class TimeTraveler
 	@EventHandler
 	public void load(FMLInitializationEvent event)
 	{  	
-		proxy.registerRenderThings();
 		initialize();
 		registerBlocks();
 		addNames();
@@ -117,17 +114,23 @@ public class TimeTraveler
 		addSmelt();
 		mkDirs();
 		registerEntities();
-		//sqlLite();
-		//villageStuff();
 		
 		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");
 		GameRegistry.registerTileEntity(TileEntityExtractor.class, "extractor");
+		GameRegistry.registerTileEntity(TileEntityParadoxCondenser.class, "condenser");
+		GameRegistry.registerTileEntity(TileEntityTimeTravel.class, "timetravel");
+		
 		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
 		GameRegistry.registerWorldGenerator(new StructureGenerator());
 		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
 		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
+		ModLoader.registerEntityID(EntityChair.class, "Chiar", 101);
+		
 		ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
 		MinecraftForge.EVENT_BUS.register(new EntityHandler());
+		
+		proxy.registerRenderThings();
+
 	}
 	public static int getUniqueEntityId() 
 	{
@@ -162,7 +165,8 @@ public class TimeTraveler
 		paradoxCondenser = new BlockParadoxCondenser(254, true).setUnlocalizedName("BlockParadoxCondenser");
 		paradoxExtractor = new ParadoxExtractor(253, true).setUnlocalizedName("ParadoxExtractor");
 		collisionBlock = new Collision(252, Material.air).setUnlocalizedName("collisionBlock");
-		
+		timeTravel = new BlockTime(250, true).setUnlocalizedName("TimeTravel");
+
 		ftm = new FutureTravelMechanics();		
 		guihandler = new GuiHandler();
 	}
@@ -175,6 +179,7 @@ public class TimeTraveler
 		GameRegistry.registerBlock(paradoxCondenser, "paradoxCondenser");
 		GameRegistry.registerBlock(paradoxExtractor, "paradoxExtractor");
 		GameRegistry.registerBlock(collisionBlock, "collisionBlock");
+		GameRegistry.registerBlock(timeTravel, "timeTravel");
 	}
 	/**
 	 * Adds Names
@@ -188,6 +193,7 @@ public class TimeTraveler
 		LanguageRegistry.addName(condensedParadox, "Condensed Paradox");
 		LanguageRegistry.addName(paradoxExtractor, "Paradox Extractor");
 		LanguageRegistry.addName(emptyBottle, "Empty Bottle");
+		LanguageRegistry.addName(timeTravel, "Time Machine");
 	}
 	/**
 	 * Adds Recipes
@@ -212,10 +218,6 @@ public class TimeTraveler
 	 */
 	public void mkDirs()
 	{
-		//File pastCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/past");
-		//File presentCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/present");
-		//File futureCreation = new File(FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/future");
-		
 		File pastCreation = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past");
 		File presentCreation = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/present");
 		File futureCreation = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/future");
@@ -238,62 +240,4 @@ public class TimeTraveler
 		
 		registerEntityEgg(EntityParadoxHunter.class, 0xffffff, 0x000000);
 	}
-
-	/*public void sqlLite()
-	{
-		try
-		{
-			Class.forName("org.sqlite.JDBC");
-			Connection connection = null;
-			try 
-			{
-	
-				// create a database connection
-				connection = DriverManager.getConnection("jdbc:sqlite:" + FMLClientHandler.instance().getClient().getMinecraftDir() + "/mods/TimeMod/database.db");
-				Statement statement = connection.createStatement();
-				statement.setQueryTimeout(30); // set timeout to 30 sec.
-	
-				//statement.executeUpdate("drop table if exists person");
-				statement.executeUpdate("create table MobData (name string, x int, y int, z int)");
-				statement.executeUpdate("insert into MobData values('Test', 1, 2, 3)");
-				statement.executeUpdate("insert into MobData values('Test 2', 4, 5, 6)");
-				ResultSet rs = statement.executeQuery("select * from MobData");
-				while (rs.next()) 
-				{
-					
-					// read the result set
-					System.out.println("name = " + rs.getString("name"));
-					System.out.println("x = " + rs.getInt("x"));
-					System.out.println("x = " + rs.getInt("y"));
-					System.out.println("x = " + rs.getInt("z"));
-
-				}
-			} 
-			catch (SQLException e) 
-			{
-				// if the error message is "out of memory",
-				// it probably means no database file is found
-				System.err.println(e.getMessage());
-			}
-			finally 
-			{
-				try 
-				{
-					if (connection != null)
-					{
-						connection.close();
-					}
-				}
-				catch (SQLException e)
-				{
-					// connection close failed.
-					System.err.println(e);
-				}
-			}
-		}
-		catch(Exception e)
-		{
-			System.err.println(e);
-		}
-	}*/
 }

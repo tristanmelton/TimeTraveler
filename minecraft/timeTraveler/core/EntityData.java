@@ -1,13 +1,13 @@
 package timeTraveler.core;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class StringArrayHolder
+public class EntityData implements Serializable
 {
     private final String[] data;
-    //I do not want any client could change the array reference
-    //this also explains why this field doesn't have a setter
-    public StringArrayHolder(String[] data) 
+
+    public EntityData(String[] data) 
     {
         this.data = data.clone();
     }
@@ -37,11 +37,10 @@ public class StringArrayHolder
         if (o instanceof StringArrayHolder) 
         {
         	StringArrayHolder other = (StringArrayHolder)o;
-            return Arrays.equals(this.data, other.data);
+            return Arrays.equals(this.data, other.getData());
         }
         return false;
     }
-    //just to print in console for testing purposes
     @Override
     public String toString() 
     {

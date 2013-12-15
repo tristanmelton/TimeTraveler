@@ -16,7 +16,7 @@ import timeTraveler.gui.GuiTimeTravel;
 public class BlockTimeTraveler extends Block
 {	
 	
-	public static Icon[] textures = new Icon[6];
+	public static Icon[] textures = new Icon[7];
 	
     public BlockTimeTraveler(int id)
     {
@@ -45,14 +45,17 @@ public class BlockTimeTraveler extends Block
     @Override
     public void registerIcons(IconRegister iconRegistry)
     {
+    	textures[6] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTraveler");
     	textures[0] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerBot");
     	textures[1] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerTop");
     	textures[2] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerSide");
     	textures[3] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerFront");
     	textures[4] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerSide");
     	textures[5] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerSide");
+    
     }
-	@Override
+   /*
+    @Override
 	public Icon getIcon(int i, int j) 
 	{
 		
@@ -72,6 +75,11 @@ public class BlockTimeTraveler extends Block
 			default:
 				return textures[4];
 		}
+	}*/
+    @Override
+	public Icon getIcon(int i, int j) 
+	{
+    	return textures[6];
 	}
 }
 

@@ -1,15 +1,13 @@
 package timeTraveler.mechanics;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -22,12 +20,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
-
-import org.lwjgl.opengl.GL11;
-
+import timeTraveler.core.EntityData;
+import timeTraveler.core.TimeTraveler;
+import timeTraveler.entities.ExtendedEntity;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.ticker.TickerClient;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -39,6 +36,7 @@ import cpw.mods.fml.client.FMLClientHandler;
  */
 public class PastMechanics
 {
+	
 	/**
 	 * Updates Paradox Bar and Renders
 	 * @param minecraft
@@ -56,7 +54,6 @@ public class PastMechanics
 	    
     	ResourceLocation texture = new ResourceLocation("charsmud_timetraveler", "textures/hud/newGUIElements.png");
 
-	   // GL11.glBindTexture(GL11.GL_TEXTURE_2D, minecraft.renderEngine.func_110577_a(new ResourceLocation("/timeTraveler/textureMap/newGUIElements.png")));
 		minecraft.renderEngine.bindTexture(texture);
 	    gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 0, 128, 8);
 		gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 8, amtOfParadox, 8);
@@ -66,7 +63,7 @@ public class PastMechanics
 	 * @param par1EntityLiving
 	 * @param par2List
 	 */
-	public void addEntityData(List<String> par2List)
+	public void addEntityData()
 	{
 		
 		List<EntityLiving> allEntities = FMLClientHandler.instance().getClient().theWorld.loadedEntityList;
@@ -75,25 +72,35 @@ public class PastMechanics
 		{
 			if(allEntities.get(i) instanceof EntityLiving)
 			{
+				
 				String entityName = allEntities.get(i).getEntityName();
 				int xCoord = (int) allEntities.get(i).posX;
 				int yCoord = (int) allEntities.get(i).posY;
 				int zCoord = (int) allEntities.get(i).posZ;
-				UUID entityUniqueId = allEntities.get(i).getPersistentID();
-
-				par2List.add(entityName + "," + xCoord + "," + yCoord + "," + zCoord + "," + entityUniqueId);
+				
+				ExtendedEntity props = ExtendedEntity.get((EntityLiving)allEntities.get(i));
+				int entityUniqueId = props.getEntityUID();
+				
+				String[] rData = new String[4];
+				rData[0] = entityName;
+				rData[1] = Integer.toString(xCoord);
+				rData[2] = Integer.toString(yCoord);
+				rData[3] = Integer.toString(zCoord);
+				
+				EntityData data = new EntityData(rData);
+				
+				TimeTraveler.vars.pathData.addEntity(entityUniqueId);
+				TimeTraveler.vars.pathData.addData(entityUniqueId, data);	
 			}
 		}
-		//par2List.add("====================");
 	}
 	/**
 	 * Saves the list input as a .epd file (entity position data).
 	 * Also clears the list once it's done writing to the file.
 	 * @param par1List
 	 */
-	public void saveEntityData(List<String> par1List, MinecraftServer par2MinecraftServer)
+	public void saveEntityData(MinecraftServer par2MinecraftServer)
 	{
-		  FileWriter fstream;
 		try
 		{
 			File init = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName());
@@ -105,24 +112,46 @@ public class PastMechanics
 			
 			String time = "Time ";
 			time = time.concat(String.format("%03d",fNumbers));
-			fstream = new FileWriter(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\" + time + ".epd");
 			
-			BufferedWriter out = new BufferedWriter(fstream);
-			for(int i = 0; i < par1List.size(); i++)
-			{
-				out.write(par1List.get(i));
-				out.newLine();
-
-			}
-			out.flush();
-			out.close();
-			par1List.clear();
+			FileOutputStream output = new FileOutputStream(new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\" + time + ".epd"));
+			ObjectOutputStream outputObj = new ObjectOutputStream(output);
+			outputObj.writeObject(TimeTraveler.vars.pathData.data);
+			outputObj.flush();
+			outputObj.close();
+						
+			System.out.println(TimeTraveler.vars.pathData.data);
+			
+			TimeTraveler.vars.pathData.data.clear();		
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 
+	}
+	
+	public void loadEntityData()
+	{
+		File allEntityData = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+		if(allEntityData.exists())
+		{
+			ObjectInputStream input;
+			try
+			{
+				input = new ObjectInputStream(new FileInputStream(allEntityData));
+				TimeTraveler.vars.pathData.data = (HashMap<Integer, List<EntityData>>)input.readObject();
+				System.out.println("Set the Correct Data! " + TimeTraveler.vars.pathData.data);
+			} 
+			catch(Exception ex)
+			{
+				ex.printStackTrace();
+			}
+
+		}
+		else
+		{
+			System.out.println("N_LHOUOH");
+		}
 	}
 
 	/**

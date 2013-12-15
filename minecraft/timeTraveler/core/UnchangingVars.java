@@ -11,27 +11,27 @@ import timeTraveler.mechanics.PathingData;
 
 public class UnchangingVars 
 {
-	static List<String> entityLocationData;
+	//static List<String> entityLocationData;
 	static String pastTime;
 	static boolean nextSet;
 	public static PathingData pathData;
 	
 	public UnchangingVars()
 	{
-		entityLocationData = new ArrayList<String>();
+		//entityLocationData = new ArrayList<String>();
 		pastTime = null;
 		nextSet = true;
 		pathData = new PathingData();
 	}
 	
-	public List<String> getEntiyLocData()
+	/*public List<String> getEntiyLocData()
 	{
 		return entityLocationData;
 	}
 	public void setEntityLocData(String data)
 	{
 		entityLocationData.add(data);
-	}
+	}*/
 	
 	public String getPastTime()
 	{
