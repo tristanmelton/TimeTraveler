@@ -33,7 +33,7 @@ public class PathingData
 		}
 		else
 		{
-			System.out.println("ENTITY EXISTS IN ARRAY");
+			//System.out.println("ENTITY EXISTS IN ARRAY");
 		}
 	}
 	

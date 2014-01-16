@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -15,13 +16,17 @@ import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.DimensionManager;
 import timeTraveler.core.EntityData;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.ExtendedEntity;
@@ -58,6 +63,38 @@ public class PastMechanics
 	    gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 0, 128, 8);
 		gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 8, amtOfParadox, 8);
 	}
+	
+	public void initSpawnEntities()
+	{
+		World world = DimensionManager.getWorld(0);
+
+		Set keys = TimeTraveler.vars.pathData.data.keySet();
+		
+		for(int i = 0; i < TimeTraveler.vars.pathData.data.size(); i++)
+		{
+			Integer uid = (Integer)keys.iterator().next();
+			//System.out.println(uid);
+			List<EntityData> dataForKey = TimeTraveler.vars.pathData.data.get(uid);
+			//System.out.println(dataForKey);
+
+			EntityData primaryData = dataForKey.get(0);
+			//System.out.println(primaryData);
+
+			String[] entityData = primaryData.getData();
+			
+			Entity entity = EntityList.createEntityByName(entityData[0], world);
+			entity.posX = Integer.parseInt(entityData[1]);
+			entity.posY = Integer.parseInt(entityData[2]);
+			entity.posZ = Integer.parseInt(entityData[3]);
+			
+			ExtendedEntity props = ExtendedEntity.get((EntityLiving)entity);
+			props.setEntityUID(uid);
+			props.saveNBTData(entity.getEntityData());
+			
+			world.spawnEntityInWorld(entity);
+		}
+	}
+	
 	/**
 	 * adds an EntityLiving's name and coordinates to a List.
 	 * @param par1EntityLiving

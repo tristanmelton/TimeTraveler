@@ -99,4 +99,9 @@ public class ExtendedEntity implements IExtendedEntityProperties
 	{
 		return this.identifierID;
 	}
+	public void setEntityUID(int uid)
+	{
+		this.identifierID = uid;
+		this.saveNBTData(entity.getEntityData());
+	}
 }

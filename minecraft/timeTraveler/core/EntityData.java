@@ -34,9 +34,9 @@ public class EntityData implements Serializable
         	return true;
         }
         
-        if (o instanceof StringArrayHolder) 
+        if (o instanceof EntityData) 
         {
-        	StringArrayHolder other = (StringArrayHolder)o;
+        	EntityData other = (EntityData)o;
             return Arrays.equals(this.data, other.getData());
         }
         return false;
