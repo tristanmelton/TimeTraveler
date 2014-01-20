@@ -1,0 +1,56 @@
+// Gradle build script which uses the ForgeGradle plugin.
+
+// add ForgeGradle plugin repo
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+		maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+    }
+}
+
+// apply plugin to this project
+apply plugin: 'forge'
+
+// minecraft properteis
+minecraft {
+    // when you update, change this value to MC-ForgeVersion. ForgeVersion is off files.minecraftforge.net
+	version = "1.6.4-9.11.1.964"
+}
+
+// version and stuff
+version = "0.0.1"
+group= "timetraveler"
+archivesBaseName = "TimeTraveler-${minecraft.version}"
+
+// jar naming
+jar
+{
+    classifier = "universal"
+}
+
+// fix mcmod.info and include resources
+processResources
+{
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
