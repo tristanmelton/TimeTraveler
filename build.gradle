@@ -23,7 +23,7 @@ apply plugin: 'forge'
 
 // minecraft properteis
 minecraft {
-    // when you update, change this value to MC-ForgeVersion. ForgeVersion is off files.minecraftforge.net
+    // when you update, change this value to "MC-ForgeVersion". "ForgeVersion" is off files.minecraftforge.net
 	version = "1.6.4-9.11.1.964"
 }
 
