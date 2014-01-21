@@ -36,6 +36,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void initCapes()
 	{
+	    // move this to dropbox
 		DevCapes.getInstance().registerConfig("https://raw2.github.com/jadar/TimeTraveler/master/capes/capes.json", TimeTraveler.modid);
 	}
 	
