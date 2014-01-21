@@ -1,22 +1,8 @@
 package timeTraveler.gui;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.server.FMLServerHandler;
-
-import timeTraveler.core.StringArrayHolder;
-import timeTraveler.core.TimeTraveler;
-import timeTraveler.mechanics.CopyFile;
-import timeTraveler.mechanics.EntityMechanics;
-import timeTraveler.mechanics.PastMechanics;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -24,14 +10,15 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ModLoader;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.StringTranslate;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
+import timeTraveler.core.TimeTraveler;
+import timeTraveler.mechanics.CopyFile;
+import timeTraveler.mechanics.EntityMechanics;
+import timeTraveler.mechanics.PastMechanics;
+import cpw.mods.fml.client.FMLClientHandler;
 
 /**
  * GUI for the Paradox Cube
@@ -61,7 +48,8 @@ private GuiButton buttonSelect;
   public GuiTimeTravel() {
    super();
   }
-  Minecraft mc = ModLoader.getMinecraftInstance();
+  static final Minecraft mc = Minecraft.getMinecraft();
+  static final MinecraftServer ms = mc.getIntegratedServer();
   WorldInfo wi = mc.theWorld.getWorldInfo();
   public  File directory;
   public File[] files;
@@ -73,9 +61,6 @@ private GuiButton buttonSelect;
  * Initializes the GUI, sest up buttons and title and directories.
  */
         public void initGui() {
-        	Minecraft minecraft = ModLoader.getMinecraftInstance();
-        	MinecraftServer ms = minecraft.getIntegratedServer();
-        	
         	directory = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past/");
         	directory.mkdir();
         	directory = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past/" + ms.getWorldName());
@@ -99,8 +84,6 @@ private GuiButton buttonSelect;
          */ 
         	public void actionPerformed(GuiButton gButton) 
         	{
-        		Minecraft minecraft = ModLoader.getMinecraftInstance();
-        		MinecraftServer ms = minecraft.getIntegratedServer();
         		if(gButton.id == 0)
         		{
         			mc.displayGuiScreen(null);
@@ -119,7 +102,7 @@ private GuiButton buttonSelect;
                         		PastMechanics pMechanics = new PastMechanics();
                         		EntityMechanics eMechanics = new EntityMechanics();
                         		
-            					WorldClient wc = minecraft.theWorld;
+            					WorldClient wc = mc.theWorld;
             					WorldInfo worldi = mc.theWorld.getWorldInfo();
             					
             					String worldName = ms.getWorldName();
@@ -141,14 +124,14 @@ private GuiButton buttonSelect;
             					cp.copyDirectory(present, directory);                 
             					isInPast = true;
             					
-            					EntityPlayer player = minecraft.thePlayer;
+            					EntityPlayer player = mc.thePlayer;
                         		pMechanics.loadEntityData();
 
             					//eMechanics.despawnAllEntities(FMLServerHandler.instance().getServer().worldServerForDimension(0));
             					
-            				    minecraft.theWorld.sendQuittingDisconnectingPacket();
-            					minecraft.loadWorld((WorldClient)null);
-            					minecraft.displayGuiScreen(new GuiMainMenu());
+            				    mc.theWorld.sendQuittingDisconnectingPacket();
+            					mc.loadWorld((WorldClient)null);
+            					mc.displayGuiScreen(new GuiMainMenu());
                            
             					source =  new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/" + ms.getWorldName() + "/" + nameOfTime); 
             					staticsource = source;
@@ -157,7 +140,7 @@ private GuiButton buttonSelect;
 
                             	try 
                             	{
-                    		        if (minecraft.getSaveLoader().canLoadWorld(worldName))
+                    		        if (mc.getSaveLoader().canLoadWorld(worldName))
                     		        {
                                 		Thread.sleep(files.length * 750 * 2);
                                 		System.out.println(nameOfTime);
@@ -168,7 +151,7 @@ private GuiButton buttonSelect;
                                 		CopyFile.moveMultipleFiles(source, dest);
                                 		
                                 		
-                                		minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
+                                		mc.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
                     		        }
                             	}
                             catch (Exception ex)

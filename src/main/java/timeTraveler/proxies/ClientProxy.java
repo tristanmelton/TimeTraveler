@@ -2,10 +2,8 @@ package timeTraveler.proxies;
 
 import net.minecraftforge.client.MinecraftForgeClient;
 import timeTraveler.core.TimeTraveler;
-import timeTraveler.entities.EntityChair;
 import timeTraveler.entities.EntityParadoxHunter;
 import timeTraveler.models.ModelParadoxHunter;
-import timeTraveler.models.ModelTimeMachine;
 import timeTraveler.render.ItemCondenserRenderer;
 import timeTraveler.render.ItemTimeMachineRenderer;
 import timeTraveler.render.RenderCondenser;
@@ -16,7 +14,7 @@ import timeTraveler.tileentity.TileEntityExtractor;
 import timeTraveler.tileentity.TileEntityParadoxCondenser;
 import timeTraveler.tileentity.TileEntityTimeTravel;
 
-import com.jadarstudios.developercapes.DevCapesUtil;
+import com.jadarstudios.developercapes.DevCapes;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -38,7 +36,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void initCapes()
 	{
-		DevCapesUtil.getInstance().addFileUrl("https://dl.dropboxusercontent.com/u/85284082/cape.txt");
+		DevCapes.getInstance().registerConfig("https://raw2.github.com/jadar/TimeTraveler/master/capes/capes.json", TimeTraveler.modid);
 	}
 	
 }

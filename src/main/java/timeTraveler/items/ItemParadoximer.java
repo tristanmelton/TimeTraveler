@@ -1,16 +1,12 @@
 package timeTraveler.items;
 
-import timeTraveler.core.TimeTraveler;
-import timeTraveler.entities.EntityPlayerPast;
-import timeTraveler.gui.GuiFutureTravel;
-import timeTraveler.gui.GuiTimeTravel;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
+import timeTraveler.core.TimeTraveler;
 
 /**
  * Paradoximer item information

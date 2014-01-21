@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
@@ -30,11 +29,11 @@ public class BlockTimeTraveler extends Block
     
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
     {
-    	 Minecraft mc = ModLoader.getMinecraftInstance();
+    	 Minecraft mc = Minecraft.getMinecraft();
     	 EntityPlayer ep = mc.thePlayer;
     	 GuiTimeTravel gtt = new GuiTimeTravel();
     	 if(gtt.isInPast == false) {
-    	 ModLoader.openGUI(ep, new GuiTimeTravel());
+    	     mc.displayGuiScreen(new GuiTimeTravel());
     	 }
     	 else {
     		 ep.addChatMessage("Cannot go to the past when in the past!");

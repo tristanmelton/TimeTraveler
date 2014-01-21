@@ -1,18 +1,15 @@
 package timeTraveler.tileentity;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import timeTraveler.core.TimeTraveler;
-import timeTraveler.entities.EntityChair;
-import timeTraveler.gui.GuiTimeTravel;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
+import timeTraveler.core.TimeTraveler;
+import timeTraveler.entities.EntityChair;
+import timeTraveler.gui.GuiTimeTravel;
+import cpw.mods.fml.client.FMLClientHandler;
 
 public class TileEntityCollision extends TileEntity
 {
@@ -65,7 +62,7 @@ public class TileEntityCollision extends TileEntity
         			}
         			else
         			{
-        				ModLoader.openGUI(ep, new GuiTimeTravel());
+        				Minecraft.getMinecraft().displayGuiScreen(new GuiTimeTravel());
         				System.out.println("OPENGING GUI");
         			}
         		}

@@ -3,13 +3,12 @@ package timeTraveler.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.MathHelper;
 
 class GuiTimeSlot extends GuiSlot
 {
     final GuiTimeTravel parentWorldGui;
-    Minecraft minecraft = ModLoader.getMinecraftInstance();
+    Minecraft minecraft = Minecraft.getMinecraft();
     
     public GuiTimeSlot(GuiTimeTravel par1)
     {

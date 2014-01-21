@@ -8,10 +8,8 @@ import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemSaddle;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.src.ModLoader;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import timeTraveler.blocks.BlockParadoxCondenser;
@@ -127,10 +125,9 @@ public class TimeTraveler
 		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
 		GameRegistry.registerWorldGenerator(new StructureGenerator());
 		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
-		ModLoader.registerEntityID(EntityPlayerPast.class, "PlayerPast", 100);//registers the mobs name and id
-		ModLoader.registerEntityID(EntityChair.class, "Chiar", 101);
+		EntityRegistry.registerGlobalEntityID(EntityPlayerPast.class, "PlayerPast", EntityRegistry.findGlobalUniqueEntityId(), 0x191919, 0x000000);//registers the mobs name and id
+		EntityRegistry.registerGlobalEntityID(EntityChair.class, "Chiar", EntityRegistry.findGlobalUniqueEntityId());
 		
-		ModLoader.addSpawn(EntityPlayerPast.class, 25, 25, 25, EnumCreatureType.creature);
 		MinecraftForge.EVENT_BUS.register(new EntityHandler());
 		
 
