@@ -1,0 +1,16 @@
+# Build and Release Folders
+target/
+build/
+bin/
+
+# Other files and folders
+.settings/
+.gradle/
+eclipse/
+
+.project
+.classpath
+MANIFEST.MF
+build.properties
+Thumbs.db
+.DS_Store
