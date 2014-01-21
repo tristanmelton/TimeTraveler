@@ -43,7 +43,6 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -54,7 +53,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 
-@Mod(modid = "charsmud_timetraveler", name = "Time Traveler", version = "0.1")
+@Mod(modid = TimeTraveler.modid, name = "Time Traveler", version = "0.1")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false, serverPacketHandlerSpec = @SidedPacketHandler (channels = {"futuretravel", "paradoxgui", "entityspawn"}, packetHandler = TimeTravelerPacketHandler.class))
 
 /**
@@ -65,8 +64,6 @@ import cpw.mods.fml.relauncher.Side;
 public class TimeTraveler
 {
 	@SidedProxy(clientSide = "timeTraveler.proxies.ClientProxy", serverSide = "timeTraveler.proxies.CommonProxy")
-	
-	
 	public static CommonProxy proxy;
 
 	@Instance
@@ -96,15 +93,6 @@ public class TimeTraveler
 	public static UnchangingVars vars = new UnchangingVars();
 	
 	/**
-	 * Initializes DeveloperCapes
-	 * @param event
-	 */
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event)
-	{
-		proxy.initCapes();
-	}
-	/**
 	 * Initiates mod, registers block and item for use.  Generates the necessary folders.
 	 */
 	@EventHandler
@@ -117,6 +105,9 @@ public class TimeTraveler
 		mkDirs();
 		registerEntities();
 		addRecipes();
+		
+		proxy.initCapes();
+		
 		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");
 		GameRegistry.registerTileEntity(TileEntityExtractor.class, "extractor");
 		GameRegistry.registerTileEntity(TileEntityParadoxCondenser.class, "condenser");
@@ -134,19 +125,19 @@ public class TimeTraveler
 		proxy.registerRenderThings();
 
 	}
-	public static int getUniqueEntityId() 
-	{
-		do 
-	  	{
-			startEntityId++;
-	  	} 
-		while (EntityList.getStringFromID(startEntityId) != null);
-
-		return startEntityId;
-	}
+//	public static int getUniqueEntityId() 
+//	{
+//		do 
+//	  	{
+//			startEntityId++;
+//	  	} 
+//		while (EntityList.getStringFromID(startEntityId) != null);
+//
+//		return startEntityId;
+//	}
 	public static void registerEntityEgg(Class<? extends Entity> entity, int primaryColor, int secondaryColor) 
 	{
-		int id = getUniqueEntityId();
+		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityList.IDtoClassMapping.put(id, entity);
 		EntityList.entityEggs.put(id, new EntityEggInfo(id, primaryColor, secondaryColor));
 	}
