@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
@@ -29,6 +30,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.DimensionManager;
 import timeTraveler.core.EntityData;
 import timeTraveler.core.TimeTraveler;
+import timeTraveler.entities.EntityParadoxHunter;
 import timeTraveler.entities.ExtendedEntity;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.ticker.TickerClient;
@@ -384,6 +386,28 @@ public class PastMechanics
 		    {
 		    	ex.printStackTrace();
 			}	
+		}
+	}
+	/**
+	 * Spawns a Paradox Hunter.  
+	 * @param mcServer
+	 * @param minecraft
+	 */
+	public void spawnParadoxHunter(MinecraftServer mcServer, Minecraft minecraft)
+	{
+		Random rand = new Random();
+		
+		int additionX = rand.nextInt(25);
+		int additionY = rand.nextInt(3);
+		int additionZ = rand.nextInt(25);
+		World world  = mcServer.getEntityWorld();
+		
+		if(world.getBlockId((int)minecraft.thePlayer.posX + additionX, (int)minecraft.thePlayer.posY + additionY,(int) minecraft.thePlayer.posZ + additionZ) == 0)
+		{
+			System.out.println("Hurrah!");
+			EntityParadoxHunter hunter = new EntityParadoxHunter(world);
+			hunter.setPosition(minecraft.thePlayer.posX + additionX, minecraft.thePlayer.posY + additionY, minecraft.thePlayer.posZ + additionZ);
+			world.spawnEntityInWorld(hunter);
 		}
 	}
 }

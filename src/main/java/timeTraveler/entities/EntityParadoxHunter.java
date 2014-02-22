@@ -13,28 +13,23 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
 
-public class EntityParadoxHunter extends EntityCreature 
+public class EntityParadoxHunter extends EntityMob 
 {
 	public EntityParadoxHunter(World par1World)
 	{
 		super(par1World);
 		//this.t = "/mods/Charsmud_TimeTraveler/textures/mobs/ParadoxHunter.png";
-		
-		this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIBreakDoor(this));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
-        this.tasks.addTask(4, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
 
 	}
 
 	public int getAttackStrength(Entity par1Entity) 
 	{
-		return 10;
+		return 20;
 	}
 
 	protected boolean isAIEnabled()
 	{
-		return true;
+		return false;
 	}
 	public String getTexture()
     {

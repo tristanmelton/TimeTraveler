@@ -48,6 +48,7 @@ public class TickerClient implements ITickHandler
 	
 	public static int paradoxLevel;
 	
+	
 	public static int seconds = 10;
 	public static int minutes = 1;
 	
@@ -56,7 +57,7 @@ public class TickerClient implements ITickHandler
 	
 	private int timeNumber = 1;
 	private int pathFileLine = 0;
-	
+	private int hunterSpawn = 0;
 
 	/*int prevSheep;
 	int prevPig;
@@ -136,6 +137,16 @@ public class TickerClient implements ITickHandler
 		{
 			if(mc.thePlayer.isSneaking())
 			{
+			}
+			if(paradoxLevel >= 30)
+			{
+				hunterSpawn++;
+				if(hunterSpawn == 150)
+				{
+					mechanics.spawnParadoxHunter(mc.getIntegratedServer(), mc);
+					System.out.println("Spawned Paradox Hunter!");
+					hunterSpawn = 0;
+				}
 			}
 		}
 		

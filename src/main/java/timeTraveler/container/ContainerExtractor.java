@@ -121,6 +121,7 @@ public class ContainerExtractor extends Container
     /**
      * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
      */
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
         ItemStack itemstack = null;
@@ -158,7 +159,7 @@ public class ContainerExtractor extends Container
                 }
                 else if (par2 >= 3 && par2 < 30)
                 {
-                    if (!this.mergeItemStack(itemstack1, 30, 39, false))
+                    if (!this.mergeItemStack(itemstack1, 30, 38, false))
                     {
                         return null;
                     }
@@ -168,7 +169,7 @@ public class ContainerExtractor extends Container
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(itemstack1, 3, 39, false))
+            else if (!this.mergeItemStack(itemstack1, 3, 38, false))
             {
                 return null;
             }

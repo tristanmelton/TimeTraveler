@@ -29,6 +29,7 @@ public class ExtractingRecipes
     private ExtractingRecipes()
     {
         this.addExtracting(TimeTraveler.emptyBottle.itemID, new ItemStack(TimeTraveler.bottledParadox, 1), 0.7F);
+        this.addExtracting(TimeTraveler.bottledParadox.itemID, new ItemStack(TimeTraveler.bottledParadox, 1), 0.7F);
     }
 
     /**

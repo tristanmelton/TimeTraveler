@@ -101,7 +101,6 @@ public class ParadoxExtractor extends BlockContainer
 				} 
 				else
 				{
-					System.out.println("ADDING");
 					par1World.setBlock(par2 + i, par3 + k, par4, TimeTraveler.collisionBlock.blockID);
 					TileEntityCollision collisionTile = (TileEntityCollision)par1World.getBlockTileEntity(par2 + i, par3 + k, par4);
 

@@ -9,8 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ForgeDummyContainer;
 import timeTraveler.blocks.ParadoxExtractor;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.crafting.ExtractingRecipes;
@@ -286,7 +284,17 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
             }
             if(this.paradoxItemStacks[1] != null && this.paradoxItemStacks[2] == null)
             {
-            	this.formItem();
+            	ItemStack item = new ItemStack(TimeTraveler.bottledParadox);
+            	
+            	if(this.paradoxItemStacks[1].isItemEqual(item))
+            	{
+            		int paradoxCurrent = this.paradoxItemStacks[1].getTagCompound().getInteger("paradoxLevel");
+            		this.formItem(paradoxCurrent);
+            	}
+            	else
+            	{
+            		this.formItem();
+            	}
             }
             if(this.paradoxItemStacks[1] == null && this.paradoxItemStacks[2] != null)
             {
@@ -380,6 +388,33 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
             }
         }
     }
+    public void formItem(int paradoxLevel)
+    {
+        if (this.canSmelt())
+        {
+        	System.out.println("Can smelt");
+        	ItemStack itemstack = this.paradoxItemStacks[1].copy();
+            if (this.paradoxItemStacks[2] == null)
+            {
+            	System.out.println(itemstack);
+            	//itemstack.getTagCompound().setInteger("paradoxLevel", paradoxLevel);
+            	//System.out.println(itemstack.getTagCompound().getInteger("paradoxLevel"));
+                paradoxItemStacks[2] = itemstack.copy();
+            }
+            else if (this.paradoxItemStacks[2].isItemEqual(itemstack))
+            {
+               // paradoxItemStacks[2].stackSize += itemstack.stackSize;
+            }
+
+            --this.paradoxItemStacks[1].stackSize;
+
+            if (this.paradoxItemStacks[1].stackSize <= 0)
+            {
+                this.paradoxItemStacks[1] = null;
+            }
+        }
+    }
+
 
     /**
      * Returns the number of ticks that the supplied fuel item will keep the furnace burning, or 0 if the item isn't
