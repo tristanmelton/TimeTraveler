@@ -3,6 +3,7 @@ package timeTraveler.blocks;
 import java.util.Random;
 
 import timeTraveler.core.TimeTraveler;
+import timeTraveler.mechanics.BlockPlaceEvent;
 import timeTraveler.render.ParadoxParticleFX;
 import timeTraveler.render.ParticleEffects;
 import timeTraveler.tileentity.TileEntityCollision;
@@ -28,6 +29,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -79,9 +81,13 @@ public class BlockTime extends BlockContainer
      */
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
-        super.onBlockAdded(par1World, par2, par3, par4);
-        this.prepareBlock(par1World, par2, par3, par4);
+        //super.onBlockAdded(par1World, par2, par3, par4);
+        //this.prepareBlock(par1World, par2, par3, par4);
         
+        BlockPlaceEvent event = new BlockPlaceEvent(this, par2, par3, par4);
+        MinecraftForge.EVENT_BUS.post(event);
+    }
+    /*
         for(int i = -1; i < 2; i++)
         {
         	for(int j = 0; j < 3; j++)
@@ -109,7 +115,7 @@ public class BlockTime extends BlockContainer
         	}
         }
     }
-
+*/
     /**
      * set a blocks direction
      */

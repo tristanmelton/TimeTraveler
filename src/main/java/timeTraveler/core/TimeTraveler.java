@@ -18,7 +18,6 @@ import timeTraveler.blocks.BlockTimeTraveler;
 import timeTraveler.blocks.Collision;
 import timeTraveler.blocks.ParadoxExtractor;
 import timeTraveler.entities.EntityChair;
-import timeTraveler.entities.EntityHandler;
 import timeTraveler.entities.EntityParadoxHunter;
 import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiHandler;
@@ -28,6 +27,7 @@ import timeTraveler.items.EmptyBottle;
 import timeTraveler.items.ItemExpEnhance;
 import timeTraveler.items.ItemFlashback;
 import timeTraveler.items.ItemParadoximer;
+import timeTraveler.mechanics.TTEventHandler;
 import timeTraveler.mechanics.FutureTravelMechanics;
 import timeTraveler.network.TimeTravelerPacketHandler;
 import timeTraveler.proxies.CommonProxy;
@@ -38,6 +38,7 @@ import timeTraveler.tileentity.TileEntityExtractor;
 import timeTraveler.tileentity.TileEntityParadoxCondenser;
 import timeTraveler.tileentity.TileEntityTimeTravel;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -61,7 +62,7 @@ import cpw.mods.fml.relauncher.Side;
  * @author Charsmud6
  *
  */
-public class TimeTraveler
+public class TimeTraveler extends DummyModContainer
 {
 	@SidedProxy(clientSide = "timeTraveler.proxies.ClientProxy", serverSide = "timeTraveler.proxies.CommonProxy")
 	public static CommonProxy proxy;
@@ -119,7 +120,7 @@ public class TimeTraveler
 		EntityRegistry.registerGlobalEntityID(EntityPlayerPast.class, "PlayerPast", EntityRegistry.findGlobalUniqueEntityId(), 0x191919, 0x000000);//registers the mobs name and id
 		EntityRegistry.registerGlobalEntityID(EntityChair.class, "Chiar", EntityRegistry.findGlobalUniqueEntityId());
 		
-		MinecraftForge.EVENT_BUS.register(new EntityHandler());
+		MinecraftForge.EVENT_BUS.register(new TTEventHandler());
 		
 
 		proxy.registerRenderThings();
