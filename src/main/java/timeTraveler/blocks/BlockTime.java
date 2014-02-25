@@ -81,11 +81,8 @@ public class BlockTime extends BlockContainer
      */
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
-        //super.onBlockAdded(par1World, par2, par3, par4);
-        //this.prepareBlock(par1World, par2, par3, par4);
-        
-        BlockPlaceEvent event = new BlockPlaceEvent(this, par2, par3, par4);
-        MinecraftForge.EVENT_BUS.post(event);
+        super.onBlockAdded(par1World, par2, par3, par4);
+        this.prepareBlock(par1World, par2, par3, par4);
     }
     /*
         for(int i = -1; i < 2; i++)

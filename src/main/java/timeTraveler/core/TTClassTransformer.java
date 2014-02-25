@@ -12,11 +12,16 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 public class TTClassTransformer implements IClassTransformer 
 {
@@ -24,7 +29,6 @@ public class TTClassTransformer implements IClassTransformer
 	@Override
 	public byte[] transform(String arg0, String arg1, byte[] arg2) 
 	{
-		//System.out.println(arg0);
 		if (arg0.equals("aqz"))
 		{
 			System.out.println("********* INSIDE OBFUSCATED BLOCK TRANSFORMER ABOUT TO PATCH: " + arg0);
@@ -37,7 +41,6 @@ public class TTClassTransformer implements IClassTransformer
         }
         return arg2;
 	}
-
 	 public byte[] patchClassASM(String name, byte[] bytes, boolean obfuscated)
 	 {
 		 	String targetMethodName = "";
@@ -55,9 +58,7 @@ public class TTClassTransformer implements IClassTransformer
 		    ClassNode classNode = new ClassNode();
 	        ClassReader classReader = new ClassReader(bytes);
 	        classReader.accept(classNode, 0);
-
-	        //Now we loop over all of the methods declared inside the Block class until we get to the targetMethodName "onBlockPlaced"
-	        // find method to inject into
+	        //Now we loop over all of the methods declared inside the Block class until we get to the targetMethodName "onBlockPlaced" 
 	        @SuppressWarnings("unchecked")
 	        Iterator<MethodNode> methods = classNode.methods.iterator();
 	        while(methods.hasNext())
@@ -69,39 +70,6 @@ public class TTClassTransformer implements IClassTransformer
 	            if ((m.name.equals(targetMethodName) && m.desc.equals("(Lnet/minecraft/world/World;IIIIFFFI)I")))
 	            {
 	                System.out.println("********* Inside target method!");
-	                // find interesting instructions in method, there is a single FDIV instruction we use as target
-	                //System.out.println("m.instructions.size = " + m.instructions.size());
-
-	                InsnList toInject = new InsnList();
-	                //TODO: NEED TO CONVERT THIS TO JAVA CODE TO INJECT
-	                //LINENUMBER 87 L0
-    				//NEW timeTraveler/mechanics/BlockPlaceEvent
-    				//DUP
-					//ALOAD 0
-					//ILOAD 2
-					//ILOAD 3
-					//ILOAD 4
-					//INVOKESPECIAL timeTraveler/mechanics/BlockPlaceEvent.<init> (Lnet/minecraft/block/Block;III)V
-					//ASTORE 5
-					//L1
-					//LINENUMBER 88 L1
-					//GETSTATIC net/minecraftforge/common/MinecraftForge.EVENT_BUS : Lnet/minecraftforge/event/EventBus;
-					//ALOAD 5
-					//INVOKEVIRTUAL net/minecraftforge/event/EventBus.post (Lnet/minecraftforge/event/Event;)Z
-					//POP
-					//L2
-	                /*
-	                //To add new instructions, such as calling a static method can be done like so:
-	                
-	                // make new instruction list
-	                InsnList toInject = new InsnList();
-	               
-					toInject.add(new VarInsnNode(ALOAD, 0));
-                    toInject.add(new MethodInsnNode(INVOKESTATIC, "mod/culegooner/MyStaticClass", "myStaticMethod", "()V"));
-                
-	                // inject new instruction list into method instruction list
-	                m.instructions.insert(targetNode, toInject);
-	                */
 	                
 	                AbstractInsnNode currentNode = null;
 	                AbstractInsnNode targetNode = null;
@@ -110,20 +78,20 @@ public class TTClassTransformer implements IClassTransformer
 	                Iterator<AbstractInsnNode> iter = m.instructions.iterator();
 	                int index = -1;
 
-	                //Loop over the instruction set and find the instruction FDIV which does the division of 1/explosionSize
+	                //Loop over the instruction set and find the instruction 21 which does the line before the ILOAD
 	                while (iter.hasNext())
 	                {
 	                    index++;
 	                    currentNode = iter.next();
 	                    System.out.println("********* index : " + index + " currentNode.getOpcode() = " + currentNode.getOpcode());
-	                    //Found it! save the index location of instruction FDIV and the node for this instruction
-	                    if (currentNode.getOpcode() == FDIV)
+	                    //Found it! save the index location of instruction ILOAD and the node for this instruction
+	                    if (currentNode.getOpcode() == 21)
 	                    {
 	                    	targetNode = currentNode;
 	                        fdiv_index = index;
 	                    }
 	                }
-	                System.out.println("********* fdiv_index should be 336 -> " + fdiv_index);
+	                System.out.println("********* fdiv_index should be 2 -> " + fdiv_index);
 	                if (targetNode == null)
 	                {
 	                    System.out.println("Did not find all necessary target nodes! ABANDON CLASS!");
@@ -134,42 +102,26 @@ public class TTClassTransformer implements IClassTransformer
 	                    System.out.println("Did not find all necessary target nodes! ABANDON CLASS!");
 	                    return bytes;
 	                }
-	                /*
-	                 //now we want the save nods that load the variable explosionSize and the division instruction:
-
-	                 The line in Explosion.java that we want to modify is:
-	                 
-	                 var25.dropBlockAsItemWithChance(this.worldObj, var4, var5, var6, this.worldObj.getBlockMetadata(var4, var5, var6), 1.0F / this.explosionSize, 0);
-	                 
-	                 The code we are looking for is the following in bytecode:
-	                 
-	                 mv.visitInsn(FCONST_1);
-					 mv.visitVarInsn(ALOAD, 0);
-                     mv.visitFieldInsn(GETFIELD, "net/minecraft/src/Explosion", "explosionSize", "F");
-                     mv.visitInsn(FDIV);
-                     mv.visitInsn(ICONST_0);
-                     mv.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/src/Block", "dropBlockAsItemWithChance", "(Lnet/minecraft/src/World;IIIIFI)V");
-                     */
-	                AbstractInsnNode remNode1 = m.instructions.get(fdiv_index-2); // mv.visitVarInsn(ALOAD, 0);
-	                AbstractInsnNode remNode2 = m.instructions.get(fdiv_index-1); // mv.visitFieldInsn(GETFIELD, "net/minecraft/src/Explosion", "explosionSize", "F");
-	                AbstractInsnNode remNode3 = m.instructions.get(fdiv_index);   // mv.visitInsn(FDIV);
-	                //This part is just to show how if the opcode we are looking for is an invokevirtual
-	                AbstractInsnNode invVirt = m.instructions.get(fdiv_index+2);
-	                if(invVirt.getOpcode() == INVOKEVIRTUAL)
-	                {
-	                	if(invVirt.getType() == METHOD_INSN){
-	                		 System.out.println("INVOKEVIRTUAL opcode is  " + invVirt.getOpcode() + " METHOD_INSN type is " + invVirt.getType()  );
-
-	                		 MethodInsnNode testMethod = (MethodInsnNode)invVirt; //only do this cast if the getType match to a MethodInsnNode!! look at the javadoc for the other types!
-	                		 System.out.println("INVOKEVIRTUAL :" + testMethod.owner + " , " +  testMethod.name + " , " + testMethod.desc );
-	                	}
-	                }
-	                //just remove these nodes from the instruction set, this will prevent the instruction FCONST_1 to be divided.
-	                m.instructions.remove(remNode1);
-	                m.instructions.remove(remNode2);
-	                m.instructions.remove(remNode3);
-	                //in this commented section, i'll just illustrate how to inject a call to a static method if your instruction is a little more advanced than just removing a couple of instruction:
-
+	                
+	                InsnList toInject = new InsnList();
+	                //LINENUMBER 87 L0 (possibly unneeded)
+    				toInject.add(new TypeInsnNode(Opcodes.NEW, "timeTraveler/mechanics/BlockPlaceEvent"));//NEW timeTraveler/mechanics/BlockPlaceEvent
+    				toInject.add(new InsnNode(Opcodes.DUP));//DUP
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));//ALOAD 0
+					toInject.add(new VarInsnNode(Opcodes.ILOAD, 2));//ILOAD 2
+					toInject.add(new VarInsnNode(Opcodes.ILOAD, 3));//ILOAD 3
+					toInject.add(new VarInsnNode(Opcodes.ILOAD, 4));//ILOAD 4
+					toInject.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "timeTraveler/mechanics/BlockPlaceEvent", "<init>", "(Lnet/minecraft/block/Block;III)V"));//INVOKESPECIAL timeTraveler/mechanics/BlockPlaceEvent.<init> (Lnet/minecraft/block/Block;III)V
+					toInject.add(new VarInsnNode(Opcodes.ASTORE, 5));//ASTORE 5
+					//L1 (possibly unneeded)
+					//LINENUMBER 88 L1 (possibly unneeded)
+					toInject.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lnet/minecraftforge/event/EventBus;"));//GETSTATIC net/minecraftforge/common/MinecraftForge.EVENT_BUS : Lnet/minecraftforge/event/EventBus;
+					toInject.add(new VarInsnNode(Opcodes.ALOAD, 5));//ALOAD 5
+					toInject.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraftforge/event/EventBus", "post", "(Lnet/minecraftforge/event/Event;)Z"));//INVOKEVIRTUAL net/minecraftforge/event/EventBus.post (Lnet/minecraftforge/event/Event;)Z
+					m.instructions.insert(targetNode, toInject);
+					//POP (possibly unneeded)
+					//L2 (possibly unneeded)
+					
 	                /*
 	                //To add new instructions, such as calling a static method can be done like so:
 	                
