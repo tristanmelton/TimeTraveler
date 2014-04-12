@@ -28,7 +28,7 @@ import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.mechanics.CopyFile;
 import timeTraveler.mechanics.EntityMechanics;
-import timeTraveler.mechanics.PastMechanics;
+import timeTraveler.pasttravel.PastMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
@@ -59,43 +59,16 @@ public class TickerClient implements ITickHandler
 	private int pathFileLine = 0;
 	private int hunterSpawn = 0;
 
-	/*int prevSheep;
-	int prevPig;
-	int prevCow;
-	int prevChick;
-	int prevSqu;
-	int prevWol;
-	int prevOce;
-	int prevBat;
-	int prevGol;
-	int prevMoo;
-	int prevVil;
-
-	int prevEnd;
-	int prevZpi;
-	int prevBla;
-	int prevCsp;
-	int prevCre;
-	int prevGha;
-	int prevMag;
-	int prevSil;
-	int prevSke;
-	int prevSli;
-	int prevSpi;
-	int prevWit;
-	int prevZom;*/
-
 	String text;
 
 	CopyFile copyFile = new CopyFile();
 
-	public boolean hasRun = false;
+	public boolean hasInitRun = false;
 	public boolean hasInitMobs = false;
 	
 	private boolean mobsInitSpawned = false; 
 	private boolean isInPast;
-	private boolean skipLines = true;
-	
+	private boolean hasRun = false;
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData)
 	{
@@ -103,6 +76,8 @@ public class TickerClient implements ITickHandler
 	@Override
 	public void tickEnd(EnumSet<TickType> type, Object... tickData)
 	{
+		paradoxLevel = TimeTraveler.vars.getParadoxAmt();
+		
 		if(type.equals(EnumSet.of(TickType.RENDER)))
 		{
 			onRenderTick();
@@ -126,15 +101,18 @@ public class TickerClient implements ITickHandler
 	{
 		ctr++;
 		ct++;
+		
+		hasInitRun = (new File(mc.mcDataDir + "/mods/TimeMod/past/" + FMLClientHandler.instance().getServer().getWorldName())).exists();
+
 
 		PastMechanics mechanics = new PastMechanics();
-		EntityMechanics entityMechanics = new EntityMechanics();
 		
 	    text  = "Time Remaining: " + minutes + " Minute, " + seconds + " Seconds";
 
 		isInPast = GuiTimeTravel.isInPast;		
 		if(!isInPast)
 		{
+			TimeTraveler.vars.setIsSpawnedPastPlayer(false);
 			if(mc.thePlayer.isSneaking())
 			{
 			}
@@ -153,9 +131,7 @@ public class TickerClient implements ITickHandler
 		if(ct == 20)
 		{
 			if(!isInPast)
-			{
-				mechanics.addEntityData();
-				
+			{				
 				ct = 0;
 			}
 		}
@@ -165,20 +141,34 @@ public class TickerClient implements ITickHandler
 			if(!isInPast)
 			{
 				mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
-				mechanics.saveEntityData(mc.getIntegratedServer());
+				mechanics.beginPastRecording(FMLClientHandler.instance().getClient().thePlayer, FMLClientHandler.instance().getClient().thePlayer.getDisplayName());
+				mechanics.beginPastRecording(FMLClientHandler.instance().getClient().thePlayer, FMLClientHandler.instance().getClient().thePlayer.getDisplayName());
+
 			}
 			ctr = 0;
+		}
+		if(!hasInitRun)
+		{
+			hasInitRun = true;
+			mechanics.firstTime(mc.getIntegratedServer(), mc);
+			mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
 		}
 		if(!hasRun)
 		{
 			hasRun = true;
-			mechanics.firstTime(mc.getIntegratedServer(), mc);
+			mechanics.beginPastRecording(FMLClientHandler.instance().getClient().thePlayer, FMLClientHandler.instance().getClient().thePlayer.getDisplayName());
+
 		}
 		if(isInPast)
 		{	
+			if(!TimeTraveler.vars.getIsSpawnedPastPlayer())
+			{
+				mechanics.replayPast(mc.thePlayer);
+				TimeTraveler.vars.setIsSpawnedPastPlayer(true);
+			}
 			if(TimeTraveler.vars.getNextSet())
 			{
-				if(mobsInitSpawned)
+				/*if(mobsInitSpawned)
 				{
 					File allEntityData = new File(mc.mcDataDir + "/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
 					
@@ -302,276 +292,6 @@ public class TickerClient implements ITickHandler
 						sneakTime = 0;
 					}
 				}
-								/*WorldClient w = mc.theWorld;
-				//Passive Mobs
-				EntitySheep es = new EntitySheep(w);
-				EntityPig ep = new EntityPig(w);
-				EntityCow ec = new EntityCow(w);
-				EntityChicken eck = new EntityChicken(w);
-				EntitySquid esq = new EntitySquid(w);
-				EntityWolf ew = new EntityWolf(w);
-				EntityOcelot eo = new EntityOcelot(w);
-				EntityBat eb = new EntityBat(w);
-				EntityIronGolem ei = new EntityIronGolem(w);
-				EntityMooshroom em = new EntityMooshroom(w);
-				EntityVillager ev = new EntityVillager(w);
-				EntityEnderman ee = new EntityEnderman(w);
-				EntityPigZombie ezp = new EntityPigZombie(w);
-				EntityBlaze ebl = new EntityBlaze(w);
-				EntityCaveSpider ecs = new EntityCaveSpider(w);
-				EntityCreeper ecr = new EntityCreeper(w);
-				EntityGhast eg = new EntityGhast(w);
-				EntityMagmaCube emc = new EntityMagmaCube(w);
-				EntitySilverfish esi = new EntitySilverfish(w);
-				EntitySkeleton esk = new EntitySkeleton(w);
-				EntitySlime esl = new EntitySlime(w);
-				EntitySpider esp = new EntitySpider(w);
-				EntityWitch ewi = new EntityWitch(w);
-				EntityZombie ez = new EntityZombie(w);
-				if(!hasInitMobs) 
-				{
-					 prevSheep = w.countEntities(es.getClass());
-					 prevPig = w.countEntities(ep.getClass());
-					 prevCow = w.countEntities(ec.getClass());
-					 prevChick = w.countEntities(eck.getClass());
-					 prevSqu = w.countEntities(esq.getClass());
-					 prevWol = w.countEntities(ew.getClass());
-					 prevOce = w.countEntities(eo.getClass());
-					 prevBat = w.countEntities(eb.getClass());
-					 prevGol = w.countEntities(ei.getClass());
-					 prevMoo = w.countEntities(ei.getClass());
-					 prevVil = w.countEntities(ev.getClass());
-					 prevEnd = w.countEntities(ee.getClass());
-					 prevZpi = w.countEntities(ezp.getClass());
-					 prevBla = w.countEntities(ebl.getClass());
-					 prevCsp = w.countEntities(ecs.getClass());
-					 prevCre = w.countEntities(ecr.getClass());
-					 prevGha = w.countEntities(eg.getClass());
-					 prevMag = w.countEntities(emc.getClass());
-					 prevSil = w.countEntities(esi.getClass());
-					 prevSke = w.countEntities(esk.getClass());
-					 prevSli = w.countEntities(esl.getClass());
-					 prevSpi = w.countEntities(esp.getClass());
-					 prevWit = w.countEntities(ewi.getClass());
-					 prevZom = w.countEntities(ez.getClass());
-					 hasRun = true;
-				}
-				if(prevSheep > w.countEntities(es.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 4;
-					prevSheep = w.countEntities(es.getClass());
-				}
-				if(prevPig > w.countEntities(ep.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 8;
-					prevPig = w.countEntities(ep.getClass());
-				}
-				if(prevCow > w.countEntities(ec.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 12;
-					prevCow = w.countEntities(ec.getClass());
-				}
-				if(prevChick > w.countEntities(eck.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 7;
-					prevChick = w.countEntities(eck.getClass());
-				}
-				if(prevSqu > w.countEntities(esq.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 2;
-					prevSqu = w.countEntities(esq.getClass());
-				}
-				if(prevWol > w.countEntities(ew.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 14;
-					prevWol = w.countEntities(ew.getClass());
-				}
-				if(prevOce > w.countEntities(eo.getClass())){
-					paradoxLevel = paradoxLevel + 20;
-					prevOce = w.countEntities(eo.getClass());
-				}
-				if(prevBat > w.countEntities(eb.getClass()))
-				{
-					paradoxLevel++;
-					prevBat = w.countEntities(eo.getClass());
-				}
-				if(prevMoo > w.countEntities(em.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 14;
-					prevMoo = w.countEntities(em.getClass());
-				}
-				if(prevGol > w.countEntities(ei.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 78;
-					prevBat = w.countEntities(ei.getClass());
-				}
-				if(prevVil > w.countEntities(ev.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 55;
-					prevVil = w.countEntities(ev.getClass());
-				}
-				if(prevEnd > w.countEntities(ee.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 25;
-					prevEnd = w.countEntities(ee.getClass());
-				}
-				if(prevZpi > w.countEntities(ezp.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 19;
-					prevZpi = w.countEntities(ezp.getClass());
-				}
-				if(prevBla > w.countEntities(ebl.getClass())) 
-				{
-					paradoxLevel = paradoxLevel + 33;
-					prevBla = w.countEntities(ebl.getClass());
-				}
-				if(prevCsp > w.countEntities(ecs.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 29;
-					prevCsp = w.countEntities(ecs.getClass());
-				}
-				if(prevCre > w.countEntities(ecr.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 69;
-					prevCre = w.countEntities(ecr.getClass());
-				}
-				if(prevGha > w.countEntities(eg.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 56;
-					prevGha = w.countEntities(eg.getClass());
-				}
-				if(prevMag > w.countEntities(emc.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 10;
-					prevMag = w.countEntities(emc.getClass());
-				}
-				if(prevSil > w.countEntities(esi.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 4;
-					prevSil = w.countEntities(esi.getClass());
-				}
-				if(prevSke > w.countEntities(esk.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 34;
-					prevSke = w.countEntities(esk.getClass());
-				}
-				if(prevSli > w.countEntities(esl.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 10;
-					prevSli = w.countEntities(esl.getClass());
-				}
-				if(prevSpi > w.countEntities(esp.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 27;
-					prevSpi = w.countEntities(esp.getClass());
-				}
-				if(prevWit > w.countEntities(ewi.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 49;
-					prevWit = w.countEntities(ewi.getClass());
-				}
-				if(prevZom > w.countEntities(ez.getClass()))
-				{
-					paradoxLevel = paradoxLevel + 20;
-					prevZom = w.countEntities(ez.getClass());
-				}
-
-				if(prevSheep < w.countEntities(es.getClass()))
-				{
-					prevSheep = w.countEntities(es.getClass());
-				}
-				if(prevPig < w.countEntities(ep.getClass()))
-				{
-					prevPig = w.countEntities(ep.getClass());
-				}
-				if(prevCow < w.countEntities(ec.getClass()))
-				{
-					prevCow = w.countEntities(ec.getClass());
-				}
-				if(prevChick < w.countEntities(eck.getClass()))
-				{
-					prevChick = w.countEntities(eck.getClass());
-				}
-				if(prevSqu < w.countEntities(esq.getClass()))
-				{
-					prevSqu = w.countEntities(esq.getClass());
-				}
-				if(prevWol < w.countEntities(ew.getClass()))
-				{
-					prevWol = w.countEntities(ew.getClass());
-				}
-				if(prevOce < w.countEntities(eo.getClass()))
-				{
-					prevOce = w.countEntities(eo.getClass());
-				}
-				if(prevBat < w.countEntities(eb.getClass()))
-				{
-					prevBat = w.countEntities(eb.getClass());
-				}
-				if(prevGol < w.countEntities(ei.getClass()))
-				{
-					prevGol = w.countEntities(ei.getClass());
-				}
-				if(prevMoo < w.countEntities(em.getClass()))
-				{
-					prevMoo = w.countEntities(em.getClass());
-				}
-				if(prevVil < w.countEntities(ev.getClass()))
-				{
-					prevVil = w.countEntities(ev.getClass());
-				}
-				if(prevEnd < w.countEntities(ee.getClass())) 
-				{
-					prevEnd = w.countEntities(ee.getClass());
-				}
-				if(prevZpi < w.countEntities(ezp.getClass()))
-				{
-					prevZpi = w.countEntities(ezp.getClass());
-				}
-				if(prevBla < w.countEntities(ebl.getClass()))
-				{
-					prevBla = w.countEntities(ebl.getClass());
-				}
-				if(prevCsp < w.countEntities(ecs.getClass()))
-				{
-					prevCsp = w.countEntities(ecs.getClass());
-				}
-				if(prevCre < w.countEntities(ecr.getClass()))
-				{
-					prevCre = w.countEntities(ecr.getClass());
-				}
-				if(prevGha < w.countEntities(eg.getClass()))
-				{
-					prevGha = w.countEntities(eg.getClass());
-				}
-				if(prevMag < w.countEntities(emc.getClass()))
-				{
-					prevMag = w.countEntities(emc.getClass());
-				}
-				if(prevSil < w.countEntities(esi.getClass()))
-				{
-					prevSil = w.countEntities(esi.getClass());
-				}
-				if(prevSke < w.countEntities(esk.getClass()))
-				{
-					prevSke = w.countEntities(esk.getClass());
-				}
-				if(prevSli < w.countEntities(esl.getClass()))
-				{
-					prevSli = w.countEntities(esl.getClass());
-				}
-				if(prevSpi < w.countEntities(esp.getClass()))
-				{
-					prevSpi = w.countEntities(esp.getClass());
-				}
-				if(prevWit < w.countEntities(ewi.getClass()))
-				{
-					prevWit = w.countEntities(ewi.getClass());
-				}
-				if(prevZom < w.countEntities(ez.getClass()))
-				{
-					prevZom = w.countEntities(ez.getClass());
-				}*/
 			}
 			else
 			{
@@ -605,7 +325,8 @@ public class TickerClient implements ITickHandler
 				TimeTraveler.vars.setNextSet(true);
 
 			}
-		}		
+		}	
+		TimeTraveler.vars.setParadoxAmt(paradoxLevel);
 	}
 	private void onTickInGui(Minecraft mc, GuiScreen gui)
 	{

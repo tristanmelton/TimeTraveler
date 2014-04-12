@@ -1,14 +1,17 @@
 package timeTraveler.proxies;
 
+import net.minecraft.client.model.ModelBiped;
 import net.minecraftforge.client.MinecraftForgeClient;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityParadoxHunter;
+import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.models.ModelParadoxHunter;
 import timeTraveler.render.ItemCondenserRenderer;
 import timeTraveler.render.ItemTimeMachineRenderer;
 import timeTraveler.render.RenderCondenser;
 import timeTraveler.render.RenderExtractor;
 import timeTraveler.render.RenderParadoxHunter;
+import timeTraveler.render.RenderPastPlayer;
 import timeTraveler.render.RenderTimeMachine;
 import timeTraveler.tileentity.TileEntityExtractor;
 import timeTraveler.tileentity.TileEntityParadoxCondenser;
@@ -29,6 +32,7 @@ public class ClientProxy extends CommonProxy {
 	    ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTimeTravel.class, new RenderTimeMachine());
 	    
 	    RenderingRegistry.registerEntityRenderingHandler(EntityParadoxHunter.class,  new RenderParadoxHunter(new ModelParadoxHunter(),  0.3F));
+	    RenderingRegistry.registerEntityRenderingHandler(EntityPlayerPast.class, new RenderPastPlayer(new ModelBiped(), 0.3F));
 	    
 	    MinecraftForgeClient.registerItemRenderer(TimeTraveler.paradoxCondenser.blockID, new ItemCondenserRenderer());
 	    MinecraftForgeClient.registerItemRenderer(TimeTraveler.timeTravel.blockID, new ItemTimeMachineRenderer());

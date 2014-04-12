@@ -1,12 +1,23 @@
 package timeTraveler.core;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerSelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -27,9 +38,12 @@ import timeTraveler.items.EmptyBottle;
 import timeTraveler.items.ItemExpEnhance;
 import timeTraveler.items.ItemFlashback;
 import timeTraveler.items.ItemParadoximer;
-import timeTraveler.mechanics.TTEventHandler;
 import timeTraveler.mechanics.FutureTravelMechanics;
+import timeTraveler.mechanics.TTEventHandler;
 import timeTraveler.network.TimeTravelerPacketHandler;
+import timeTraveler.pasttravel.PastAction;
+import timeTraveler.pasttravel.TimeTravelerPastRecorder;
+import timeTraveler.pasttravel.TimeTravelerPlayerTracker;
 import timeTraveler.proxies.CommonProxy;
 import timeTraveler.structures.StructureGenerator;
 import timeTraveler.ticker.TickerClient;
@@ -39,6 +53,7 @@ import timeTraveler.tileentity.TileEntityParadoxCondenser;
 import timeTraveler.tileentity.TileEntityTimeTravel;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.DummyModContainer;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -93,6 +108,57 @@ public class TimeTraveler extends DummyModContainer
 
 	public static UnchangingVars vars = new UnchangingVars();
 	
+	
+	@SuppressWarnings("rawtypes")
+	public Map<EntityPlayer, TimeTravelerPastRecorder> recordThreads = Collections.synchronizedMap(new HashMap());
+	 
+	public static EntityPlayerMP getPlayerForName(ICommandSender sender, String name)
+	{
+		EntityPlayerMP var2 = PlayerSelector.matchOnePlayer(sender, name);
+		if (var2 != null)
+		{
+			return var2;
+		}
+		return getPlayerForName(name);
+	}
+
+	public static EntityPlayerMP getPlayerForName(String name)
+	{
+		EntityPlayerMP tempPlayer = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(name);
+		if (tempPlayer != null) 
+		{
+			return tempPlayer;
+		}
+		List<EntityPlayerMP> possibles = new LinkedList();
+		ArrayList<EntityPlayerMP> temp = (ArrayList) FMLCommonHandler.instance().getSidedDelegate().getServer().getConfigurationManager().playerEntityList;
+		for (EntityPlayerMP player : temp)
+		{
+			if (player.getDisplayName().equalsIgnoreCase(name))
+			{
+				return player;
+			}
+			if (player.getDisplayName().toLowerCase().contains(name.toLowerCase())) 
+			{
+				possibles.add(player);
+			}
+		}
+		if (possibles.size() == 1)
+		{
+			return (EntityPlayerMP) possibles.get(0);
+		}
+		return null;
+	}
+	
+	public List<PastAction> getActionListForPlayer(EntityPlayer ep)
+	{
+		TimeTravelerPastRecorder aRecorder = (TimeTravelerPastRecorder) this.recordThreads.get(ep);
+		if (aRecorder == null) 
+		{
+			return null;
+		}
+		return aRecorder.eventsList;
+	}
+	
 	/**
 	 * Initiates mod, registers block and item for use.  Generates the necessary folders.
 	 */
@@ -113,6 +179,9 @@ public class TimeTraveler extends DummyModContainer
 		GameRegistry.registerTileEntity(TileEntityExtractor.class, "extractor");
 		GameRegistry.registerTileEntity(TileEntityParadoxCondenser.class, "condenser");
 		GameRegistry.registerTileEntity(TileEntityTimeTravel.class, "timetravel");
+		
+	    GameRegistry.registerPlayerTracker(new TimeTravelerPlayerTracker());
+
 		
 		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
 		GameRegistry.registerWorldGenerator(new StructureGenerator());

@@ -1,5 +1,6 @@
 package timeTraveler.entities;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
@@ -19,9 +20,12 @@ public class EntityParadoxHunter extends EntityMob
 	{
 		super(par1World);
 		//this.t = "/mods/Charsmud_TimeTraveler/textures/mobs/ParadoxHunter.png";
+		this.setAIMoveSpeed(2.0F);
+        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0D, false));
+        this.tasks.addTask(6, new EntityAIWander(this, 1.0D));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
 
 	}
-
 	public int getAttackStrength(Entity par1Entity) 
 	{
 		return 20;
@@ -29,7 +33,7 @@ public class EntityParadoxHunter extends EntityMob
 
 	protected boolean isAIEnabled()
 	{
-		return false;
+		return true;
 	}
 	public String getTexture()
     {

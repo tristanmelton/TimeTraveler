@@ -27,7 +27,7 @@ public class BlockTimeTraveler extends Block
       * Called when block is right-clicked.  Handles opening of the GUI
       */
     
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
+   /* public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
     {
     	 Minecraft mc = Minecraft.getMinecraft();
     	 EntityPlayer ep = mc.thePlayer;
@@ -39,6 +39,37 @@ public class BlockTimeTraveler extends Block
     		 ep.addChatMessage("Cannot go to the past when in the past!");
     	 }
     	 return true;
+    }
+    */
+    public int onBlockPlaced(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
+    {
+    	for(int x = 0; x < 3; x++)
+    	{
+    		for(int y = 0; y < 3; y++)
+    		{
+    			for(int z = 0; z < 3; z++)
+    			{
+    				System.out.println(par1World.getBlockId(par2 + x, par3 + y, par4 + z));
+    			}
+    		}
+    	}
+    	System.out.println(":)");
+        if(par1World.getBlockId(par2, par3, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2,  par3, par4 + 2) == TimeTraveler.travelTime.blockID
+        		&& par1World.getBlockId(par2 + 1, par3, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3, par4 + 2) == TimeTraveler.travelTime.blockID
+        		&& par1World.getBlockId(par2 + 2, par3, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3, par4 + 2) == TimeTraveler.travelTime.blockID
+        		
+        		&&par1World.getBlockId(par2, par3 + 1, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2, par3 + 1, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2,  par3 + 1, par4 + 2) == TimeTraveler.travelTime.blockID
+                && par1World.getBlockId(par2 + 1, par3 + 1, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3 + 1, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3 + 1, par4 + 2) == TimeTraveler.travelTime.blockID
+                && par1World.getBlockId(par2 + 2, par3 + 1, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3 + 1, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3 + 1, par4 + 2) == TimeTraveler.travelTime.blockID
+        		
+                &&par1World.getBlockId(par2, par3 + 2, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2, par3 + 2, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2,  par3 + 2, par4 + 2) == TimeTraveler.travelTime.blockID
+                && par1World.getBlockId(par2 + 1, par3 + 2, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3 + 2, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3 + 2, par4 + 2) == TimeTraveler.travelTime.blockID
+                && par1World.getBlockId(par2 + 2, par3 + 2, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3 + 2, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3 + 2, par4 + 2) == TimeTraveler.travelTime.blockID)
+        {
+        	System.out.println("MULTIBLOCKING");
+        	par1World.setBlock(par2 + 1, par3, par4 + 1, TimeTraveler.timeTravel.blockID);
+        }
+        return par9;
     }
     
     @Override

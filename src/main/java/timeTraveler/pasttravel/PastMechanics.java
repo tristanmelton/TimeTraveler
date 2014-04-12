@@ -1,15 +1,12 @@
-package timeTraveler.mechanics;
+package timeTraveler.pasttravel;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.List;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
-import java.util.Set;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -17,9 +14,6 @@ import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
@@ -27,12 +21,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.common.DimensionManager;
-import timeTraveler.core.EntityData;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityParadoxHunter;
-import timeTraveler.entities.ExtendedEntity;
+import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiTimeTravel;
+import timeTraveler.mechanics.ClientMethods;
+import timeTraveler.mechanics.CopyFile;
 import timeTraveler.ticker.TickerClient;
 import cpw.mods.fml.client.FMLClientHandler;
 
@@ -43,6 +37,8 @@ import cpw.mods.fml.client.FMLClientHandler;
  */
 public class PastMechanics
 {
+	  ArrayList<PastPlayThread> playThreads = new ArrayList();
+
 	
 	/**
 	 * Updates Paradox Bar and Renders
@@ -65,133 +61,6 @@ public class PastMechanics
 	    gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 0, 128, 8);
 		gig.drawTexturedModalRect(var6 / 2 - 200, var8, 0, 8, amtOfParadox, 8);
 	}
-	
-	public void initSpawnEntities()
-	{
-		World world = DimensionManager.getWorld(0);
-
-		Set keys = TimeTraveler.vars.pathData.data.keySet();
-		
-		for(int i = 0; i < TimeTraveler.vars.pathData.data.size(); i++)
-		{
-			Integer uid = (Integer)keys.iterator().next();
-			//System.out.println(uid);
-			List<EntityData> dataForKey = TimeTraveler.vars.pathData.data.get(uid);
-			//System.out.println(dataForKey);
-
-			EntityData primaryData = dataForKey.get(0);
-			//System.out.println(primaryData);
-
-			String[] entityData = primaryData.getData();
-			
-			Entity entity = EntityList.createEntityByName(entityData[0], world);
-			entity.posX = Integer.parseInt(entityData[1]);
-			entity.posY = Integer.parseInt(entityData[2]);
-			entity.posZ = Integer.parseInt(entityData[3]);
-			
-			ExtendedEntity props = ExtendedEntity.get((EntityLiving)entity);
-			props.setEntityUID(uid);
-			props.saveNBTData(entity.getEntityData());
-			
-			world.spawnEntityInWorld(entity);
-		}
-	}
-	
-	/**
-	 * adds an EntityLiving's name and coordinates to a List.
-	 * @param par1EntityLiving
-	 * @param par2List
-	 */
-	public void addEntityData()
-	{
-		
-		List<EntityLiving> allEntities = FMLClientHandler.instance().getClient().theWorld.loadedEntityList;
-		
-		for(int i = 0; i < allEntities.size(); i++)
-		{
-			if(allEntities.get(i) instanceof EntityLiving)
-			{
-				
-				String entityName = allEntities.get(i).getEntityName();
-				int xCoord = (int) allEntities.get(i).posX;
-				int yCoord = (int) allEntities.get(i).posY;
-				int zCoord = (int) allEntities.get(i).posZ;
-				
-				ExtendedEntity props = ExtendedEntity.get((EntityLiving)allEntities.get(i));
-				int entityUniqueId = props.getEntityUID();
-				
-				String[] rData = new String[4];
-				rData[0] = entityName;
-				rData[1] = Integer.toString(xCoord);
-				rData[2] = Integer.toString(yCoord);
-				rData[3] = Integer.toString(zCoord);
-				
-				EntityData data = new EntityData(rData);
-				
-				TimeTraveler.vars.pathData.addEntity(entityUniqueId);
-				TimeTraveler.vars.pathData.addData(entityUniqueId, data);	
-			}
-		}
-	}
-	/**
-	 * Saves the list input as a .epd file (entity position data).
-	 * Also clears the list once it's done writing to the file.
-	 * @param par1List
-	 */
-	public void saveEntityData(MinecraftServer par2MinecraftServer)
-	{
-		try
-		{
-			File init = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName());
-			if(!init.exists())
-			{
-				init.mkdirs();
-			}
-			int fNumbers = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName()).listFiles().length + 1;
-			
-			String time = "Time ";
-			time = time.concat(String.format("%03d",fNumbers));
-			
-			FileOutputStream output = new FileOutputStream(new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\" + time + ".epd"));
-			ObjectOutputStream outputObj = new ObjectOutputStream(output);
-			outputObj.writeObject(TimeTraveler.vars.pathData.data);
-			outputObj.flush();
-			outputObj.close();
-						
-			System.out.println(TimeTraveler.vars.pathData.data);
-			
-			TimeTraveler.vars.pathData.data.clear();		
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-	}
-	
-	public void loadEntityData()
-	{
-		File allEntityData = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
-		if(allEntityData.exists())
-		{
-			ObjectInputStream input;
-			try
-			{
-				input = new ObjectInputStream(new FileInputStream(allEntityData));
-				TimeTraveler.vars.pathData.data = (HashMap<Integer, List<EntityData>>)input.readObject();
-				System.out.println("Set the Correct Data! " + TimeTraveler.vars.pathData.data);
-			} 
-			catch(Exception ex)
-			{
-				ex.printStackTrace();
-			}
-
-		}
-		else
-		{
-			System.out.println("N_LHOUOH");
-		}
-	}
 
 	/**
 	 * Saves the first timezone when world is created
@@ -208,20 +77,23 @@ public class PastMechanics
 		    {
 		    	File initWorldGen = new File(minecraft.mcDataDir + "/mods/TimeMod/past/" + ms.getWorldName());
 		    	initWorldGen.mkdirs();
-		        File fi = new File(minecraft.mcDataDir + "/saves/" + ms.getWorldName() + "/region");
-		        File moveTo = new File(minecraft.mcDataDir  + "/mods/TimeMod/past/" + ms.getWorldName() + "/Time 001");
-		        try
+			    TimeTraveler.vars.setLastPastTimeSavedForWorld("Time 001");
+
+		        //File fi = new File(minecraft.mcDataDir + "/saves/" + ms.getWorldName() + "/region");
+		        //File moveTo = new File(minecraft.mcDataDir  + "/mods/TimeMod/past/" + ms.getWorldName() + "/Time 001");
+		       /* try
 		        {
 		            cf.copyDirectory(fi, moveTo);
 		        }
 		        catch(IOException ex)
 		        {
 		        	ex.printStackTrace();
-		        }
+		        }*/
 		    }
 
 		}
 	}
+	
 	/**
 	 * Creates a Past Timezone
 	 * @param ms
@@ -259,7 +131,6 @@ public class PastMechanics
 				File directoryToMoveTo = new File(fname);
 			                		   
 				cf.copyDirectory(fi, directoryToMoveTo);
-			          
 				System.out.println("Created a time!");       
 				//File destination = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past");
 				//File zipped = new File(Minecraft.getMinecraftDir(), "mods/TimeMod/past/w1.zip");
@@ -273,6 +144,7 @@ public class PastMechanics
 
 		}
 	}
+	
 	/**
 	 * Return the player to the present from past.
 	 * @param minecraft
@@ -332,6 +204,7 @@ public class PastMechanics
 	        }
 		}
 	}
+	
 	/**
 	 * Draws the time left button
 	 * @param minecraft
@@ -342,6 +215,7 @@ public class PastMechanics
 		GuiButton button = new GuiButton(0,0,5, text);
 		button.drawButton(minecraft,0,0);
 	}
+	
 	/**
 	 * Player ran out of time in the past, sends player to present
 	 * @param minecraft
@@ -388,6 +262,7 @@ public class PastMechanics
 			}	
 		}
 	}
+	
 	/**
 	 * Spawns a Paradox Hunter.  
 	 * @param mcServer
@@ -410,4 +285,221 @@ public class PastMechanics
 			world.spawnEntityInWorld(hunter);
 		}
 	}
+	
+	/**
+	 * Starts recording the actions of a player.
+	 * @param player
+	 * @param pastName
+	 */
+	public void beginPastRecording(EntityPlayer player, String pastName)
+	{
+		TimeTravelerPastRecorder aRecorder = (TimeTravelerPastRecorder) TimeTraveler.instance.recordThreads.get(player);
+		if (aRecorder != null) 
+		{
+			aRecorder.recordThread.capture = Boolean.valueOf(false);
+			System.out.println("Stopped recording " + player.getDisplayName() + " to file " + aRecorder.fileName + ".ppd");
+			TimeTraveler.instance.recordThreads.remove(player);
+			return;
+		}
+		synchronized (TimeTraveler.instance.recordThreads) 
+		{
+			for (TimeTravelerPastRecorder ar : TimeTraveler.instance.recordThreads.values()) 
+			{
+				if (ar.fileName.equals(pastName.toLowerCase())) 
+				{
+					System.out.println("'" + ar.fileName + ".ppd' is already being recorded to?");
+					return;
+				}
+			}
+		}
+		if (aRecorder == null) 
+		{
+			System.out.println("Started recording " + player.getDisplayName() + " to file " + pastName + ".ppd");
+			TimeTravelerPastRecorder mcr = new TimeTravelerPastRecorder();
+			mcr.fileName = pastName.toLowerCase();
+			TimeTraveler.instance.recordThreads.put(player, mcr);
+			mcr.recordThread = new PastRecordThread(player, pastName);
+
+			return;
+		}
+	}
+	
+	public void replayPast(EntityPlayer player) 
+	{
+		System.out.println(player.getDisplayName());
+		File file = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past/EntityLocations/" + MinecraftServer.getServer().getWorldName() + "/" + TimeTraveler.vars.getLastPastTimeSavedForWorld() + "/" + player.getDisplayName() + ".ppd");
+		if (!file.exists()) 
+		{
+			System.out.println("Can't find " + file + ".ppd past file!");
+			return;
+		}
+		double x = 0.0D;
+		double y = 0.0D;
+		double z = 0.0D;
+		try 
+		{
+			RandomAccessFile in = new RandomAccessFile(file, "r");
+			short magic = in.readShort();
+			if (magic != -4885)
+			{
+				System.out.println(file + " isn't a .ppd file.");
+				in.close();
+				return;
+			}
+			float yaw = in.readFloat();
+			float pitch = in.readFloat();
+			x = in.readDouble();
+			y = in.readDouble();
+			z = in.readDouble();
+
+			in.close();
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		World world = player.worldObj;
+
+		EntityPlayerPast entity = new EntityPlayerPast(world);
+
+		entity.setPosition(x, y, z);
+
+		entity.setSkinSource(player.getDisplayName());
+		entity.setCustomNameTag(player.getDisplayName());
+		entity.setAlwaysRenderNameTag(true);
+
+		world.spawnEntityInWorld(entity);
+		System.out.println("Spawned entity in world at " + x + ", " + y + ", " + z);
+		for (Iterator<PastPlayThread> iterator = this.playThreads.iterator(); iterator.hasNext();) {
+			PastPlayThread item = (PastPlayThread) iterator.next();
+			if (!item.t.isAlive())
+			{
+				iterator.remove();
+			}
+		}
+		this.playThreads.add(new PastPlayThread(entity, file.toString()));
+	}
 }
+
+//UNUSED METHODS OF OLD:
+/*
+public void initSpawnEntities()
+{
+	World world = DimensionManager.getWorld(0);
+
+	Set keys = TimeTraveler.vars.pathData.data.keySet();
+	
+	for(int i = 0; i < TimeTraveler.vars.pathData.data.size(); i++)
+	{
+		Integer uid = (Integer)keys.iterator().next();
+		//System.out.println(uid);
+		List<EntityData> dataForKey = TimeTraveler.vars.pathData.data.get(uid);
+		//System.out.println(dataForKey);
+
+		EntityData primaryData = dataForKey.get(0);
+		//System.out.println(primaryData);
+
+		String[] entityData = primaryData.getData();
+		
+		Entity entity = EntityList.createEntityByName(entityData[0], world);
+		entity.posX = Integer.parseInt(entityData[1]);
+		entity.posY = Integer.parseInt(entityData[2]);
+		entity.posZ = Integer.parseInt(entityData[3]);
+		
+		ExtendedEntity props = ExtendedEntity.get((EntityLiving)entity);
+		props.setEntityUID(uid);
+		props.saveNBTData(entity.getEntityData());
+		
+		world.spawnEntityInWorld(entity);
+	}
+}
+	public void addEntityData()
+	{
+		
+		List<EntityLiving> allEntities = FMLClientHandler.instance().getClient().theWorld.loadedEntityList;
+		
+		for(int i = 0; i < allEntities.size(); i++)
+		{
+			if(allEntities.get(i) instanceof EntityLiving)
+			{
+				
+				String entityName = allEntities.get(i).getEntityName();
+				int xCoord = (int) allEntities.get(i).posX;
+				int yCoord = (int) allEntities.get(i).posY;
+				int zCoord = (int) allEntities.get(i).posZ;
+				
+				ExtendedEntity props = ExtendedEntity.get((EntityLiving)allEntities.get(i));
+				int entityUniqueId = props.getEntityUID();
+				
+				String[] rData = new String[4];
+				rData[0] = entityName;
+				rData[1] = Integer.toString(xCoord);
+				rData[2] = Integer.toString(yCoord);
+				rData[3] = Integer.toString(zCoord);
+				
+				EntityData data = new EntityData(rData);
+				
+				TimeTraveler.vars.pathData.addEntity(entityUniqueId);
+				TimeTraveler.vars.pathData.addData(entityUniqueId, data);	
+			}
+		}
+	}
+
+	public void saveEntityData(MinecraftServer par2MinecraftServer)
+	{
+		try
+		{
+			File init = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName());
+			if(!init.exists())
+			{
+				init.mkdirs();
+			}
+			int fNumbers = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName()).listFiles().length + 1;
+			
+			String time = "Time ";
+			time = time.concat(String.format("%03d",fNumbers));
+			
+			FileOutputStream output = new FileOutputStream(new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\" + time + ".epd"));
+			ObjectOutputStream outputObj = new ObjectOutputStream(output);
+			outputObj.writeObject(TimeTraveler.vars.pathData.data);
+			outputObj.flush();
+			outputObj.close();
+						
+			System.out.println(TimeTraveler.vars.pathData.data);
+			
+			TimeTraveler.vars.pathData.data.clear();		
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void loadEntityData()
+	{
+		File allEntityData = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+		if(allEntityData.exists())
+		{
+			ObjectInputStream input;
+			try
+			{
+				input = new ObjectInputStream(new FileInputStream(allEntityData));
+				TimeTraveler.vars.pathData.data = (HashMap<Integer, List<EntityData>>)input.readObject();
+				System.out.println("Set the Correct Data! " + TimeTraveler.vars.pathData.data);
+			} 
+			catch(Exception ex)
+			{
+				ex.printStackTrace();
+			}
+
+		}
+		else
+		{
+			System.out.println("N_LHOUOH");
+		}
+	}*/

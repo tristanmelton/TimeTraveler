@@ -52,7 +52,7 @@ public class RenderTimeMachine extends TileEntitySpecialRenderer
 
                   //directory of the model's texture file
    		ResourceLocation texture = new ResourceLocation("charsmud_timetraveler", "textures/blocks/BlockTimePast.png");
-   		ResourceLocation texture2 = new ResourceLocation("charsmud_timetraveler", "textures/blocks/BlockTImeFuture.png");
+   		ResourceLocation texture2 = new ResourceLocation("charsmud_timetraveler", "textures/blocks/BlockTimeFuture.png");
 	   FMLClientHandler.instance().getClient().renderEngine.bindTexture(texture2);
 	   GL11.glPushMatrix(); 
 	   GL11.glEnable(GL12.GL_RESCALE_NORMAL);

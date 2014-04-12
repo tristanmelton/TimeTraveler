@@ -14,10 +14,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
+import sun.security.jgss.spi.MechanismFactory;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.mechanics.CopyFile;
 import timeTraveler.mechanics.EntityMechanics;
-import timeTraveler.mechanics.PastMechanics;
+import timeTraveler.pasttravel.PastMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
 
 /**
@@ -108,8 +109,8 @@ private GuiButton buttonSelect;
             					String worldName = ms.getWorldName();
             					String folderName = ms.getFolderName();
             					
-            					TimeTraveler.vars.setPastTime(nameOfTime);
-            					File allEntityData = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
+            					TimeTraveler.vars.setLastPastTimeSavedForWorld(nameOfTime);
+            					//File allEntityData = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
             					
             					mc.thePlayer.addChatMessage("Loading...");
             					File present = new File("./saves/" + ms.getWorldName() + "/region").getAbsoluteFile();
@@ -125,7 +126,7 @@ private GuiButton buttonSelect;
             					isInPast = true;
             					
             					EntityPlayer player = mc.thePlayer;
-                        		pMechanics.loadEntityData();
+                        		//pMechanics.loadEntityData();
 
             					//eMechanics.despawnAllEntities(FMLServerHandler.instance().getServer().worldServerForDimension(0));
             					

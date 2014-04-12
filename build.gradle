@@ -28,14 +28,14 @@ minecraft {
 }
 
 // version and stuff
-version = "0.0.1"
-group= "timetraveler"
-archivesBaseName = "TimeTraveler-${minecraft.version}"
+version = "1.6.4-1.0"
+group= "timeTraveler.core"
+archivesBaseName = "TimeTraveler"
 
 // jar naming
 jar
 {
-    classifier = "universal"
+    classifier = "client"
 }
 
 // fix mcmod.info and include resources
