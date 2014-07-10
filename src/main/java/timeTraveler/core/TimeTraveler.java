@@ -77,7 +77,7 @@ import cpw.mods.fml.relauncher.Side;
  * @author Charsmud6
  *
  */
-public class TimeTraveler extends DummyModContainer
+public class TimeTraveler
 {
 	@SidedProxy(clientSide = "timeTraveler.proxies.ClientProxy", serverSide = "timeTraveler.proxies.CommonProxy")
 	public static CommonProxy proxy;

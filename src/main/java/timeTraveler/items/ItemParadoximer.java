@@ -1,5 +1,6 @@
 package timeTraveler.items;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,6 +8,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
+import timeTraveler.gui.GuiFutureReturn;
+import timeTraveler.gui.GuiFutureTravel;
+import timeTraveler.gui.GuiTimeTravel;
+import cpw.mods.fml.client.FMLClientHandler;
 
 /**
  * Paradoximer item information
@@ -26,22 +31,22 @@ public class ItemParadoximer extends Item {
 	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
 		//System.out.println(TimeTraveler.vars.pathData.allEntityData);
-
-		/*for(int i = 0; i < TimeTraveler.vars.pathData.allEntityData.size(); i++)
+		if(!TimeTraveler.vars.getIsInFuture())
 		{
+	    	GuiTimeTravel gtt = new GuiTimeTravel();
+	    	GuiFutureTravel gft = new GuiFutureTravel(gtt, "");
+	    	Minecraft mc = FMLClientHandler.instance().getClient();
+	    	mc.displayGuiScreen(gft);
+	    	
+		}
+		else
+		{
+			GuiFutureReturn gfr = new GuiFutureReturn();
+			Minecraft mc = Minecraft.getMinecraft();
+			mc.displayGuiScreen(gfr);
+			
+		}
 
-		}*/
-    	/*GuiTimeTravel gtt = new GuiTimeTravel();
-    	GuiFutureTravel gft = new GuiFutureTravel(gtt, "");
-    	ModLoader.openGUI(par2EntityPlayer, gft);
-    	EntityPlayerPast p = new EntityPlayerPast(par3World);
-    	p.setSkin("Charsmud");
-
-    	p.setLocationAndAngles(par2EntityPlayer.posX, par2EntityPlayer.posY + 1, par2EntityPlayer.posZ, 0, 0);
-
-    	par3World.spawnEntityInWorld(p);*/
-
-    	
     	return true;
     }
     public void registerIcons(IconRegister par1IconRegister)

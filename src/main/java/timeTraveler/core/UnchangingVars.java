@@ -13,20 +13,30 @@ import timeTraveler.pasttravel.PastMechanics;
 public class UnchangingVars 
 {
 	static String lastPastTimeSavedForWorld;
+	
 	static boolean nextSet;
 	static boolean hasSpawnedPlayerPast;
+	static boolean isInFuture;
+	
 	public static PathingData pathData;
 	public static PastMechanics pMechanics;
+	
 	static int paradoxAmt;
+	static int currentFuture;
 	
 	public UnchangingVars()
 	{
 		lastPastTimeSavedForWorld = null;
-		hasSpawnedPlayerPast = false;
+		
 		nextSet = true;
+		hasSpawnedPlayerPast = false;
+		isInFuture = false;
+		
+		paradoxAmt = 0;
+		currentFuture = 0;
+		
 		pathData = new PathingData();
 		pMechanics = new PastMechanics();
-		paradoxAmt = 0;
 	}
 		
 	public String getLastPastTimeSavedForWorld()
@@ -59,6 +69,22 @@ public class UnchangingVars
 	}
 	public void setParadoxAmt(int paradox)
 	{
-		this.paradoxAmt = paradox;
+		paradoxAmt = paradox;
+	}
+	public int getFuture()
+	{
+		return currentFuture;
+	}
+	public void setFuture(int future)
+	{
+		currentFuture = future;
+	}
+	public boolean getIsInFuture()
+	{
+		return isInFuture;
+	}
+	public void setIsInFuture(boolean future)
+	{
+		isInFuture = future;
 	}
 }

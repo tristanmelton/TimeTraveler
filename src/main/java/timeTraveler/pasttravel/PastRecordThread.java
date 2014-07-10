@@ -6,13 +6,11 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
 
-import cpw.mods.fml.client.FMLClientHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.DimensionManager;
 import timeTraveler.core.TimeTraveler;
+import cpw.mods.fml.client.FMLClientHandler;
 
 class PastRecordThread implements Runnable 
 {
@@ -99,25 +97,20 @@ class PastRecordThread implements Runnable
 
 	private void trackAndWriteMovement() throws IOException 
 	{
-		this.in.writeFloat(this.player.rotationYaw);
-		this.in.writeFloat(this.player.rotationPitch);
-
-		this.in.writeDouble(this.player.posX);
-		this.in.writeDouble(this.player.posY);
-		this.in.writeDouble(this.player.posZ);
-
-		this.in.writeDouble(this.player.motionX);
-		this.in.writeDouble(this.player.motionY);
-		this.in.writeDouble(this.player.motionZ);
-
-		this.in.writeFloat(this.player.fallDistance);
-		this.in.writeBoolean(this.player.isAirBorne);
-		this.in.writeBoolean(this.player.isSneaking());
-		this.in.writeBoolean(this.player.isSprinting());
-		this.in.writeBoolean(this.player.onGround);
-
-		this.in.writeBoolean((this.player.getDataWatcher().getWatchableObjectByte(0) & 0x10) != 0);
-	}
+		in.writeFloat(player.rotationYaw);
+		in.writeFloat(player.rotationPitch);
+		in.writeDouble(player.posX);
+		in.writeDouble(player.posY);
+		in.writeDouble(player.posZ);
+		in.writeDouble(player.motionX);
+		in.writeDouble(player.motionY);
+		in.writeDouble(player.motionZ);
+		in.writeFloat(player.fallDistance);
+		in.writeBoolean(player.isAirBorne);
+		in.writeBoolean(player.isSneaking());
+		in.writeBoolean(player.isSprinting());
+		in.writeBoolean(player.onGround);
+		in.writeBoolean((player.getDataWatcher().getWatchableObjectByte(0) & 1 << 4) != 0);	}
 
 	private void trackArmor()
 	{
@@ -128,17 +121,18 @@ class PastRecordThread implements Runnable
 				if (this.player.inventory.armorInventory[(ci - 1)].itemID != this.itemsEquipped[ci])
 				{
 					this.itemsEquipped[ci] = this.player.inventory.armorInventory[(ci - 1)].itemID;
-					PastAction ma = new PastAction((byte) 4);
+					PastAction ma = new PastAction(PastActionTypes.EQUIP);
 					ma.armorSlot = ci;
 					ma.armorId = this.itemsEquipped[ci];
 					ma.armorDmg = this.player.inventory.armorInventory[(ci - 1)].getItemDamage();
+
 					this.eventList.add(ma);
 				}
 			} 
 			else if (this.itemsEquipped[ci] != -1) 
 			{
 				this.itemsEquipped[ci] = -1;
-				PastAction ma = new PastAction((byte) 4);
+				PastAction ma = new PastAction(PastActionTypes.EQUIP);
 				ma.armorSlot = ci;
 				ma.armorId = this.itemsEquipped[ci];
 				ma.armorDmg = 0;
@@ -154,17 +148,18 @@ class PastRecordThread implements Runnable
 			if (this.player.getHeldItem().itemID != this.itemsEquipped[0])
 			{
 				this.itemsEquipped[0] = this.player.getHeldItem().itemID;
-				PastAction ma = new PastAction((byte) 4);
+				PastAction ma = new PastAction(PastActionTypes.EQUIP);
 				ma.armorSlot = 0;
 				ma.armorId = this.itemsEquipped[0];
 				ma.armorDmg = this.player.getHeldItem().getItemDamage();
+				player.getHeldItem().writeToNBT(ma.itemData);
 				this.eventList.add(ma);
 			}
 		} 
 		else if (this.itemsEquipped[0] != -1)
 		{
 			this.itemsEquipped[0] = -1;
-			PastAction ma = new PastAction((byte) 4);
+			PastAction ma = new PastAction(PastActionTypes.EQUIP);
 			ma.armorSlot = 0;
 			ma.armorId = this.itemsEquipped[0];
 			ma.armorDmg = 0;
@@ -179,7 +174,7 @@ class PastRecordThread implements Runnable
 			if (!this.lastTickSwipe.booleanValue())
 			{
 				this.lastTickSwipe = Boolean.valueOf(true);
-				this.eventList.add(new PastAction((byte) 2));
+				this.eventList.add(new PastAction(PastActionTypes.SWIPE));
 			}
 		}
 		else 
@@ -197,28 +192,51 @@ class PastRecordThread implements Runnable
 			this.in.writeByte(ma.type);
 			switch (ma.type) 
 			{
-			case 1:
+			case PastActionTypes.CHAT:
+			{
 				this.in.writeUTF(ma.message);
 				break;
-			case 2:
+			}
+			case PastActionTypes.SWIPE:
+			{
 				break;
-			case 3:
-				//TODO:  LINE IS IFFY, DONT KNOW IF THIS IS WHAT IT IS SUPPOSED TO BE
-				//        by.a(ma.itemData, this.in);
-				NBTTagCompound.writeNamedTag(ma.itemData, this.in);
+			}
+			case PastActionTypes.DROP:
+			{
+				CompressedStreamTools.write(ma.itemData, this.in);
 				break;
-			case 4:
+			}
+			case PastActionTypes.EQUIP:
+			{
 				this.in.writeInt(ma.armorSlot);
 				this.in.writeInt(ma.armorId);
 				this.in.writeInt(ma.armorDmg);
+				
+				if (ma.armorId != -1) {
+					CompressedStreamTools.write(ma.itemData, in);
+				}
 				break;
-			case 5:
+			}
+			case PastActionTypes.SHOOTARROW:
+			{
 				this.in.writeInt(ma.arrowCharge);
 				break;
-			case 6:
+			}
+			case PastActionTypes.PLACEBLOCK: 
+			{
+				in.writeInt(ma.xCoord);
+				in.writeInt(ma.yCoord);
+				in.writeInt(ma.zCoord);
+				CompressedStreamTools.write(ma.itemData, in);
+				break;
+			}
+			case PastActionTypes.LOGOUT:
+			{
 				TimeTraveler.instance.recordThreads.remove(this.player);
 				System.out.println("Stopped recording " + this.player.getDisplayName() + ".  Bye!");
 				this.capture = Boolean.valueOf(false);
+				break;
+			}
 			}
 			this.eventList.remove(0);
 		} 

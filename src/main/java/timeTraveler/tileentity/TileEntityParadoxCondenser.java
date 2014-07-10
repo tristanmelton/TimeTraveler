@@ -7,8 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ForgeDummyContainer;
 import timeTraveler.blocks.BlockParadoxCondenser;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.crafting.ParadoxRecipes;
@@ -287,19 +285,21 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
             }
             if(this.paradoxItemStacks[0] == null && this.paradoxItemStacks[1] != null)
             {
-            	int paradoxAmount = this.paradoxItemStacks[1].getTagCompound().getInteger("paradoxLevel") - 1;
-            	if(paradoxAmount > 0)
+            	if(this.paradoxItemStacks[1].getItem() == TimeTraveler.bottledParadox)
             	{
-                	++this.paradoxFormTime;
-                	this.paradoxItemStacks[1].getTagCompound().setInteger("paradoxLevel", paradoxAmount);
-                	//Time it takes to form
-                	if(this.paradoxFormTime == 200)
+                	int paradoxAmount = this.paradoxItemStacks[1].getTagCompound().getInteger("paradoxLevel") - 1;
+                	if(paradoxAmount > 0)
                 	{
-                		this.paradoxFormTime = 0;
-                		this.formItem();
-                		flag1 = true;
+                    	++this.paradoxFormTime;
+                    	this.paradoxItemStacks[1].getTagCompound().setInteger("paradoxLevel", paradoxAmount);
+                    	//Time it takes to form
+                    	if(this.paradoxFormTime == 200)
+                    	{
+                    		this.paradoxFormTime = 0;
+                    		this.formItem();
+                    		flag1 = true;
+                    	}
                 	}
-
             	}
             }
             if(this.paradoxItemStacks[0] != null && this.paradoxItemStacks[1] != null)
@@ -380,7 +380,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
                 paradoxItemStacks[2].stackSize += itemstack.stackSize;
             }
 
-            --this.paradoxItemStacks[0].stackSize;
+            //--this.paradoxItemStacks[0].stackSize;
 
             if (this.paradoxItemStacks[0].stackSize <= 0)
             {

@@ -12,6 +12,7 @@ import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.input.Keyboard;
 
+import timeTraveler.core.TimeTraveler;
 import timeTraveler.mechanics.FutureTravelMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -96,8 +97,9 @@ public class GuiFutureTravel extends GuiScreen{
                             System.out.println(":) :)");
                             PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("futuretravel", bytearrayoutputstream.toByteArray()));
                             System.out.println(":) :) :)");
+                            TimeTraveler.vars.setFuture(run);
+                            mc.displayGuiScreen(null);
                     }
-                    
                     catch (Exception exception)
                     {
                             exception.printStackTrace();

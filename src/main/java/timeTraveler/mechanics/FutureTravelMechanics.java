@@ -10,7 +10,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import cpw.mods.fml.client.FMLClientHandler;
+
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Tuple;
@@ -18,6 +21,7 @@ import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.feature.WorldGenBigTree;
@@ -144,12 +148,12 @@ public class FutureTravelMechanics
 	 */
     public static final Map<Block, Tuple> oreExpansion = new HashMap();
     { // value range for maximum ore in a chunk
-            oreExpansion.put(Block.oreRedstone, new Tuple(100, 200)); //24.8  25,50
+            oreExpansion.put(Block.oreRedstone, new Tuple(150, 200)); //24.8  25,50
             oreExpansion.put(Block.oreIron, new Tuple(150, 300)); //77  77,154
-            oreExpansion.put(Block.oreCoal, new Tuple(100, 200)); // 142.6  143, 284
+            oreExpansion.put(Block.oreCoal, new Tuple(140, 200)); // 142.6  143, 284
             oreExpansion.put(Block.oreGold, new Tuple(70, 140)); //8.2  8, 16
             oreExpansion.put(Block.oreLapis, new Tuple(50, 100)); //3.43  3, 7
-            oreExpansion.put(Block.oreDiamond, new Tuple(20, 100)); //3.097  3, 6
+            oreExpansion.put(Block.oreDiamond, new Tuple(50, 100)); //3.097  3, 6
     }
 
     /**
@@ -275,6 +279,13 @@ public class FutureTravelMechanics
         	//ArrayList listOfPieces = villagePieces.getStructureVillageWeightedPieceList(new Random(), 9);
                
         }
+    }
+    public static void launchWorld(String folderName, String worldName, WorldSettings ws)
+    {
+    	if(FMLClientHandler.instance().getClient().isSingleplayer())
+    	{
+    		FMLClientHandler.instance().getClient().launchIntegratedServer(folderName, worldName, ws);
+    	}
     }
 }
 	

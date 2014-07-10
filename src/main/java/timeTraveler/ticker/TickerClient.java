@@ -110,7 +110,7 @@ public class TickerClient implements ITickHandler
 	    text  = "Time Remaining: " + minutes + " Minute, " + seconds + " Seconds";
 
 		isInPast = GuiTimeTravel.isInPast;		
-		if(!isInPast)
+		if(!isInPast && !TimeTraveler.vars.getIsInFuture())
 		{
 			TimeTraveler.vars.setIsSpawnedPastPlayer(false);
 			if(mc.thePlayer.isSneaking())
@@ -130,7 +130,7 @@ public class TickerClient implements ITickHandler
 		
 		if(ct == 20)
 		{
-			if(!isInPast)
+			if(!isInPast && !TimeTraveler.vars.getIsInFuture())
 			{				
 				ct = 0;
 			}
@@ -138,7 +138,7 @@ public class TickerClient implements ITickHandler
 		
 		if(ctr == 20 * 60)
 		{
-			if(!isInPast)
+			if(!isInPast && !TimeTraveler.vars.getIsInFuture())
 			{
 				mechanics.saveTime(mc.getIntegratedServer(), mc, copyFile);
 				mechanics.beginPastRecording(FMLClientHandler.instance().getClient().thePlayer, FMLClientHandler.instance().getClient().thePlayer.getDisplayName());

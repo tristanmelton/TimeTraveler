@@ -85,11 +85,11 @@ public class CopyFile {
 			String x = (source + "/" + files[i].getName());
 			String y = (dest + "/" + files[i].getName());
 			
+			System.out.println(x + " " + y);
+			
 			File f1 = new File(x);
 			File f2 = new File(y);
 			f2.delete();
-	
-			
 			f1.renameTo(new File(y));
 		}
 	}

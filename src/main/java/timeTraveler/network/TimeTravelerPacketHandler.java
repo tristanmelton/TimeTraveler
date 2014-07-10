@@ -1,23 +1,33 @@
 package timeTraveler.network;
 
-import java.util.List;
-import java.util.UUID;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.stats.StatList;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings;
 import net.minecraftforge.common.DimensionManager;
+import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityPlayerPast;
+import timeTraveler.gui.GuiFutureGenerating;
+import timeTraveler.gui.GuiFutureTravel;
+import timeTraveler.mechanics.CopyFile;
 import timeTraveler.mechanics.FutureTravelMechanics;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.relauncher.Side;
 
 public class TimeTravelerPacketHandler implements IPacketHandler {
 @Override
@@ -30,23 +40,80 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 		}
 		if(packet.channel.equals("futuretravel"))
 	    {
+			Minecraft mc = FMLClientHandler.instance().getClient();
+			MinecraftServer ms = Minecraft.getMinecraft().getIntegratedServer();
+			GuiFutureGenerating gfg = new GuiFutureGenerating();
+
 			DataInputStream datainputstream = new DataInputStream(new ByteArrayInputStream(packet.data));
 			try
 		    {
+				String worldName = ms.getWorldName();
+				String folderName = ms.getFolderName();
+				
 		    	FutureTravelMechanics ftm = new FutureTravelMechanics();
 		        int run = datainputstream.readInt();
 		        World world = DimensionManager.getWorld(0);
 		        System.out.println(run);
-		        if (world != null)
+		   
+		        gfg.setFutureYears(run);
+		        mc.displayGuiScreen(gfg);
+		        File present = new File(mc.mcDataDir + "/mods/TimeMod/present/" + ms.getWorldName());
+		        File worldFile = new File(mc.mcDataDir + "/saves/" + ms.getWorldName() + "/region");
+		        File future = new File(mc.mcDataDir + "/mods/TimeMod/future/" + ms.getWorldName() + "/" + run);
+		        try
 		        {
-		        	for (int i = 0; i < run; i++)
-		            {
-		        		System.out.println(run);
-		                ftm.expandOres(world);
-		                ftm.expandForests(world, 2);
-		            }
+		        	Thread.sleep(3000);
+					CopyFile.copyDirectory(worldFile, present);
+					System.out.println("COPYING PRESENT");
 		        }
-		
+		        catch(Exception ex)
+		        {
+		        	ex.printStackTrace();
+		        }
+		        if(future.exists())
+		        {
+		        	try
+		        	{
+				        System.out.println("THIS FUTURE EXISTS, MOVING THE FUTURE IN");
+				        mc.displayGuiScreen(null);
+				        	
+					    mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
+						mc.theWorld.sendQuittingDisconnectingPacket();
+						ms.stopServer();
+						// mc.loadWorld((WorldClient)null);
+
+						Thread.sleep(3000);
+
+						CopyFile.moveMultipleFiles(future, worldFile);
+						FutureTravelMechanics.launchWorld(folderName, worldName, (WorldSettings)null);
+						//ms.startServerThread();
+						//mc.launchIntegratedServer(folderName, worldName, (WorldSettings) null);
+
+		        	}
+		        	catch(Exception ex)
+		        	{
+		        		ex.printStackTrace();
+		        	}
+		        }
+		        else
+		        {
+		        	System.out.println("THIS FUTURE DOES NOT EXIST, GENERATING");
+			        future.mkdirs();
+
+		        	if (world != null)
+		        	{
+		        		for (int i = 0; i < run; i++)
+		        		{
+		        			gfg.setGenerated(i);
+		        			System.out.println(run);
+		        			ftm.expandOres(world);
+		        			ftm.expandForests(world, 2);
+		        		}
+		        	}
+		        	mc.displayGuiScreen(null);
+		        	mc.displayInGameMenu();
+		        	TimeTraveler.vars.setIsInFuture(true);
+		        }
 		    }
 		    catch (IOException ioexception)
 		    {

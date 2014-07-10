@@ -298,25 +298,23 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
             }
             if(this.paradoxItemStacks[1] == null && this.paradoxItemStacks[2] != null)
             {
-            	System.out.println(1);
             	if(this.paradoxItemStacks[2].getTagCompound() != null)
             	{
-            		System.out.println(2);
                 	int paradoxCurrent = this.paradoxItemStacks[2].getTagCompound().getInteger("paradoxLevel");
                 	System.out.println(paradoxCurrent);
                 	paradoxCurrent++;
                 	System.out.println(paradoxCurrent);
-                	int paradoxPlayerAmt = TickerClient.paradoxLevel;
-                	System.out.println(3);
-                	if(paradoxPlayerAmt >= 0)
+                	int paradoxPlayerAmt = TimeTraveler.vars.getParadoxAmt();
+                	System.out.println(TickerClient.paradoxLevel + " Before");
+                	if(paradoxPlayerAmt > 0)
                 	{
        			     	GuiScreen curScreen = Minecraft.getMinecraft().currentScreen;
                 		if(curScreen instanceof GuiExtractor)
                 		{
-                    		System.out.println(4);
-                    		TickerClient.paradoxLevel--;
-                    		this.paradoxItemStacks[2].getTagCompound().setInteger("paradoxLevel", paradoxCurrent);
-                    		System.out.println(5);
+                			paradoxPlayerAmt--;
+                			TimeTraveler.vars.setParadoxAmt(paradoxPlayerAmt);
+                			this.paradoxItemStacks[2].getTagCompound().setInteger("paradoxLevel", paradoxCurrent);
+                    		System.out.println(TickerClient.paradoxLevel + " After");
                 		}
                 	}
             	}

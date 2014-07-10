@@ -11,9 +11,12 @@ public class PastAction
 	public int armorDmg;
 	public NBTTagCompound itemData;
 	public int arrowCharge;
-
+	public int xCoord;
+	public int yCoord;
+	public int zCoord;
 	public PastAction(byte chat)
 	{
+		super();
 		this.type = chat;
 		this.itemData = new NBTTagCompound("itemdata");
 	}

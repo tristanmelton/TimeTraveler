@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
@@ -14,12 +15,36 @@ import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.ExtendedEntity;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.pasttravel.PastAction;
+import timeTraveler.pasttravel.PastActionTypes;
 import timeTraveler.pasttravel.PastMechanics;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
 public class TTEventHandler
 {
+
+	@ForgeSubscribe
+	public void onLivingPlaceBlockEvent(LivingPlaceBlockEvent event) {
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+
+		if (side == Side.SERVER) {
+			if (event.entityLiving instanceof EntityPlayerMP) {
+				EntityPlayerMP thePlayer = (EntityPlayerMP) event.entityLiving;
+				List<PastAction> aList = TimeTraveler.instance
+						.getActionListForPlayer(thePlayer);
+
+				if (aList != null) {
+					PastAction ma = new PastAction(
+							PastActionTypes.PLACEBLOCK);
+					event.theItem.writeToNBT(ma.itemData);
+					ma.xCoord = event.xCoord;
+					ma.yCoord = event.yCoord;
+					ma.zCoord = event.zCoord;
+					aList.add(ma);
+				}
+			}
+		}
+	}
 	@ForgeSubscribe
 	public void onArrowLooseEvent(ArrowLooseEvent ev) throws IOException
 	{
@@ -29,7 +54,7 @@ public class TTEventHandler
 			List<PastAction> aList = TimeTraveler.instance.getActionListForPlayer(ev.entityPlayer);
 			if (aList != null)
 			{
-				PastAction pa = new PastAction((byte)5);
+				PastAction pa = new PastAction(PastActionTypes.SHOOTARROW);
 				pa.arrowCharge = ev.charge;
 				aList.add(pa);
 			}
@@ -39,18 +64,15 @@ public class TTEventHandler
 	@ForgeSubscribe
 	public void onItemTossEvent(ItemTossEvent ev) throws IOException 
 	{
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.SERVER)
+		
+		List<PastAction> aList = TimeTraveler.instance.getActionListForPlayer(ev.player);
+		if (aList != null) 
 		{
-			List<PastAction> aList = TimeTraveler.instance.getActionListForPlayer(ev.player);
-			if (aList != null) 
-			{
-				PastAction ma = new PastAction((byte) 3);
+			PastAction ma = new PastAction(PastActionTypes.DROP);
 
-				ev.entityItem.getEntityItem().writeToNBT(ma.itemData);
+			ev.entityItem.getEntityItem().writeToNBT(ma.itemData);
 
-				aList.add(ma);
-			}
+			aList.add(ma);
 		}
 	}
 
