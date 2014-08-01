@@ -1,4 +1,4 @@
-package timeTraveler.mechanics;
+package timeTraveler.futuretravel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
+
+import timeTraveler.mechanics.ClientMethods;
 
 import cpw.mods.fml.client.FMLClientHandler;
 

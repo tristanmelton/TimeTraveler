@@ -6,13 +6,17 @@ import java.io.IOException;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
 import net.minecraft.world.WorldSettings;
 
 import org.lwjgl.input.Keyboard;
 
 import timeTraveler.core.TimeTraveler;
+import timeTraveler.futuretravel.TeleporterFuture;
 import timeTraveler.mechanics.CopyFile;
+import cpw.mods.fml.client.FMLClientHandler;
 
 /**
  * GUI for returning to the Present from the Future
@@ -59,29 +63,53 @@ public class GuiFutureReturn extends GuiScreen
             	File present = new File(mc.mcDataDir + "/mods/TimeMod/present/" + mc.getIntegratedServer().getWorldName());
             	File future = new File(mc.mcDataDir + "/mods/TimeMod/future/" + mc.getIntegratedServer().getWorldName() + "/" + TimeTraveler.vars.getFuture());
 		        File worldFile = new File(mc.mcDataDir + "/saves/" + mc.getIntegratedServer().getWorldName() + "/region");
-            	
+		        File futureDim = new File(mc.mcDataDir + "/saves/" + mc.getIntegratedServer().getWorldName() + "/DIM10/region");
+
 				String worldName = mc.getIntegratedServer().getWorldName();
 				String folderName = mc.getIntegratedServer().getFolderName();
-		     
-            	try 
-            	{
-    		        mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
-    		        mc.theWorld.sendQuittingDisconnectingPacket();
-    		        mc.loadWorld((WorldClient)null);
+				if(TimeTraveler.vars.getIsPreGenerated())
+				{
+					try
+					{
+						mc.displayGuiScreen(null);
+						EntityPlayerMP player = null;
+						MinecraftServer minecraft = FMLClientHandler.instance().getServer();
+						String allNames[] = minecraft.getAllUsernames().clone();
+						for(int i = 0; i < allNames.length; i++)
+						{
+							player = minecraft.getConfigurationManager().getPlayerForUsername(allNames[i]);
+							System.out.println(player);
+						}
+						CopyFile.moveMultipleFiles(futureDim, future);
+                        mc.getIntegratedServer().getConfigurationManager().transferPlayerToDimension(player, 0, new TeleporterFuture(mc.getIntegratedServer().worldServerForDimension(1)));
+                        TimeTraveler.vars.setIsPreGenerated(false);
+					}
+					catch(IOException ex)
+					{
+						ex.printStackTrace();
+					}
+				}
+				else
+				{
+	            	try 
+	            	{
+	    		        mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
+	    		        mc.theWorld.sendQuittingDisconnectingPacket();
+	    		        mc.loadWorld((WorldClient)null);
 
-            		Thread.sleep(3000);
-					CopyFile.moveMultipleFiles(worldFile, future);
-					Thread.sleep(2000);
-					CopyFile.moveMultipleFiles(present, worldFile);
-				} 
-            	catch (Exception e)
-            	{
-					e.printStackTrace();
-					System.out.println("Couldn't move files!");
+	            		Thread.sleep(3000);
+						CopyFile.moveMultipleFiles(worldFile, future);
+						Thread.sleep(2000);
+						CopyFile.moveMultipleFiles(present, worldFile);
+					} 
+	            	catch (Exception e)
+	            	{
+						e.printStackTrace();
+						System.out.println("Couldn't move files!");
+					}
+			        mc.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
 				}
             	TimeTraveler.vars.setIsInFuture(false);
-		        mc.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
-
             	//mc.displayGuiScreen(null);
             }
             else if (par1GuiButton.id == 1)

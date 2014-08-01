@@ -17,6 +17,7 @@ public class UnchangingVars
 	static boolean nextSet;
 	static boolean hasSpawnedPlayerPast;
 	static boolean isInFuture;
+	static boolean isPreGenerated;
 	
 	public static PathingData pathData;
 	public static PastMechanics pMechanics;
@@ -31,7 +32,7 @@ public class UnchangingVars
 		nextSet = true;
 		hasSpawnedPlayerPast = false;
 		isInFuture = false;
-		
+		isPreGenerated = false;
 		paradoxAmt = 0;
 		currentFuture = 0;
 		
@@ -86,5 +87,13 @@ public class UnchangingVars
 	public void setIsInFuture(boolean future)
 	{
 		isInFuture = future;
+	}
+	public boolean getIsPreGenerated()
+	{
+		return isPreGenerated;
+	}
+	public void setIsPreGenerated(boolean gen)
+	{
+		isPreGenerated = gen;
 	}
 }

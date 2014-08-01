@@ -13,7 +13,7 @@ import net.minecraft.util.StringTranslate;
 import org.lwjgl.input.Keyboard;
 
 import timeTraveler.core.TimeTraveler;
-import timeTraveler.mechanics.FutureTravelMechanics;
+import timeTraveler.futuretravel.FutureTravelMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 

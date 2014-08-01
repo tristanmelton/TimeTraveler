@@ -7,27 +7,24 @@ import java.io.IOException;
 import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stats.StatList;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityPlayerPast;
+import timeTraveler.futuretravel.FutureTravelMechanics;
+import timeTraveler.futuretravel.TeleporterFuture;
 import timeTraveler.gui.GuiFutureGenerating;
-import timeTraveler.gui.GuiFutureTravel;
 import timeTraveler.mechanics.CopyFile;
-import timeTraveler.mechanics.FutureTravelMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.relauncher.Side;
 
 public class TimeTravelerPacketHandler implements IPacketHandler {
 @Override
@@ -60,6 +57,9 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 		        File present = new File(mc.mcDataDir + "/mods/TimeMod/present/" + ms.getWorldName());
 		        File worldFile = new File(mc.mcDataDir + "/saves/" + ms.getWorldName() + "/region");
 		        File future = new File(mc.mcDataDir + "/mods/TimeMod/future/" + ms.getWorldName() + "/" + run);
+            	File futureDim = new File(mc.mcDataDir + "/saves/" + mc.getIntegratedServer().getWorldName() + "/DIM10/region");
+
+		        
 		        try
 		        {
 		        	Thread.sleep(3000);
@@ -74,21 +74,42 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 		        {
 		        	try
 		        	{
+		        		MinecraftServer allServers = MinecraftServer.getServer();
 				        System.out.println("THIS FUTURE EXISTS, MOVING THE FUTURE IN");
-				        mc.displayGuiScreen(null);
+				        //mc.displayGuiScreen(null);
+				       /*for (int i = 0; i < allServers.worldServers.length; ++i)
+				        {
+				            if (allServers.worldServers[i] != null)
+				            {
+				                WorldServer wServer = allServers.worldServers[i];
+				                wServer.canNotSave = true;
+								System.out.println(wServer.canNotSave);
+				            }
+				        }*/
 				        	
-					    mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
-						mc.theWorld.sendQuittingDisconnectingPacket();
-						ms.stopServer();
+					    //mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
+						//mc.theWorld.sendQuittingDisconnectingPacket();
+						//ms.stopServer();
 						// mc.loadWorld((WorldClient)null);
-
 						Thread.sleep(3000);
 
-						CopyFile.moveMultipleFiles(future, worldFile);
-						FutureTravelMechanics.launchWorld(folderName, worldName, (WorldSettings)null);
+						CopyFile.moveMultipleFiles(future, futureDim);
+			        	TimeTraveler.vars.setIsInFuture(true);
+			        	TimeTraveler.vars.setIsPreGenerated(true);
+                        ms.getConfigurationManager().transferPlayerToDimension((EntityPlayerMP)player, TimeTraveler.dimensionId, new TeleporterFuture(ms.worldServerForDimension(TimeTraveler.dimensionId)));
+
+			        	
+						/*for(int i = 0; i < allServers.worldServers.length; i++)
+						{
+							if(allServers.worldServers[i] != null)
+							{
+								WorldServer wServer = allServers.worldServers[i];
+								wServer.canNotSave = false;
+							}
+						}*/
+						//FutureTravelMechanics.launchWorld(folderName, worldName, (WorldSettings)null);
 						//ms.startServerThread();
 						//mc.launchIntegratedServer(folderName, worldName, (WorldSettings) null);
-
 		        	}
 		        	catch(Exception ex)
 		        	{

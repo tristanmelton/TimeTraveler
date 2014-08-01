@@ -91,6 +91,7 @@ public class CopyFile {
 			File f2 = new File(y);
 			f2.delete();
 			f1.renameTo(new File(y));
+			System.out.println(f1 + " " + f2 + "SECOND PRINTLN " + f2.exists());
 		}
 	}
 }

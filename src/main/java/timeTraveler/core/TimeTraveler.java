@@ -22,6 +22,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import timeTraveler.blocks.BlockParadoxCondenser;
 import timeTraveler.blocks.BlockTime;
@@ -31,6 +32,8 @@ import timeTraveler.blocks.ParadoxExtractor;
 import timeTraveler.entities.EntityChair;
 import timeTraveler.entities.EntityParadoxHunter;
 import timeTraveler.entities.EntityPlayerPast;
+import timeTraveler.futuretravel.FutureTravelMechanics;
+import timeTraveler.futuretravel.WorldProviderFuture;
 import timeTraveler.gui.GuiHandler;
 import timeTraveler.items.BottledParadox;
 import timeTraveler.items.CondensedParadox;
@@ -38,7 +41,6 @@ import timeTraveler.items.EmptyBottle;
 import timeTraveler.items.ItemExpEnhance;
 import timeTraveler.items.ItemFlashback;
 import timeTraveler.items.ItemParadoximer;
-import timeTraveler.mechanics.FutureTravelMechanics;
 import timeTraveler.mechanics.TTEventHandler;
 import timeTraveler.network.TimeTravelerPacketHandler;
 import timeTraveler.pasttravel.PastAction;
@@ -52,7 +54,6 @@ import timeTraveler.tileentity.TileEntityExtractor;
 import timeTraveler.tileentity.TileEntityParadoxCondenser;
 import timeTraveler.tileentity.TileEntityTimeTravel;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -105,7 +106,8 @@ public class TimeTraveler
 	private GuiHandler guihandler;
 
 	static int startEntityId = 300;
-
+	public static int dimensionId = 10;
+	
 	public static UnchangingVars vars = new UnchangingVars();
 	
 	
@@ -188,6 +190,9 @@ public class TimeTraveler
 		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
 		EntityRegistry.registerGlobalEntityID(EntityPlayerPast.class, "PlayerPast", EntityRegistry.findGlobalUniqueEntityId(), 0x191919, 0x000000);//registers the mobs name and id
 		EntityRegistry.registerGlobalEntityID(EntityChair.class, "Chiar", EntityRegistry.findGlobalUniqueEntityId());
+		
+		DimensionManager.registerProviderType(TimeTraveler.dimensionId, WorldProviderFuture.class, false); 
+		DimensionManager.registerDimension(TimeTraveler.dimensionId, TimeTraveler.dimensionId); 
 		
 		MinecraftForge.EVENT_BUS.register(new TTEventHandler());
 		
