@@ -41,7 +41,6 @@ public class RenderPastPlayer extends RenderBiped
     public RenderPastPlayer(ModelBiped par1ModelBase, float par2)
     {
         super(par1ModelBase, par2);
-        // TODO Auto-generated constructor stub
     }
 
     //private static final ResourceLocation Your_Texture = new ResourceLocation("mocap","test.png");  //refers to:assets/yourmod/models/optionalfile/yourtexture.png

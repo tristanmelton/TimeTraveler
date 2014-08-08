@@ -315,6 +315,7 @@ public class TimeTraveler
 	public void registerEntities()
 	{
 		EntityRegistry.registerModEntity(EntityParadoxHunter.class, "ParadoxHunter", 1, this, 80, 1, true);
+		EntityRegistry.registerModEntity(EntityPlayerPast.class, "PastPlayer", 2, this, 80, 1, true);
 		EntityRegistry.addSpawn(EntityParadoxHunter.class, 10, 2, 4, EnumCreatureType.creature, BiomeGenBase.beach, BiomeGenBase.extremeHills, BiomeGenBase.extremeHillsEdge, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.jungle, BiomeGenBase.jungleHills, BiomeGenBase.mushroomIsland, BiomeGenBase.mushroomIslandShore, BiomeGenBase.ocean, BiomeGenBase.plains, BiomeGenBase.river, BiomeGenBase.swampland);
 		LanguageRegistry.instance().addStringLocalization("entity.Charsmud_TimeTraveler.ParadoxHunter.name", "Paradox Hunter");
 

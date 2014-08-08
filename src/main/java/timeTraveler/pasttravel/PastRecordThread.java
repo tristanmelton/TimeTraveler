@@ -100,7 +100,7 @@ class PastRecordThread implements Runnable
 		in.writeFloat(player.rotationYaw);
 		in.writeFloat(player.rotationPitch);
 		in.writeDouble(player.posX);
-		in.writeDouble(player.posY);
+		in.writeDouble(player.posY - 1.5);
 		in.writeDouble(player.posZ);
 		in.writeDouble(player.motionX);
 		in.writeDouble(player.motionY);
@@ -110,7 +110,8 @@ class PastRecordThread implements Runnable
 		in.writeBoolean(player.isSneaking());
 		in.writeBoolean(player.isSprinting());
 		in.writeBoolean(player.onGround);
-		in.writeBoolean((player.getDataWatcher().getWatchableObjectByte(0) & 1 << 4) != 0);	}
+		in.writeBoolean((player.getDataWatcher().getWatchableObjectByte(0) & 1 << 4) != 0);
+	}
 
 	private void trackArmor()
 	{
@@ -236,6 +237,12 @@ class PastRecordThread implements Runnable
 				System.out.println("Stopped recording " + this.player.getDisplayName() + ".  Bye!");
 				this.capture = Boolean.valueOf(false);
 				break;
+			}
+			case PastActionTypes.BREAKBLOCK:
+			{
+				in.writeInt(ma.xCoord);
+				in.writeInt(ma.yCoord);
+				in.writeInt(ma.zCoord);
 			}
 			}
 			this.eventList.remove(0);

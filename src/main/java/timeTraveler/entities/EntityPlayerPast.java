@@ -17,10 +17,12 @@ import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.pasttravel.PastAction;
 import timeTraveler.pasttravel.PastActionTypes;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.server.FMLServerHandler;
 
 public class EntityPlayerPast extends EntityLiving
 {
@@ -149,10 +151,18 @@ public class EntityPlayerPast extends EntityLiving
 
     			break;
     		}
+    		case PastActionTypes.BREAKBLOCK:
+    		{
+		        World world = DimensionManager.getWorld(0);
+    			world.setBlockToAir(ma.xCoord, ma.yCoord, ma.zCoord);
+    			break;
+    		}
         }
     }
 
-    public void onLivingUpdate() {
+    public void onLivingUpdate()
+    {
+    	super.onLivingUpdate();
 		if (eventsList.size() > 0) {
 			PastAction ma = eventsList.remove(0);
 			processActions(ma);
@@ -242,20 +252,19 @@ public class EntityPlayerPast extends EntityLiving
 
     public boolean isPlayerSeen(Entity par1Entity)
     {
-    	Vec3 playerLook = FMLClientHandler.instance().getClient().thePlayer.getLook(0);
     	Vec3 pastLook = this.getLook(0);
     	
     	Vec3 playerPos = FMLClientHandler.instance().getClient().thePlayer.getPosition(0);
     	Vec3 pastPos = this.getPosition(0);
     	
-    	Vec3 displacement = Vec3.createVectorHelper(playerPos.xCoord = pastPos.xCoord, playerPos.yCoord - pastPos.yCoord, playerPos.zCoord - pastPos.zCoord);
-    	displacement.addVector(playerPos.xCoord - pastPos.xCoord, playerPos.yCoord - pastPos.yCoord, playerPos.zCoord - pastPos.zCoord);
+    	Vec3 displacement = Vec3.createVectorHelper(playerPos.xCoord - pastPos.xCoord, playerPos.yCoord - pastPos.yCoord, playerPos.zCoord - pastPos.zCoord);
+    	//displacement.addVector(playerPos.xCoord - pastPos.xCoord, playerPos.yCoord - pastPos.yCoord, playerPos.zCoord - pastPos.zCoord);
     	double dP = displacement.normalize().dotProduct(pastLook.normalize());
     	if(dP < 0)
     	{
     		return false;
     	}
-    	if(dP > 0)
+    	if(dP >= Math.cos((120/2)))
     	{    		
     		if(this.canEntityBeSeen(FMLClientHandler.instance().getClient().thePlayer))
     		{
@@ -267,16 +276,16 @@ public class EntityPlayerPast extends EntityLiving
     	return false;
     }
     
-  /*  public void onEntityUpdate()
-    {
+ public void onEntityUpdate()
+   {
         super.onEntityUpdate();
         if(isPlayerSeen(FMLClientHandler.instance().getClient().thePlayer))
         {
         	System.out.println("PLAYER SPOTTED!");
 			int paradox = TimeTraveler.vars.getParadoxAmt();
-			paradox = paradox + 3;
+			paradox = paradox + 2;
 			TimeTraveler.vars.setParadoxAmt(paradox);
 
         }
-    }*/
+    }
 }

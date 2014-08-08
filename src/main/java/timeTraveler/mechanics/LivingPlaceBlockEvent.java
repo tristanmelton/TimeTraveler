@@ -10,7 +10,7 @@ public class LivingPlaceBlockEvent extends LivingEvent
     public int xCoord;
     public int yCoord;
     public int zCoord;
-
+    
     public LivingPlaceBlockEvent(EntityLivingBase entity, ItemStack theItem, int x, int y, int z)
     {
         super(entity);
@@ -18,6 +18,7 @@ public class LivingPlaceBlockEvent extends LivingEvent
         this.xCoord = x;
         this.yCoord = y;
         this.zCoord = z;
+
         System.out.println("**TIMETRAVELER - LivingPlaceBlockEvent works!");
     }
 }

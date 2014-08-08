@@ -9,4 +9,5 @@ public class PastActionTypes
 	public final static byte SHOOTARROW = 5;
 	public final static byte LOGOUT = 6;
 	public final static byte PLACEBLOCK = 7;
+	public final static byte BREAKBLOCK = 8;
 }

@@ -149,10 +149,20 @@ class PastPlayThread implements Runnable
 						ma.xCoord = in.readInt();
 						ma.yCoord = in.readInt();
 						ma.zCoord = in.readInt();
+						System.out.println(ma.itemData);
+						System.out.println(in);
 						ma.itemData = CompressedStreamTools.read(in);
 						replayEntity.eventsList.add(ma);
 						break;
 					}
+					case PastActionTypes.BREAKBLOCK:
+					{
+						PastAction ma = new PastAction(PastActionTypes.BREAKBLOCK);
+						ma.xCoord = in.readInt();
+						ma.yCoord = in.readInt();
+						ma.zCoord = in.readInt();
+						replayEntity.eventsList.add(ma);
+					}	
 					}
 				}
 				Thread.sleep(100L);

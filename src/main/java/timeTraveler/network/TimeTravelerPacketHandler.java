@@ -43,10 +43,7 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 
 			DataInputStream datainputstream = new DataInputStream(new ByteArrayInputStream(packet.data));
 			try
-		    {
-				String worldName = ms.getWorldName();
-				String folderName = ms.getFolderName();
-				
+		    {				
 		    	FutureTravelMechanics ftm = new FutureTravelMechanics();
 		        int run = datainputstream.readInt();
 		        World world = DimensionManager.getWorld(0);
@@ -74,42 +71,14 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 		        {
 		        	try
 		        	{
-		        		MinecraftServer allServers = MinecraftServer.getServer();
 				        System.out.println("THIS FUTURE EXISTS, MOVING THE FUTURE IN");
-				        //mc.displayGuiScreen(null);
-				       /*for (int i = 0; i < allServers.worldServers.length; ++i)
-				        {
-				            if (allServers.worldServers[i] != null)
-				            {
-				                WorldServer wServer = allServers.worldServers[i];
-				                wServer.canNotSave = true;
-								System.out.println(wServer.canNotSave);
-				            }
-				        }*/
-				        	
-					    //mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
-						//mc.theWorld.sendQuittingDisconnectingPacket();
-						//ms.stopServer();
-						// mc.loadWorld((WorldClient)null);
+				       
 						Thread.sleep(3000);
 
 						CopyFile.moveMultipleFiles(future, futureDim);
 			        	TimeTraveler.vars.setIsInFuture(true);
 			        	TimeTraveler.vars.setIsPreGenerated(true);
                         ms.getConfigurationManager().transferPlayerToDimension((EntityPlayerMP)player, TimeTraveler.dimensionId, new TeleporterFuture(ms.worldServerForDimension(TimeTraveler.dimensionId)));
-
-			        	
-						/*for(int i = 0; i < allServers.worldServers.length; i++)
-						{
-							if(allServers.worldServers[i] != null)
-							{
-								WorldServer wServer = allServers.worldServers[i];
-								wServer.canNotSave = false;
-							}
-						}*/
-						//FutureTravelMechanics.launchWorld(folderName, worldName, (WorldSettings)null);
-						//ms.startServerThread();
-						//mc.launchIntegratedServer(folderName, worldName, (WorldSettings) null);
 		        	}
 		        	catch(Exception ex)
 		        	{
@@ -145,7 +114,6 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 		if(packet.channel.equals("entityspawn"))
 		{
 			World world = DimensionManager.getWorld(0);
-			//FMLClientHandler.instance().getClient().theWorld.getGameRules().setOrCreateGameRule("doMobSpawning", "false");
 
 			DataInputStream datainputstream = new DataInputStream(new ByteArrayInputStream(packet.data));
 			
@@ -161,7 +129,6 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 				
 				if(pastEntity != null)
 				{
-					//PathEntity path = ((EntityLiving)pastEntity).getNavigator().getPath();
 					
 					pastEntity.posX = (double)entityX;
 					pastEntity.posY = (double)entityY;
@@ -181,13 +148,6 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 					System.out.println(pastPlayer);
 					world.spawnEntityInWorld(pastPlayer);
 				}
-				//System.out.println(entityName + " " + entityX + " " + entityY + " " + entityZ);
-				
-		        //path = ((EntityLiving)pastEntity).getNavigator().getPathToXYZ((double)entityX, (double)entityY, (double)entityZ);
-		            		
-		        //((EntityLiving)pastEntity).getNavigator().setPath(path, 1.0F);
-		        //((EntityLiving)pastEntity).getNavigator().tryMoveToXYZ((double)entityX, (double)entityY, (double)entityZ, 0.5F);
-
 			}			
 			catch(Exception ex)
 			{
@@ -198,7 +158,6 @@ public class TimeTravelerPacketHandler implements IPacketHandler {
 		if(packet.channel.equals("entitypathupdate"))
 		{
 			World world = DimensionManager.getWorld(0);
-			//FMLClientHandler.instance().getClient().theWorld.getGameRules().setOrCreateGameRule("doMobSpawning", "false");
 
 			DataInputStream datainputstream = new DataInputStream(new ByteArrayInputStream(packet.data));
 			

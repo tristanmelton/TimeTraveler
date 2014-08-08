@@ -1,5 +1,6 @@
 package timeTraveler.pasttravel;
 
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class PastAction 
@@ -14,6 +15,8 @@ public class PastAction
 	public int xCoord;
 	public int yCoord;
 	public int zCoord;
+	public Block blockType;
+	public int blockMeta;
 	public PastAction(byte chat)
 	{
 		super();

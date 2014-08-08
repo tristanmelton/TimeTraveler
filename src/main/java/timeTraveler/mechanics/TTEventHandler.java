@@ -11,36 +11,69 @@ import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.ExtendedEntity;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.pasttravel.PastAction;
 import timeTraveler.pasttravel.PastActionTypes;
 import timeTraveler.pasttravel.PastMechanics;
+import timeTraveler.ticker.TickerClient;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
 public class TTEventHandler
 {
+	@ForgeSubscribe
+	public void onBlockBreakEvent(BreakEvent event)
+	{
+		if(!GuiTimeTravel.isInPast)
+		{
+			List<PastAction> aList = TimeTraveler.instance.getActionListForPlayer(event.getPlayer());
 
+			if (aList != null)
+			{
+				PastAction ma = new PastAction(PastActionTypes.BREAKBLOCK);
+				ma.xCoord = event.x;
+				ma.yCoord = event.y;
+				ma.zCoord = event.z;
+				aList.add(ma);
+				System.out.println("BREAKING BLOCK");
+			}
+		}
+		else
+		{
+			if(ParadoxBlockLevels.paradoxAmountsForBlocks().getParadoxBlockLevelList().containsKey(event.block))
+			{
+				System.out.println(event.block);
+				int paradox = TimeTraveler.vars.getParadoxAmt() + (Integer)(ParadoxBlockLevels.paradoxAmountsForBlocks().getParadoxBlockLevelList().get(event.block));
+				System.out.println(paradox);
+				TimeTraveler.vars.setParadoxAmt(paradox);
+			}
+		}
+		
+	}
 	@ForgeSubscribe
 	public void onLivingPlaceBlockEvent(LivingPlaceBlockEvent event) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 
-		if (side == Side.SERVER) {
-			if (event.entityLiving instanceof EntityPlayerMP) {
-				EntityPlayerMP thePlayer = (EntityPlayerMP) event.entityLiving;
-				List<PastAction> aList = TimeTraveler.instance
-						.getActionListForPlayer(thePlayer);
+		if(!GuiTimeTravel.isInPast)
+		{
+			if (side == Side.SERVER) {
+				if (event.entityLiving instanceof EntityPlayerMP) {
+					EntityPlayerMP thePlayer = (EntityPlayerMP) event.entityLiving;
+					List<PastAction> aList = TimeTraveler.instance
+							.getActionListForPlayer(thePlayer);
 
-				if (aList != null) {
-					PastAction ma = new PastAction(
-							PastActionTypes.PLACEBLOCK);
-					event.theItem.writeToNBT(ma.itemData);
-					ma.xCoord = event.xCoord;
-					ma.yCoord = event.yCoord;
-					ma.zCoord = event.zCoord;
-					aList.add(ma);
+					if (aList != null) {
+						PastAction ma = new PastAction(
+								PastActionTypes.PLACEBLOCK);
+						event.theItem.writeToNBT(ma.itemData);
+						ma.xCoord = event.xCoord;
+						ma.yCoord = event.yCoord;
+						ma.zCoord = event.zCoord;
+						aList.add(ma);
+					}
 				}
 			}
 		}
