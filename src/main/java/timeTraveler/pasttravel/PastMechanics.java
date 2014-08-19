@@ -253,6 +253,7 @@ public class PastMechanics
 				    TickerClient.minutes = 1;
 				    TickerClient.seconds = 10;
 				    minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
+				    
 			        //minecraft.loadWorld(worldClient);
 	            }
 		    }  

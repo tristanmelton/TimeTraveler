@@ -102,7 +102,6 @@ public class TimeTraveler
 	public static final String modid = "charsmud_timetraveler";
 	
 	FutureTravelMechanics ftm;
-	
 	private GuiHandler guihandler;
 
 	static int startEntityId = 300;
@@ -175,8 +174,9 @@ public class TimeTraveler
 		registerEntities();
 		addRecipes();
 		
-		proxy.initCapes();
-		
+		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
+
+		guihandler = new GuiHandler();
 		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");
 		GameRegistry.registerTileEntity(TileEntityExtractor.class, "extractor");
 		GameRegistry.registerTileEntity(TileEntityParadoxCondenser.class, "condenser");
@@ -195,7 +195,7 @@ public class TimeTraveler
 		DimensionManager.registerDimension(TimeTraveler.dimensionId, TimeTraveler.dimensionId); 
 		
 		MinecraftForge.EVENT_BUS.register(new TTEventHandler());
-		
+		proxy.initCapes();
 
 		proxy.registerRenderThings();
 
@@ -228,8 +228,8 @@ public class TimeTraveler
 		bottledParadox = new BottledParadox(2331).setUnlocalizedName("BottledParadox");
 		condensedParadox = new CondensedParadox(2332).setUnlocalizedName("CondensedParadox");
 		emptyBottle = new EmptyBottle(2333).setUnlocalizedName("emptyBottle");
-		expEnhance = new ItemExpEnhance(2334).setUnlocalizedName("ExpEnhancer");
-		flashback = new ItemFlashback(2335).setUnlocalizedName("Flashback");
+		//expEnhance = new ItemExpEnhance(2334).setUnlocalizedName("ExpEnhancer");
+		//flashback = new ItemFlashback(2335).setUnlocalizedName("Flashback");
 		
 		travelTime = new BlockTimeTraveler(255).setUnlocalizedName("BlockTimeTraveler");
 		paradoxCondenser = new BlockParadoxCondenser(254, true).setUnlocalizedName("BlockParadoxCondenser");
@@ -238,7 +238,6 @@ public class TimeTraveler
 		timeTravel = new BlockTime(250, true).setUnlocalizedName("TimeTravel");
 
 		ftm = new FutureTravelMechanics();		
-		guihandler = new GuiHandler();
 	}
 	/**
 	 * Registers Blocks
@@ -264,8 +263,8 @@ public class TimeTraveler
 		LanguageRegistry.addName(paradoxExtractor, "Paradox Extractor");
 		LanguageRegistry.addName(emptyBottle, "Empty Bottle");
 		LanguageRegistry.addName(timeTravel, "Time Machine");
-		LanguageRegistry.addName(expEnhance, "XP Enhancer");
-		LanguageRegistry.addName(flashback, "Flashback");
+		//LanguageRegistry.addName(expEnhance, "XP Enhancer");
+		//LanguageRegistry.addName(flashback, "Flashback");
 	}
 	/**
 	 * Adds Recipes
@@ -276,15 +275,26 @@ public class TimeTraveler
 				{
 			" o ", "x x", " x ", Character.valueOf('x'), Block.glass, Character.valueOf('o'), Item.clay
 				});
-		GameRegistry.addRecipe(new ItemStack(expEnhance, 1), new Object[]
+		GameRegistry.addRecipe(new ItemStack(paradoxCondenser, 1), new Object[]
+				{
+			"ooo", "iui", "ooo", Character.valueOf('o'), Block.blockDiamond, Character.valueOf('i'), travelTime, Character.valueOf('u'), Item.appleGold
+				});
+		GameRegistry.addRecipe(new ItemStack(paradoxExtractor, 1), new Object[]
+				{
+			"ooo", "iui", "ooo", Character.valueOf('o'), Block.blockIron, Character.valueOf('i'), travelTime, Character.valueOf('u'), emptyBottle
+				});
+		/*GameRegistry.addRecipe(new ItemStack(expEnhance, 1), new Object[]
 				{
 			"xox", "oxo", "xox", Character.valueOf('x'), TimeTraveler.expEnhance, Character.valueOf('o'), Item.expBottle
 				});
 		GameRegistry.addRecipe(new ItemStack(flashback, 1), new Object[]
 				{
 			"xox", "yxy", "xox", Character.valueOf('x'), TimeTraveler.expEnhance, Character.valueOf('o'), Item.compass, Character.valueOf('y'), Item.pocketSundial
+				});*/
+		GameRegistry.addRecipe(new ItemStack(timeTravel, 1), new Object[]
+				{
+			"ooo", "ooo", "ooo", Character.valueOf('o'), TimeTraveler.travelTime
 				});
-		
 	}
 	/**
 	 * Adds Smelting Recipes

@@ -32,3 +32,5 @@ ForgeModLoader-client-0.log.1
 saves/Worldofworldiness/session.lock
 screenshots/2014-02-24_18.32.12.png
 stats/stats_charsmud_unsent.old
+*.lock
+*.png

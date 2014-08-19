@@ -278,11 +278,6 @@ public class TickerClient implements ITickHandler
 						invisPotTime = 0;
 					}
 				}
-				if(eps.isEating()) 
-				{
-					paradoxLevel++;
-					eps.experienceTotal = eps.experienceTotal + 2;
-				}
 				if(eps.isSneaking())
 				{
 					sneakTime++;
