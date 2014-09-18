@@ -1,8 +1,10 @@
 package timeTraveler.core;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import static org.objectweb.asm.Opcodes.*;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.objectweb.asm.ClassReader;
@@ -17,9 +19,18 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class TimeTravelerClassTransformer implements IClassTransformer
+import cpw.mods.fml.common.asm.transformers.AccessTransformer;
+
+public class TimeTravelerClassTransformer extends AccessTransformer implements IClassTransformer 
 {
-    @Override
+    public TimeTravelerClassTransformer() throws IOException
+    {
+		super("TimeTraveler_at.cfg");  
+		System.out.println("** TIMETRAVELER - Changing Access Levels!");
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
     public byte[] transform(String arg0, String arg1, byte[] arg2)
     {
         if (arg0.equals("aqz"))
@@ -32,6 +43,7 @@ public class TimeTravelerClassTransformer implements IClassTransformer
 			System.out.println("** TIMETRAVELER TRANS : " + arg0);
         return patchClassASM(arg0, arg2);
         }
+
         return arg2;
     }
 
@@ -82,6 +94,7 @@ public class TimeTravelerClassTransformer implements IClassTransformer
                     }
                 }
             }*/
+         
             if(m.name.equals("onBlockPlacedBy"))
            // if (m.name.equals("a") && m.desc.equals("(Labw;IIILof;Lye;)V"))
             {

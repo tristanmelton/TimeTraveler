@@ -49,8 +49,8 @@ public class TickerClient implements ITickHandler
 	public static int paradoxLevel;
 	
 	
-	public static int seconds = 10;
-	public static int minutes = 1;
+	public static int seconds = 1;
+	public static int minutes = 5;
 	
 	public int invisPotTime = 0;
 	public int sneakTime = 0;
@@ -136,7 +136,7 @@ public class TickerClient implements ITickHandler
 			}
 		}
 		
-		if(ctr == 20 * 60)
+		if(ctr == 5140)
 		{
 			if(!isInPast && !TimeTraveler.vars.getIsInFuture())
 			{

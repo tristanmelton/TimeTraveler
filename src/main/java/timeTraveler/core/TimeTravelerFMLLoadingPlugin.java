@@ -20,7 +20,6 @@ public class TimeTravelerFMLLoadingPlugin implements IFMLLoadingPlugin
         // TODO Auto-generated method stub
         return new String[] {TimeTravelerClassTransformer.class.getName()};
     }
-
     @Override
     public String getModContainerClass()
     {
