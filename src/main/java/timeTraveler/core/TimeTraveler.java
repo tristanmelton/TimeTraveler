@@ -29,11 +29,14 @@ import net.minecraft.potion.PotionHelper;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import timeTraveler.blocks.BlockMarker;
 import timeTraveler.blocks.BlockParadoxCondenser;
 import timeTraveler.blocks.BlockTime;
+import timeTraveler.blocks.BlockTimeField;
 import timeTraveler.blocks.BlockTimeTraveler;
 import timeTraveler.blocks.Collision;
 import timeTraveler.blocks.ParadoxExtractor;
+import timeTraveler.blocks.TimeDistorter;
 import timeTraveler.entities.EntityChair;
 import timeTraveler.entities.EntityParadoxHunter;
 import timeTraveler.entities.EntityPlayerPast;
@@ -57,7 +60,9 @@ import timeTraveler.structures.StructureGenerator;
 import timeTraveler.ticker.TickerClient;
 import timeTraveler.tileentity.TileEntityCollision;
 import timeTraveler.tileentity.TileEntityExtractor;
+import timeTraveler.tileentity.TileEntityMarker;
 import timeTraveler.tileentity.TileEntityParadoxCondenser;
+import timeTraveler.tileentity.TileEntityTimeDistorter;
 import timeTraveler.tileentity.TileEntityTimeTravel;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -98,6 +103,9 @@ public class TimeTraveler
 	public static Block paradoxExtractor;
 	public static Block collisionBlock;
 	public static Block timeTravel;
+	public static Block marker;
+	public static Block timeDistorter;
+	public static Block timeField;
 	
 	public static Item paradoximer;
 	public static Item bottledParadox;
@@ -192,6 +200,8 @@ public class TimeTraveler
 		GameRegistry.registerTileEntity(TileEntityExtractor.class, "extractor");
 		GameRegistry.registerTileEntity(TileEntityParadoxCondenser.class, "condenser");
 		GameRegistry.registerTileEntity(TileEntityTimeTravel.class, "timetravel");
+		GameRegistry.registerTileEntity(TileEntityMarker.class, "marker");
+		GameRegistry.registerTileEntity(TileEntityTimeDistorter.class, "timeDistorter");
 		
 	    GameRegistry.registerPlayerTracker(new TimeTravelerPlayerTracker());
 
@@ -248,12 +258,14 @@ public class TimeTraveler
 		slowLeggings = new SlowArmor(2337, EnumArmorMaterial.IRON, 4, 2).setUnlocalizedName("slowLeggings");
 		slowBoots = new SlowArmor(2338, EnumArmorMaterial.IRON, 4, 3).setUnlocalizedName("slowBoots");
 		
+		timeDistorter = new TimeDistorter(251).setUnlocalizedName("BlockTimeDistorter");
+		marker = new BlockMarker(500).setUnlocalizedName("BlockMarker");
 		travelTime = new BlockTimeTraveler(255).setUnlocalizedName("BlockTimeTraveler");
 		paradoxCondenser = new BlockParadoxCondenser(254, true).setUnlocalizedName("BlockParadoxCondenser");
 		paradoxExtractor = new ParadoxExtractor(253, true).setUnlocalizedName("ParadoxExtractor");
 		collisionBlock = new Collision(252, Material.air).setUnlocalizedName("collisionBlock");
 		timeTravel = new BlockTime(250, true).setUnlocalizedName("TimeTravel");
-		
+		timeField = new BlockTimeField(501).setUnlocalizedName("timeField");
 		ftm = new FutureTravelMechanics();		
 	}
 	/**
@@ -266,6 +278,9 @@ public class TimeTraveler
 		GameRegistry.registerBlock(paradoxExtractor, "paradoxExtractor");
 		GameRegistry.registerBlock(collisionBlock, "collisionBlock");
 		GameRegistry.registerBlock(timeTravel, "timeTravel");
+		GameRegistry.registerBlock(marker, "marker");
+		GameRegistry.registerBlock(timeDistorter, "timeDistorter");
+		GameRegistry.registerBlock(timeField, "timeField");
 	}
 	/**
 	 * Adds Names
@@ -281,6 +296,9 @@ public class TimeTraveler
 		LanguageRegistry.addName(emptyBottle, "Empty Bottle");
 		LanguageRegistry.addName(timeTravel, "Time Machine");
 		LanguageRegistry.addName(expEnhance, "XP Enhancer");
+		LanguageRegistry.addName(marker, "Marker");
+		LanguageRegistry.addName(timeDistorter, "Time Distorter");
+		LanguageRegistry.addName(timeField, "Time Field");
 		//LanguageRegistry.addName(flashback, "Flashback");
 	}
 	/**
@@ -311,6 +329,14 @@ public class TimeTraveler
 		GameRegistry.addRecipe(new ItemStack(timeTravel, 1), new Object[]
 				{
 			"ooo", "ooo", "ooo", Character.valueOf('o'), TimeTraveler.travelTime
+				});
+		GameRegistry.addRecipe(new ItemStack(marker, 2), new Object[]
+				{
+			" o ", "ioi", " o ", Character.valueOf('o'), TimeTraveler.condensedParadox, Character.valueOf('i'), Block.glass
+				});
+		GameRegistry.addRecipe(new ItemStack(timeDistorter, 1), new Object[]
+				{
+			"ipi", "pnp", "ipi", Character.valueOf('i'), Block.blockIron, Character.valueOf('p'), TimeTraveler.condensedParadox, Character.valueOf('n'), Item.netherStar
 				});
 	}
 	/**

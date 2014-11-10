@@ -36,11 +36,11 @@ public class SlowArmor extends ItemArmor
 	{
 		if (stack.itemID == TimeTraveler.slowChestplate.itemID || stack.itemID == TimeTraveler.slowBoots.itemID || stack.itemID == TimeTraveler.slowHelmet.itemID)
 		{ 
-			return TimeTraveler.modid + ":" + "/armor/condensed.png";
+			return TimeTraveler.modid + ":" + "textures/armor/condensed.png";
 		} 
 		if (stack.itemID == TimeTraveler.slowLeggings.itemID) 
 		{ 
-			return TimeTraveler.modid +":" + "/armor/legs.png";
+			return TimeTraveler.modid +":" + "textures/armor/legs.png";
 		}
 		return null; 
 	}
@@ -111,30 +111,12 @@ public class SlowArmor extends ItemArmor
 						}
 						else
 						{
-							
-							/*double velx = (e.posX - e.prevPosX);
-							double vely = (e.posY - e.prevPosY);
-							double velz = (e.posZ - e.prevPosZ);
-
-							if(velx != e.getEntityData().getDouble("slowX") || vely != e.getEntityData().getDouble("slowY") || velz != e.getEntityData().getDouble("slowZ"))
-							{
-								e.getEntityData().setBoolean("inSlowZone", false);
-							}
-							if(!e.getEntityData().getBoolean("inSlowZone") )
-							{ 	
-								double factor = 0.7D;
-								
-								e.setVelocity(velx * factor, vely * factor, velz * factor);
-								e.getEntityData().setBoolean("inSlowZone", true);
-								e.getEntityData().setDouble("slowX", velx * factor);
-								e.getEntityData().setDouble("slowY", vely * factor);
-								e.getEntityData().setDouble("slowZ", velz * factor);
-							}*/
+							e.motionX *=0.5D;
+							e.motionY *=0.5D;
+							e.motionZ *= 0.5D;
 						}
 					}
 				}
-				
-				System.out.println(":D :D LEL");
 			}
 		}
 	}
