@@ -2,7 +2,7 @@ package timeTraveler.items;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,13 +21,15 @@ public class BottledParadox extends Item
 	private int containedParadox = 0;
 	NBTTagCompound tag;
 
-	public BottledParadox (int id)
+	public BottledParadox ()
 	{
-		super(id);
-		this.setCreativeTab(CreativeTabs.tabMisc);
+		super();
+		setUnlocalizedName("BottledParadox");
+		this.setCreativeTab(TimeTraveler.tabTT);
 		
 	}
-    public void registerIcons(IconRegister par1IconRegister)
+	@Override
+    public void registerIcons(IIconRegister par1IconRegister)
     {
      this.itemIcon = par1IconRegister.registerIcon(TimeTraveler.modid + ":" + this.getUnlocalizedName());
     }
@@ -43,7 +45,6 @@ public class BottledParadox extends Item
     		l.add("Amount of Paradox Stored: 0");
     	}
     }
-
     public int getContainedParadox()
     {
     	return containedParadox;

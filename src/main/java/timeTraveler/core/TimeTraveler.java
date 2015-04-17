@@ -1,8 +1,6 @@
 package timeTraveler.core;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,25 +12,30 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerSelector;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionHelper;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import timeTraveler.blocks.BlockMarker;
 import timeTraveler.blocks.BlockParadoxCondenser;
 import timeTraveler.blocks.BlockTime;
 import timeTraveler.blocks.BlockTimeField;
+import timeTraveler.blocks.BlockTimeFluid;
 import timeTraveler.blocks.BlockTimeTraveler;
 import timeTraveler.blocks.Collision;
 import timeTraveler.blocks.ParadoxExtractor;
@@ -50,14 +53,15 @@ import timeTraveler.items.EmptyBottle;
 import timeTraveler.items.ItemExpEnhance;
 import timeTraveler.items.ItemParadoximer;
 import timeTraveler.items.SlowArmor;
+import timeTraveler.items.TimeFluidBucket;
 import timeTraveler.mechanics.TTEventHandler;
+import timeTraveler.network.Message;
 import timeTraveler.network.TimeTravelerPacketHandler;
 import timeTraveler.pasttravel.PastAction;
 import timeTraveler.pasttravel.TimeTravelerPastRecorder;
-import timeTraveler.pasttravel.TimeTravelerPlayerTracker;
 import timeTraveler.proxies.CommonProxy;
 import timeTraveler.structures.StructureGenerator;
-import timeTraveler.ticker.TickerClient;
+import timeTraveler.ticker.Ticker;
 import timeTraveler.tileentity.TileEntityCollision;
 import timeTraveler.tileentity.TileEntityExtractor;
 import timeTraveler.tileentity.TileEntityMarker;
@@ -72,18 +76,15 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 
 @Mod(modid = TimeTraveler.modid, name = "Time Traveler", version = "0.1")
-@NetworkMod(clientSideRequired = true, serverSideRequired = false, serverPacketHandlerSpec = @SidedPacketHandler (channels = {"futuretravel", "paradoxgui", "entityspawn"}, packetHandler = TimeTravelerPacketHandler.class))
 
 /**
  * Main launcher for TimeTraveler
@@ -98,6 +99,8 @@ public class TimeTraveler
 	@Instance
 	public static TimeTraveler instance = new TimeTraveler();
 	
+	public static SimpleNetworkWrapper snw;
+
 	public static Block travelTime;
 	public static Block paradoxCondenser;
 	public static Block paradoxExtractor;
@@ -106,6 +109,7 @@ public class TimeTraveler
 	public static Block marker;
 	public static Block timeDistorter;
 	public static Block timeField;
+	public static Block timeLiquid;
 	
 	public static Item paradoximer;
 	public static Item bottledParadox;
@@ -113,11 +117,14 @@ public class TimeTraveler
 	public static Item emptyBottle;
 	public static Item expEnhance;
 	public static Item flashback;
+	public static Item bucket;
 	
 	public static Item slowHelmet;
 	public static Item slowChestplate;
 	public static Item slowLeggings;
 	public static Item slowBoots;
+	
+	public static Fluid timeFluid;
 	
 	public static final String modid = "charsmud_timetraveler";
 	
@@ -129,6 +136,7 @@ public class TimeTraveler
 	
 	public static UnchangingVars vars = new UnchangingVars();
 	
+
 	
 	@SuppressWarnings("rawtypes")
 	public Map<EntityPlayer, TimeTravelerPastRecorder> recordThreads = Collections.synchronizedMap(new HashMap());
@@ -145,7 +153,7 @@ public class TimeTraveler
 
 	public static EntityPlayerMP getPlayerForName(String name)
 	{
-		EntityPlayerMP tempPlayer = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(name);
+		EntityPlayerMP tempPlayer = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(name);
 		if (tempPlayer != null) 
 		{
 			return tempPlayer;
@@ -179,6 +187,17 @@ public class TimeTraveler
 		}
 		return aRecorder.eventsList;
 	}
+	@EventHandler
+	public void preLoad(FMLPreInitializationEvent event)
+	{
+		snw = NetworkRegistry.INSTANCE.newSimpleChannel(modid);
+		snw.registerMessage(TimeTravelerPacketHandler.class, Message.class, 0, Side.CLIENT);
+		
+		FMLCommonHandler.instance().bus().register(new TTEventHandler());
+		FMLCommonHandler.instance().bus().register(new Ticker());
+		MinecraftForge.EVENT_BUS.register(new TTEventHandler());
+		MinecraftForge.EVENT_BUS.register(new Ticker());
+	}
 	/**
 	 * Initiates mod, registers block and item for use.  Generates the necessary folders.
 	 */
@@ -193,7 +212,6 @@ public class TimeTraveler
 		registerEntities();
 		addRecipes();
 		
-		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
 
 		guihandler = new GuiHandler();
 		GameRegistry.registerTileEntity(TileEntityCollision.class, "collide");
@@ -203,20 +221,21 @@ public class TimeTraveler
 		GameRegistry.registerTileEntity(TileEntityMarker.class, "marker");
 		GameRegistry.registerTileEntity(TileEntityTimeDistorter.class, "timeDistorter");
 		
-	    GameRegistry.registerPlayerTracker(new TimeTravelerPlayerTracker());
-
 		
-		TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
-		GameRegistry.registerWorldGenerator(new StructureGenerator());
-		NetworkRegistry.instance().registerGuiHandler(this, guihandler);
+		//TickRegistry.registerTickHandler(new TickerClient(), Side.CLIENT);		
+		GameRegistry.registerWorldGenerator(new StructureGenerator(), 0);
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, guihandler);
 		EntityRegistry.registerGlobalEntityID(EntityPlayerPast.class, "PlayerPast", EntityRegistry.findGlobalUniqueEntityId(), 0x191919, 0x000000);//registers the mobs name and id
-		EntityRegistry.registerGlobalEntityID(EntityChair.class, "Chiar", EntityRegistry.findGlobalUniqueEntityId());
-		EntityRegistry.registerGlobalEntityID(EntityXPOrbTT.class, "XP Orb", EntityRegistry.findGlobalUniqueEntityId());
+		EntityRegistry.registerGlobalEntityID(EntityChair.class, "Chiar", 1001);
+		EntityRegistry.registerGlobalEntityID(EntityXPOrbTT.class, "XP Orb", 1002);
 		
 		DimensionManager.registerProviderType(TimeTraveler.dimensionId, WorldProviderFuture.class, false); 
 		DimensionManager.registerDimension(TimeTraveler.dimensionId, TimeTraveler.dimensionId); 
 		
-		MinecraftForge.EVENT_BUS.register(new TTEventHandler());
+		
+		FluidContainerRegistry.registerFluidContainer(timeFluid, new ItemStack(bucket), new ItemStack(Items.bucket));
+
+		
 		proxy.initCapes();
 
 		proxy.registerRenderThings();
@@ -245,28 +264,36 @@ public class TimeTraveler
 	 * Initializes Variables
 	 */
 	public void initialize()
-	{
-		paradoximer = new ItemParadoximer(2330).setUnlocalizedName("ItemParadoximer");	
-		bottledParadox = new BottledParadox(2331).setUnlocalizedName("BottledParadox");
-		condensedParadox = new CondensedParadox(2332).setUnlocalizedName("CondensedParadox");
-		emptyBottle = new EmptyBottle(2333).setUnlocalizedName("emptyBottle");
-		expEnhance = new ItemExpEnhance(2334).setUnlocalizedName("ExpEnhancer");
-		//flashback = new ItemFlashback(2335).setUnlocalizedName("Flashback");
+	{		
+		timeFluid = new Fluid("timeFluid").setLuminosity(7).setDensity(2000).setViscosity(3000);
+		FluidRegistry.registerFluid(timeFluid);
+		timeLiquid = new BlockTimeFluid(timeFluid, Material.water);
+
 		
-		slowHelmet = new SlowArmor(2335, EnumArmorMaterial.IRON, 4, 0).setUnlocalizedName("slowHelmet");
-		slowChestplate = new SlowArmor(2336, EnumArmorMaterial.IRON, 4, 1).setUnlocalizedName("slowChestplate");
-		slowLeggings = new SlowArmor(2337, EnumArmorMaterial.IRON, 4, 2).setUnlocalizedName("slowLeggings");
-		slowBoots = new SlowArmor(2338, EnumArmorMaterial.IRON, 4, 3).setUnlocalizedName("slowBoots");
+		paradoximer = new ItemParadoximer();	
+		bottledParadox = new BottledParadox();
+		condensedParadox = new CondensedParadox();
+		emptyBottle = new EmptyBottle();
+		expEnhance = new ItemExpEnhance();
+		//flashback = new ItemFlashback();
+		bucket = new TimeFluidBucket(timeLiquid);
 		
-		timeDistorter = new TimeDistorter(251).setUnlocalizedName("BlockTimeDistorter");
-		marker = new BlockMarker(500).setUnlocalizedName("BlockMarker");
-		travelTime = new BlockTimeTraveler(255).setUnlocalizedName("BlockTimeTraveler");
-		paradoxCondenser = new BlockParadoxCondenser(254, true).setUnlocalizedName("BlockParadoxCondenser");
-		paradoxExtractor = new ParadoxExtractor(253, true).setUnlocalizedName("ParadoxExtractor");
-		collisionBlock = new Collision(252, Material.air).setUnlocalizedName("collisionBlock");
-		timeTravel = new BlockTime(250, true).setUnlocalizedName("TimeTravel");
-		timeField = new BlockTimeField(501).setUnlocalizedName("timeField");
-		ftm = new FutureTravelMechanics();		
+		slowHelmet = new SlowArmor(ArmorMaterial.IRON, 4, 0).setUnlocalizedName("slowHelmet");
+		slowChestplate = new SlowArmor(ArmorMaterial.IRON, 4, 1).setUnlocalizedName("slowChestplate");
+		slowLeggings = new SlowArmor(ArmorMaterial.IRON, 4, 2).setUnlocalizedName("slowLeggings");
+		slowBoots = new SlowArmor(ArmorMaterial.IRON, 4, 3).setUnlocalizedName("slowBoots");
+		
+		timeDistorter = new TimeDistorter();
+		marker = new BlockMarker();
+		travelTime = new BlockTimeTraveler();
+		paradoxCondenser = new BlockParadoxCondenser();
+		paradoxExtractor = new ParadoxExtractor(true);
+		collisionBlock = new Collision(Material.glass);
+		timeTravel = new BlockTime();
+		timeField = new BlockTimeField();
+		ftm = new FutureTravelMechanics();	
+		
+
 	}
 	/**
 	 * Registers Blocks
@@ -281,13 +308,25 @@ public class TimeTraveler
 		GameRegistry.registerBlock(marker, "marker");
 		GameRegistry.registerBlock(timeDistorter, "timeDistorter");
 		GameRegistry.registerBlock(timeField, "timeField");
+		GameRegistry.registerBlock(timeLiquid, "timeLiquid");
+		
+		GameRegistry.registerItem(paradoximer, "ItemParadoximer");
+		GameRegistry.registerItem(slowHelmet, "slowHelmet");
+		GameRegistry.registerItem(slowChestplate, "slowChestplate");
+		GameRegistry.registerItem(slowLeggings, "slowLeggings");
+		GameRegistry.registerItem(slowBoots, "slowBoots");
+		GameRegistry.registerItem(bottledParadox, "BottledParadox");
+		GameRegistry.registerItem(condensedParadox, "CondensedParadox");
+		GameRegistry.registerItem(emptyBottle, "emptyBottle");
+		GameRegistry.registerItem(bucket, "timeFluidBucket");
+		GameRegistry.registerItem(expEnhance, "ExpEnhancer");
 	}
 	/**
 	 * Adds Names
 	 */
 	public void addNames()
 	{
-		LanguageRegistry.addName(travelTime, "Paradox Cube");
+		/*LanguageRegistry.addName(travelTime, "Paradox Cube");
 		LanguageRegistry.addName(paradoximer, "Paradoximer");
 		LanguageRegistry.addName(paradoxCondenser, "Paradox Condenser");
 		LanguageRegistry.addName(bottledParadox, "Bottled Paradox");
@@ -299,7 +338,13 @@ public class TimeTraveler
 		LanguageRegistry.addName(marker, "Marker");
 		LanguageRegistry.addName(timeDistorter, "Time Distorter");
 		LanguageRegistry.addName(timeField, "Time Field");
-		//LanguageRegistry.addName(flashback, "Flashback");
+		LanguageRegistry.addName(timeLiquid, "Liquid Time");
+		LanguageRegistry.addName(bucket, "Bucket");
+		LanguageRegistry.addName(slowBoots, "Paradox Boots");
+		LanguageRegistry.addName(slowLeggings, "Paradox Leggings");
+		LanguageRegistry.addName(slowChestplate, "Paradox Chestplate");
+		LanguageRegistry.addName(slowHelmet, "Paradox Helmet");
+		//LanguageRegistry.addName(flashback, "Flashback");*/
 	}
 	/**
 	 * Adds Recipes
@@ -308,23 +353,23 @@ public class TimeTraveler
 	{
 		GameRegistry.addRecipe(new ItemStack(emptyBottle,  1), new Object[] 
 				{
-			" o ", "x x", " x ", Character.valueOf('x'), Block.glass, Character.valueOf('o'), Item.clay
+			" o ", "x x", " x ", Character.valueOf('x'), Blocks.glass, Character.valueOf('o'), Items.clay_ball
 				});
 		GameRegistry.addRecipe(new ItemStack(paradoxCondenser, 1), new Object[]
 				{
-			"ooo", "iui", "ooo", Character.valueOf('o'), Block.blockDiamond, Character.valueOf('i'), travelTime, Character.valueOf('u'), Item.appleGold
+			"ooo", "iui", "ooo", Character.valueOf('o'), Blocks.diamond_block, Character.valueOf('i'), travelTime, Character.valueOf('u'), Items.golden_apple
 				});
 		GameRegistry.addRecipe(new ItemStack(paradoxExtractor, 1), new Object[]
 				{
-			"ooo", "iui", "ooo", Character.valueOf('o'), Block.blockIron, Character.valueOf('i'), travelTime, Character.valueOf('u'), emptyBottle
+			"ooo", "iui", "ooo", Character.valueOf('o'), Blocks.iron_block, Character.valueOf('i'), travelTime, Character.valueOf('u'), emptyBottle
 				});
 		GameRegistry.addRecipe(new ItemStack(expEnhance, 1), new Object[]
 				{
-			"xox", "oxo", "xox", Character.valueOf('x'), TimeTraveler.condensedParadox, Character.valueOf('o'), Item.expBottle
+			"xox", "oxo", "xox", Character.valueOf('x'), TimeTraveler.condensedParadox, Character.valueOf('o'), Items.experience_bottle
 				});
 		/*GameRegistry.addRecipe(new ItemStack(flashback, 1), new Object[]
 				{
-			"xox", "yxy", "xox", Character.valueOf('x'), TimeTraveler.expEnhance, Character.valueOf('o'), Item.compass, Character.valueOf('y'), Item.pocketSundial
+			"xox", "yxy", "xox", Character.valueOf('x'), TimeTraveler.expEnhance, Character.valueOf('o'), Items.compass, Character.valueOf('y'), Items.pocketSundial
 				});*/
 		GameRegistry.addRecipe(new ItemStack(timeTravel, 1), new Object[]
 				{
@@ -332,11 +377,27 @@ public class TimeTraveler
 				});
 		GameRegistry.addRecipe(new ItemStack(marker, 2), new Object[]
 				{
-			" o ", "ioi", " o ", Character.valueOf('o'), TimeTraveler.condensedParadox, Character.valueOf('i'), Block.glass
+			" o ", "ioi", " o ", Character.valueOf('o'), TimeTraveler.condensedParadox, Character.valueOf('i'), Blocks.glass
 				});
 		GameRegistry.addRecipe(new ItemStack(timeDistorter, 1), new Object[]
 				{
-			"ipi", "pnp", "ipi", Character.valueOf('i'), Block.blockIron, Character.valueOf('p'), TimeTraveler.condensedParadox, Character.valueOf('n'), Item.netherStar
+			"ipi", "pnp", "ipi", Character.valueOf('i'), Blocks.iron_block, Character.valueOf('p'), TimeTraveler.condensedParadox, Character.valueOf('n'), Items.nether_star
+				});
+		GameRegistry.addRecipe(new ItemStack(slowBoots, 1), new Object[]
+				{
+			"i i", "p p", "   ", Character.valueOf('p'), TimeTraveler.condensedParadox, Character.valueOf('i'), Items.diamond
+				});
+		GameRegistry.addRecipe(new ItemStack(slowLeggings, 1), new Object[]
+				{
+			"ddd", "p p", "p p", Character.valueOf('d'), Items.diamond, Character.valueOf('p'), TimeTraveler.condensedParadox
+				});
+		GameRegistry.addRecipe(new ItemStack(slowChestplate, 1), new Object[]
+				{
+			"d d", "dpd", "ddd", Character.valueOf('d'), Items.diamond, Character.valueOf('p'), TimeTraveler.condensedParadox
+				});
+		GameRegistry.addRecipe(new ItemStack(slowHelmet, 1), new Object[]
+				{
+			"ddd", "p p", "   ", Character.valueOf('d'), Items.diamond, Character.valueOf('p'), TimeTraveler.condensedParadox
 				});
 	}
 	/**
@@ -344,7 +405,7 @@ public class TimeTraveler
 	 */
 	public void addSmelt()
 	{
-		FurnaceRecipes.smelting().addSmelting(Item.glassBottle.itemID, new ItemStack(TimeTraveler.emptyBottle), 0.2F);
+		FurnaceRecipes.smelting().func_151396_a(Items.glass_bottle, new ItemStack(TimeTraveler.emptyBottle), 0.2F);
 	}
 	
 	/**
@@ -375,4 +436,13 @@ public class TimeTraveler
 		
 		registerEntityEgg(EntityParadoxHunter.class, 0xffffff, 0x000000);
 	}
+	
+	public static CreativeTabs tabTT = new CreativeTabs("tabTimeTraveler")
+	{
+		
+		public Item getTabIconItem()
+		{
+			return Items.arrow;
+		}
+	};
 }

@@ -1,26 +1,33 @@
 package timeTraveler.blocks;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Icon;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
+import timeTraveler.entities.EntityChair;
 import timeTraveler.gui.GuiTimeTravel;
 
 
 public class BlockTimeTraveler extends Block
 {	
 	
-	public static Icon[] textures = new Icon[7];
+	public static IIcon[] textures = new IIcon[7];
 	
-    public BlockTimeTraveler(int id)
+    public BlockTimeTraveler()
     {
-        super(id, Material.iron);
-        this.setCreativeTab(CreativeTabs.tabBlock);
+        super(Material.iron);
+        setBlockName("BlockTimeTraveler");
+        this.setCreativeTab(TimeTraveler.tabTT);
     }
      
      /**
@@ -49,31 +56,31 @@ public class BlockTimeTraveler extends Block
     		{
     			for(int z = 0; z < 3; z++)
     			{
-    				System.out.println(par1World.getBlockId(par2 + x, par3 + y, par4 + z));
+    				System.out.println(par1World.getBlock(par2 + x, par3 + y, par4 + z));
     			}
     		}
     	}
     	System.out.println(":)");
-        if(par1World.getBlockId(par2, par3, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2,  par3, par4 + 2) == TimeTraveler.travelTime.blockID
-        		&& par1World.getBlockId(par2 + 1, par3, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3, par4 + 2) == TimeTraveler.travelTime.blockID
-        		&& par1World.getBlockId(par2 + 2, par3, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3, par4 + 2) == TimeTraveler.travelTime.blockID
+        if(par1World.getBlock(par2, par3, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2,  par3, par4 + 2) == TimeTraveler.travelTime
+        		&& par1World.getBlock(par2 + 1, par3, par4) == TimeTraveler.travelTime && par1World.getBlock(par2 + 1, par3, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2 + 1, par3, par4 + 2) == TimeTraveler.travelTime
+        		&& par1World.getBlock(par2 + 2, par3, par4) == TimeTraveler.travelTime && par1World.getBlock(par2 + 2, par3, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2 + 2, par3, par4 + 2) == TimeTraveler.travelTime
         		
-        		&&par1World.getBlockId(par2, par3 + 1, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2, par3 + 1, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2,  par3 + 1, par4 + 2) == TimeTraveler.travelTime.blockID
-                && par1World.getBlockId(par2 + 1, par3 + 1, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3 + 1, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3 + 1, par4 + 2) == TimeTraveler.travelTime.blockID
-                && par1World.getBlockId(par2 + 2, par3 + 1, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3 + 1, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3 + 1, par4 + 2) == TimeTraveler.travelTime.blockID
+        		&&par1World.getBlock(par2, par3 + 1, par4) == TimeTraveler.travelTime && par1World.getBlock(par2, par3 + 1, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2,  par3 + 1, par4 + 2) == TimeTraveler.travelTime
+                && par1World.getBlock(par2 + 1, par3 + 1, par4) == TimeTraveler.travelTime && par1World.getBlock(par2 + 1, par3 + 1, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2 + 1, par3 + 1, par4 + 2) == TimeTraveler.travelTime
+                && par1World.getBlock(par2 + 2, par3 + 1, par4) == TimeTraveler.travelTime && par1World.getBlock(par2 + 2, par3 + 1, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2 + 2, par3 + 1, par4 + 2) == TimeTraveler.travelTime
         		
-                &&par1World.getBlockId(par2, par3 + 2, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2, par3 + 2, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2,  par3 + 2, par4 + 2) == TimeTraveler.travelTime.blockID
-                && par1World.getBlockId(par2 + 1, par3 + 2, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3 + 2, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 1, par3 + 2, par4 + 2) == TimeTraveler.travelTime.blockID
-                && par1World.getBlockId(par2 + 2, par3 + 2, par4) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3 + 2, par4 + 1) == TimeTraveler.travelTime.blockID && par1World.getBlockId(par2 + 2, par3 + 2, par4 + 2) == TimeTraveler.travelTime.blockID)
+                &&par1World.getBlock(par2, par3 + 2, par4) == TimeTraveler.travelTime && par1World.getBlock(par2, par3 + 2, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2,  par3 + 2, par4 + 2) == TimeTraveler.travelTime
+                && par1World.getBlock(par2 + 1, par3 + 2, par4) == TimeTraveler.travelTime && par1World.getBlock(par2 + 1, par3 + 2, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2 + 1, par3 + 2, par4 + 2) == TimeTraveler.travelTime
+                && par1World.getBlock(par2 + 2, par3 + 2, par4) == TimeTraveler.travelTime && par1World.getBlock(par2 + 2, par3 + 2, par4 + 1) == TimeTraveler.travelTime && par1World.getBlock(par2 + 2, par3 + 2, par4 + 2) == TimeTraveler.travelTime)
         {
         	System.out.println("MULTIBLOCKING");
-        	par1World.setBlock(par2 + 1, par3, par4 + 1, TimeTraveler.timeTravel.blockID);
+        	par1World.setBlock(par2 + 1, par3, par4 + 1, TimeTraveler.timeTravel);
         }
         return par9;
     }
     
     @Override
-    public void registerIcons(IconRegister iconRegistry)
+    public void registerBlockIcons(IIconRegister iconRegistry)
     {
     	textures[6] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTraveler");
     	textures[0] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerBot");
@@ -84,6 +91,40 @@ public class BlockTimeTraveler extends Block
     	textures[5] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerSide");
     
     }
+    @Override
+    public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int noIdea)
+    {
+		List<Entity> entitiesToSlow = world.getEntitiesWithinAABB(Entity.class, AxisAlignedBB.getBoundingBox(x - 2, y - 2, z - 2, x + 2, y + 2, z + 2));
+		if(entitiesToSlow.size() > 0)
+		{
+			for(int i = 0; i < entitiesToSlow.size(); i++)
+			{
+				Entity e = entitiesToSlow.get(i);
+				System.out.println(e);
+
+				if(e instanceof EntityChair)
+				{
+					e.setDead();
+				}
+			}
+		}
+    }
+    @Override
+    public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion explosion)
+    {
+		List<Entity> entitiesToSlow = world.getEntitiesWithinAABB(Entity.class, AxisAlignedBB.getBoundingBox(x - 2, y - 2, z - 2, x + 2, y + 2, z + 2));
+		if(entitiesToSlow.size() > 0)
+		{
+			for(int i = 0; i < entitiesToSlow.size(); i++)
+			{
+				Entity e = entitiesToSlow.get(i);
+				if(e instanceof EntityChair)
+				{
+					e.setDead();
+				}
+			}
+		}    }
+    
    /*
     @Override
 	public Icon getIcon(int i, int j) 
@@ -107,7 +148,7 @@ public class BlockTimeTraveler extends Block
 		}
 	}*/
     @Override
-	public Icon getIcon(int i, int j) 
+	public IIcon getIcon(int i, int j) 
 	{
     	return textures[6];
 	}

@@ -35,3 +35,4 @@ stats/stats_charsmud_unsent.old
 *.lock
 *.log
 *.old
+*.gz

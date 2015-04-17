@@ -40,6 +40,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     /**
      * Returns the number of slots in the inventory.
      */
+    @Override
     public int getSizeInventory()
     {
         return this.paradoxItemStacks.length;
@@ -48,6 +49,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     /**
      * Returns the stack in slot i
      */
+    @Override
     public ItemStack getStackInSlot(int par1)
     {
         return this.paradoxItemStacks[par1];
@@ -57,6 +59,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
      * Removes from an inventory slot (first arg) up to a specified number (second arg) of items and returns them in a
      * new stack.
      */
+    @Override
     public ItemStack decrStackSize(int par1, int par2)
     {
         if (this.paradoxItemStacks[par1] != null)
@@ -91,6 +94,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
      * When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
      * like when you close a workbench GUI.
      */
+    @Override
     public ItemStack getStackInSlotOnClosing(int par1)
     {
         if (this.paradoxItemStacks[par1] != null)
@@ -108,6 +112,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     /**
      * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
      */
+    @Override
     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
         this.paradoxItemStacks[par1] = par2ItemStack;
@@ -121,37 +126,35 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     /**
      * Returns the name of the inventory.
      */
-    public String getInvName()
+    @Override
+    public String getInventoryName()
     {
-        return this.isInvNameLocalized() ? this.field_94130_e : "Paradox Condenser";
+        return this.hasCustomInventoryName() ? this.field_94130_e : "Paradox Condenser";
     }
 
     /**
      * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
      * language. Otherwise it will be used directly.
      */
-    public boolean isInvNameLocalized()
+    @Override
+    public boolean hasCustomInventoryName()
     {
         return this.field_94130_e != null && this.field_94130_e.length() > 0;
-    }
-
-    public void func_94129_a(String par1Str)
-    {
-        this.field_94130_e = par1Str;
     }
 
     /**
      * Reads a tile entity from NBT.
      */
+    @Override
     public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
-        NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items");
+        NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items", 0);
         this.paradoxItemStacks = new ItemStack[this.getSizeInventory()];
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
-            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
             byte b0 = nbttagcompound1.getByte("Slot");
 
             if (b0 >= 0 && b0 < this.paradoxItemStacks.length)
@@ -174,6 +177,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     /**
      * Writes a tile entity to NBT.
      */
+    @Override
     public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
@@ -195,9 +199,9 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
 
         par1NBTTagCompound.setTag("Items", nbttaglist);
 
-        if (this.isInvNameLocalized())
+        if (this.hasCustomInventoryName())
         {
-            par1NBTTagCompound.setString("Tut Furnace", this.field_94130_e);
+            par1NBTTagCompound.setString("Paradox Condenser", this.field_94130_e);
         }
     }
 
@@ -205,6 +209,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
      * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
      * this more of a set than a get?*
      */
+    @Override
     public int getInventoryStackLimit()
     {
         return 64;
@@ -220,7 +225,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     {
         return this.paradoxCookTime * par1 / 200;
     }
-
+    
     public int getFormProgressScaled(int par1)
     {
     	return this.paradoxFormTime * par1 / 200;
@@ -254,6 +259,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
      * Allows the entity to update its state. Overridden in most subclasses, e.g. the mob spawner uses this to count
      * ticks and creates a new spawn inside its implementation.
      */
+    @Override
     public void updateEntity()
     {	
         boolean flag = this.paradoxBurnTime > 0;
@@ -278,7 +284,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
                     {
                         if (this.paradoxItemStacks[1].stackSize == 0)
                         {
-                            this.paradoxItemStacks[1] = this.paradoxItemStacks[1].getItem().getContainerItemStack(paradoxItemStacks[1]);
+                            this.paradoxItemStacks[1] = this.paradoxItemStacks[1].getItem().getContainerItem(paradoxItemStacks[1]);
                         }
                     }
                 }
@@ -332,13 +338,13 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
             if (flag != this.paradoxBurnTime > 0)
             {
                 flag1 = true;
-                BlockParadoxCondenser.updateFurnaceBlockState(this.paradoxBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+                //BlockParadoxCondenser.updateFurnaceBlockState(this.paradoxBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
             }
         }
 
         if (flag1)
         {
-            this.onInventoryChanged();
+            //this.onInventoryChanged();
         }
     }
 
@@ -365,6 +371,7 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
     /**
      * Turn one item from the furnace source stack into the appropriate smelted item in the furnace result stack
      */
+    
     public void smeltItem()
     {
         if (this.canSmelt())
@@ -417,7 +424,6 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
         }
         else
         {
-            int i = par0ItemStack.getItem().itemID;
             Item item = par0ItemStack.getItem();
             if(item.equals(TimeTraveler.bottledParadox))
             {
@@ -468,28 +474,10 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
      */
     public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
     {
-        return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
+        return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
     }
 
-    public void openChest() {}
 
-    public void closeChest() {}
-
-    /**
-     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
-     */
-    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
-    {
-        return par1 == 2 ? false : (par1 == 1 ? isItemFuel(par2ItemStack) : true);
-    }
-
-    /**
-     * Get the size of the side inventory.
-     */
-    public int[] getSizeInventorySide(int par1)
-    {
-        return par1 == 0 ? field_102011_e : (par1 == 1 ? field_102010_d : field_102009_f);
-    }
 
     /***********************************************************************************
      * This function is here for compatibilities sake, Modders should Check for
@@ -540,5 +528,18 @@ public class TileEntityParadoxCondenser extends TileEntity implements ISidedInve
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+
+	@Override
+	public void openInventory() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeInventory() {
+		// TODO Auto-generated method stub
+		
 	}
 }

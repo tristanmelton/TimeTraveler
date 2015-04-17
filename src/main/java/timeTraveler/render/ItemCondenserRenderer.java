@@ -1,6 +1,6 @@
 package timeTraveler.render;
 
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.IItemRenderer;
@@ -34,6 +34,6 @@ public class ItemCondenserRenderer implements IItemRenderer
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) 
 	{
-		TileEntityRenderer.instance.renderTileEntityAt(new TileEntityParadoxCondenser(), 0.0D, 0.0D, 0.0D, 0.0F);
+		TileEntityRendererDispatcher.instance.renderTileEntityAt(new TileEntityParadoxCondenser(), 0.0D, 0.0D, 0.0D, 0.0F);
 	}
 }

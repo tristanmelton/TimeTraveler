@@ -66,7 +66,7 @@ public class EntityParadoxHunter extends EntityMob
         switch (this.rand.nextInt(1))
         {
             case 0:
-                this.dropItem(TimeTraveler.condensedParadox.itemID, 1);
+                this.dropItem(TimeTraveler.condensedParadox, 1);
                 break;
         }
     }

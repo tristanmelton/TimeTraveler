@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -107,18 +108,18 @@ public class EntityXPOrbTT extends Entity
         this.prevPosZ = this.posZ;
         this.motionY -= 0.029999999329447746D;
 
-        if (this.worldObj.getBlockMaterial(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) == Material.lava)
+      /*  if (this.worldObj.getBlockMaterial(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) == Material.lava)
         {
             this.motionY = 0.20000000298023224D;
             this.motionX = (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
             this.motionZ = (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
             this.playSound("random.fizz", 0.4F, 2.0F + this.rand.nextFloat() * 0.4F);
-        }
+        }*/
 
-        this.pushOutOfBlocks(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
+      //  this.pushOutOfBlocks(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
         double var1 = 8.0D;
 
-        if (this.xpTargetColor < this.xpColor - 20 + this.entityId % 100)
+        if (this.xpTargetColor < this.xpColor - 20  % 100)
         {
             if (this.closestPlayer == null || this.closestPlayer.getDistanceSqToEntity(this) > var1 * var1)
             {
@@ -151,11 +152,11 @@ public class EntityXPOrbTT extends Entity
         if (this.onGround)
         {
             var13 = 0.58800006F;
-            int var4 = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
+            Block var4 = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
 
-            if (var4 > 0)
+            if (var4 != Blocks.air)
             {
-                var13 = Block.blocksList[var4].slipperiness * 0.98F;
+               // var13 = Blocks.beacon;[var4].slipperiness * 0.98F;
             }
         }
 

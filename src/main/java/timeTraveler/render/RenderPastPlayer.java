@@ -2,6 +2,9 @@ package timeTraveler.render;
 
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
 import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
+
+import java.io.File;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -11,12 +14,13 @@ import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderBiped;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureObject;
 import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -29,7 +33,6 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 
 import timeTraveler.entities.EntityPlayerPast;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -55,7 +58,7 @@ public class RenderPastPlayer extends RenderBiped
     }
 
     @Override
-    public void doRenderLiving(EntityLiving par1EntityLiving, double par2, double par4, double par6, float par8, float par9)
+    public void doRender(EntityLiving par1EntityLiving, double par2, double par4, double par6, float par8, float par9)
     {
         EntityPlayerPast par1EntityMocap = (EntityPlayerPast)par1EntityLiving;
         ItemStack itemstack = par1EntityLiving.getHeldItem();
@@ -81,13 +84,13 @@ public class RenderPastPlayer extends RenderBiped
         }
 
         this.field_82423_g.isSneak = this.field_82425_h.isSneak = this.modelBipedMain.isSneak = par1EntityLiving.isSneaking();
-        super.doRenderLiving(par1EntityLiving, par2, par4, par6, par8, par9);
+        super.doRender(par1EntityLiving, par2, par4, par6, par8, par9);
     }
 
     /**
      * Called from renderEquippedItems in RenderBiped.
      */
-    @Override
+    /*@Override
     protected void func_130005_c(EntityLiving par1EntityLiving, float par2)
     {
     	EntityPlayerPast par1EntityMocap = (EntityPlayerPast)par1EntityLiving;
@@ -95,9 +98,6 @@ public class RenderPastPlayer extends RenderBiped
         ItemStack helmetItem = par1EntityLiving.func_130225_q(3);
         float f1 = 1.0F;
         GL11.glColor3f(f1, f1, f1);
-        /*
-         * Render Skulls, etc.
-         */
         float f2;
 
         if (helmetItem != null)
@@ -119,7 +119,7 @@ public class RenderPastPlayer extends RenderBiped
 
                 this.renderManager.itemRenderer.renderItem(par1EntityLiving, helmetItem, 0);
             }
-            else if (helmetItem.getItem().itemID == Item.skull.itemID)
+            else if (helmetItem.getItem() == Items.skull)
             {
                 f2 = 1.0625F;
                 GL11.glScalef(f2, -f2, -f2);
@@ -162,7 +162,7 @@ public class RenderPastPlayer extends RenderBiped
                 GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
                 GL11.glScalef(-f11, -f11, f11);
             }
-            else if (itemstack1.itemID == Item.bow.itemID)
+            else if (itemstack1.getItem() == Items.bow)
             {
                 f11 = 0.625F;
                 GL11.glTranslatef(0.0F, 0.125F, 0.3125F);
@@ -234,7 +234,7 @@ public class RenderPastPlayer extends RenderBiped
             GL11.glPopMatrix();
         }
     }
-
+*/
     //@Override
     protected void renderModelTest(EntityLivingBase par1EntityLivingBase, float par2, float par3, float par4, float par5, float par6, float par7)
     {
@@ -259,8 +259,8 @@ public class RenderPastPlayer extends RenderBiped
 
         if (object == null)
         {
-            object = new ThreadDownloadImageData(par1Str, par2ResourceLocation, par3IImageBuffer);
-            texturemanager.loadTexture(par0ResourceLocation, (TextureObject)object);
+            object = new ThreadDownloadImageData((File)null, par1Str, par2ResourceLocation, par3IImageBuffer);
+            texturemanager.loadTexture(par0ResourceLocation, (ITextureObject)object);
         }
 
         return (ThreadDownloadImageData)object;

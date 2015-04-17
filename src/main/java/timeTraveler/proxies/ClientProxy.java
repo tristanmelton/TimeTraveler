@@ -2,6 +2,7 @@ package timeTraveler.proxies;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderXPOrb;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.MinecraftForgeClient;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityParadoxHunter;
@@ -25,9 +26,6 @@ import timeTraveler.tileentity.TileEntityMarker;
 import timeTraveler.tileentity.TileEntityParadoxCondenser;
 import timeTraveler.tileentity.TileEntityTimeDistorter;
 import timeTraveler.tileentity.TileEntityTimeTravel;
-
-import com.jadarstudios.developercapes.DevCapes;
-
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
@@ -48,18 +46,16 @@ public class ClientProxy extends CommonProxy
 	    RenderingRegistry.registerEntityRenderingHandler(EntityParadoxHunter.class,  new RenderParadoxHunter(new ModelParadoxHunter(),  0.3F));
 	    RenderingRegistry.registerEntityRenderingHandler(EntityPlayerPast.class, new RenderPastPlayer(new ModelBiped(), 0.3F));
 	    RenderingRegistry.registerEntityRenderingHandler(EntityXPOrbTT.class, new RenderXPOrb());
-	    
-	    MinecraftForgeClient.registerItemRenderer(TimeTraveler.paradoxCondenser.blockID, new ItemCondenserRenderer());
-	    MinecraftForgeClient.registerItemRenderer(TimeTraveler.timeTravel.blockID, new ItemTimeMachineRenderer());
-	    MinecraftForgeClient.registerItemRenderer(TimeTraveler.marker.blockID, new ItemMarkerRenderer());
-	    MinecraftForgeClient.registerItemRenderer(TimeTraveler.timeDistorter.blockID, new ItemTimeDistorterRenderer());
+	    MinecraftForgeClient.registerItemRenderer(new ItemStack(TimeTraveler.paradoxCondenser).getItem(), new ItemCondenserRenderer());
+	    MinecraftForgeClient.registerItemRenderer(new ItemStack(TimeTraveler.timeTravel).getItem(), new ItemTimeMachineRenderer());
+	    MinecraftForgeClient.registerItemRenderer(new ItemStack(TimeTraveler.marker).getItem(), new ItemMarkerRenderer());
+	    MinecraftForgeClient.registerItemRenderer(new ItemStack(TimeTraveler.timeDistorter).getItem(), new ItemTimeDistorterRenderer());
 
 	}
 	@Override
 	public void initCapes()
 	{
 	    // move this to dropbox
-		DevCapes.getInstance().registerConfig("https://raw2.github.com/jadar/TimeTraveler/master/capes/capes.json", TimeTraveler.modid);
 	}
 	@Override public ModelBiped getArmorModel(int id)
 	{ 

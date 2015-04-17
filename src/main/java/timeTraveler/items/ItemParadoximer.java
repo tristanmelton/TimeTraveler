@@ -1,7 +1,7 @@
 package timeTraveler.items;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,14 +21,17 @@ import cpw.mods.fml.client.FMLClientHandler;
 public class ItemParadoximer extends Item {
 	//
 	
-	public ItemParadoximer (int id) {
-		super(id);
-		this.setCreativeTab(CreativeTabs.tabMisc);
+	public ItemParadoximer () {
+		super();
+		setUnlocalizedName("ItemParadoximer");
+		this.setCreativeTab(TimeTraveler.tabTT);
 	}
 	/**
 	 * Opens the future travel GUI
+	 * @return 
 	 */
-	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+	@Override
+	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
 		//System.out.println(TimeTraveler.vars.pathData.allEntityData);
 		if(!TimeTraveler.vars.getIsInFuture())
@@ -46,10 +49,10 @@ public class ItemParadoximer extends Item {
 			mc.displayGuiScreen(gfr);
 			
 		}
-
-    	return true;
+		return par1ItemStack;
     }
-    public void registerIcons(IconRegister par1IconRegister)
+	@Override
+    public void registerIcons(IIconRegister par1IconRegister)
  {
      this.itemIcon = par1IconRegister.registerIcon(TimeTraveler.modid + ":" + this.getUnlocalizedName());
  }

@@ -122,9 +122,9 @@ public class TimeTravelerClassTransformer extends AccessTransformer implements I
                         toInject.add(new VarInsnNode(ILOAD, 4));
                         toInject.add(new MethodInsnNode(INVOKESPECIAL, "timeTraveler/mechanics/LivingPlaceBlockEvent", "<init>", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/item/ItemStack;III)V"));
                         toInject.add(new VarInsnNode(ASTORE, 7));
-                        toInject.add(new FieldInsnNode(GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lnet/minecraftforge/event/EventBus;"));
+                        toInject.add(new FieldInsnNode(GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
                         toInject.add(new VarInsnNode(ALOAD, 7));
-                        toInject.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraftforge/event/EventBus", "post", "(Lnet/minecraftforge/event/Event;)Z"));
+                        toInject.add(new MethodInsnNode(INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
                         toInject.add(new InsnNode(POP));
                         m.instructions.insertBefore(currentNode, toInject);
                     }

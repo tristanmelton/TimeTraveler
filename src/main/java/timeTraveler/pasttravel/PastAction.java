@@ -21,6 +21,6 @@ public class PastAction
 	{
 		super();
 		this.type = chat;
-		this.itemData = new NBTTagCompound("itemdata");
+		this.itemData = new NBTTagCompound();
 	}
 }

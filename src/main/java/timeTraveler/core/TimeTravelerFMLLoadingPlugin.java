@@ -5,7 +5,7 @@ import java.util.Map;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 
-@MCVersion(value = "1.6.4")
+@MCVersion(value = "1.7.10")
 public class TimeTravelerFMLLoadingPlugin implements IFMLLoadingPlugin
 {
     public String[] getLibraryRequestClass()
@@ -39,4 +39,10 @@ public class TimeTravelerFMLLoadingPlugin implements IFMLLoadingPlugin
     {
         // TODO Auto-generated method stub
     }
+
+	@Override
+	public String getAccessTransformerClass() {
+		// TODO Auto-generated method stub
+		return TimeTravelerAccessTransformer.class.getName();
+	}
 }

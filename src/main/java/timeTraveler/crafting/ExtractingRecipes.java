@@ -16,7 +16,7 @@ public class ExtractingRecipes
 
     /** The list of smelting results. */
     private Map extractingList = new HashMap();
-    private HashMap<List<Integer>, ItemStack> metaExtractingList = new HashMap<List<Integer>, ItemStack>();
+    private HashMap<List<Object>, ItemStack> metaExtractingList = new HashMap<List<Object>, ItemStack>();
 
     /**
      * Used to call methods addSmelting and getSmeltingResult.
@@ -28,16 +28,20 @@ public class ExtractingRecipes
 
     private ExtractingRecipes()
     {
-        this.addExtracting(TimeTraveler.emptyBottle.itemID, new ItemStack(TimeTraveler.bottledParadox, 1), 0.7F);
-        this.addExtracting(TimeTraveler.bottledParadox.itemID, new ItemStack(TimeTraveler.bottledParadox, 1), 0.7F);
+        this.addExtracting(TimeTraveler.emptyBottle, new ItemStack(TimeTraveler.bottledParadox, 1), 0.7F);
+        this.addExtracting(TimeTraveler.bottledParadox, new ItemStack(TimeTraveler.bottledParadox, 1), 0.7F);
     }
 
     /**
      * Adds a smelting recipe.
      */
-    public void addExtracting(int par1, ItemStack par2ItemStack, float par3)
+    public void addExtracting(Block par1, ItemStack par2ItemStack, float par3)
     {
-        this.extractingList.put(Integer.valueOf(par1), par2ItemStack);
+        this.extractingList.put(par1, par2ItemStack);
+    }
+    public void addExtracting(Item par1, ItemStack par2ItemStack, float par3)
+    {
+        this.extractingList.put(par1, par2ItemStack);
     }
 
     /**
@@ -64,10 +68,15 @@ public class ExtractingRecipes
     /**
      * A metadata sensitive version of adding a furnace recipe.
      */
-    public void addExtracting(int itemID, int metadata, ItemStack itemstack, float experience)
+    public void addExtracting(Block block, int metadata, ItemStack itemstack, float experience)
     {
-        metaExtractingList.put(Arrays.asList(itemID, metadata), itemstack);
+        metaExtractingList.put(Arrays.asList(block, metadata), itemstack);
     }
+    public void addExtracting(Item item, int metadata, ItemStack itemstack, float experience)
+    {
+        metaExtractingList.put(Arrays.asList(item, metadata), itemstack);
+    }
+
 
     /**
      * Used to get the resulting ItemStack form a source ItemStack
@@ -80,12 +89,12 @@ public class ExtractingRecipes
         {
             return null;
         }
-        ItemStack ret = (ItemStack)metaExtractingList.get(Arrays.asList(item.itemID, item.getItemDamage()));
+        ItemStack ret = (ItemStack)metaExtractingList.get(Arrays.asList(item, item.getItemDamage()));
         if (ret != null) 
         {
             return ret;
         }
-        return (ItemStack)extractingList.get(Integer.valueOf(item.itemID));
+        return (ItemStack)extractingList.get((item));
     }
 
     /**

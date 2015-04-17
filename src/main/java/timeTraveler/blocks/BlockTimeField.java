@@ -4,7 +4,7 @@ import com.sun.org.apache.xml.internal.dtm.Axis;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
@@ -14,15 +14,17 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockTimeField extends Block
 {		
-    public BlockTimeField(int id)
+    public BlockTimeField()
     {
-        super(id, Material.iron);
+        super(Material.iron);
+        setBlockName("timeField");
         this.setResistance(1000F);
         this.setBlockUnbreakable();
 
     }
-    @SideOnly(Side.CLIENT)  
-    public void registerIcons(IconRegister par1IconRegister)
+    @SideOnly(Side.CLIENT) 
+    @Override
+    public void registerBlockIcons(IIconRegister par1IconRegister)
     {  
     	this.blockIcon = par1IconRegister.registerIcon(TimeTraveler.modid + ":" + (this.getUnlocalizedName().substring(5)));
     }

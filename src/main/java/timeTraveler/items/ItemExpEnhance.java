@@ -1,6 +1,6 @@
 package timeTraveler.items;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import timeTraveler.core.TimeTraveler;
@@ -13,14 +13,15 @@ import timeTraveler.core.TimeTraveler;
 public class ItemExpEnhance extends Item
 {
 
-	public ItemExpEnhance (int id)
+	public ItemExpEnhance()
 	{
-		super(id);
-		this.setCreativeTab(CreativeTabs.tabMisc);
+		super();
+		setUnlocalizedName("ExpEnhancer");
+		this.setCreativeTab(TimeTraveler.tabTT);
 		
 	}
 
-    public void registerIcons(IconRegister par1IconRegister)
+    public void registerIcons(IIconRegister par1IconRegister)
     {
     	this.itemIcon = par1IconRegister.registerIcon(TimeTraveler.modid + ":" + this.getUnlocalizedName());
     }

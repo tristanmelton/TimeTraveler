@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.tileentity.TileEntityCollision;
@@ -19,31 +19,36 @@ import timeTraveler.tileentity.TileEntityTimeDistorter;
 
 public class TimeDistorter extends BlockContainer
 {
-	public static Icon[] textures = new Icon[6];
+	public static IIcon[] textures = new IIcon[6];
 
 	int xcoord = 0;
 	int zcoord = 0;
 
 	
 	
-    public TimeDistorter(int par1)
+    public TimeDistorter()
     {
-        super(par1, Material.iron);
-        this.setCreativeTab(CreativeTabs.tabBlock);
+        super(Material.iron);
+        setBlockName("BlockTimeDistorter");
+        this.setCreativeTab(TimeTraveler.tabTT);
 
     }
 
     /**
      * Returns the ID of the items to drop on destruction.
      */
+    /*
+    @Override
     public int idDropped(int par1, Random par2Random, int par3)
     {
         return TimeTraveler.timeDistorter.blockID;
     }
-
+*/
     /**
      * set a blocks direction
      */
+    /*
+    @Override
     private void setDefaultDirection(World par1World, int par2, int par3, int par4)
     {
         if (!par1World.isRemote)
@@ -76,9 +81,9 @@ public class TimeDistorter extends BlockContainer
 
             par1World.setBlockMetadataWithNotify(par2, par3, par4, b0, 2);
         }
-    }
+    }*/
     @Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int neighborID)
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block neighborID)
 	{	
 		
 	}
@@ -88,13 +93,14 @@ public class TimeDistorter extends BlockContainer
      * Called whenever the block is added into the world. Args: world, x, y, z
      * @return 
      */
+    @Override
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
 		super.onBlockAdded(par1World, par2, par3, par4);
 
 		System.out.println("ADDING");
-		par1World.setBlock(par2, par3 + 1, par4, TimeTraveler.collisionBlock.blockID);
-		TileEntityCollision collisionTile = (TileEntityCollision) par1World.getBlockTileEntity(par2, par3 + 1, par4);
+		par1World.setBlock(par2, par3 + 1, par4, TimeTraveler.collisionBlock);
+		TileEntityCollision collisionTile = (TileEntityCollision) par1World.getTileEntity(par2, par3 + 1, par4);
 		if (collisionTile != null)
 		{
 			collisionTile.primary_x = par2;
@@ -106,7 +112,8 @@ public class TimeDistorter extends BlockContainer
     /**
      * Returns a new instance of a block's tile entity class. Called on placing the block.
      */
-    public TileEntity createNewTileEntity(World par1World)
+    @Override
+    public TileEntity createNewTileEntity(World par1World, int metadata)
     {
         return new TileEntityTimeDistorter();
     }
@@ -115,6 +122,7 @@ public class TimeDistorter extends BlockContainer
      * If this returns true, then comparators facing away from this block will use the value from
      * getComparatorInputOverride instead of the actual redstone signal strength.
      */
+    @Override
     public boolean hasComparatorInputOverride()
     {
         return true;
@@ -124,9 +132,10 @@ public class TimeDistorter extends BlockContainer
      * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
      * strength when this block inputs to a comparator.
      */
+    @Override
     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
-        return Container.calcRedstoneFromInventory((IInventory)par1World.getBlockTileEntity(par2, par3, par4));
+        return Container.calcRedstoneFromInventory((IInventory)par1World.getTileEntity(par2, par3, par4));
     }
     @Override
     public int getRenderType() 
@@ -140,5 +149,4 @@ public class TimeDistorter extends BlockContainer
     {
             return false;
     }
-
 }

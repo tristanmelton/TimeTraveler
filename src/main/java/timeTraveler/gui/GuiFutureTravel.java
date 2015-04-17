@@ -7,15 +7,15 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.input.Keyboard;
 
+import timeTraveler.network.Message;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.futuretravel.FutureTravelMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
 
 /**
  * GUI for the paradoximer
@@ -53,7 +53,7 @@ public class GuiFutureTravel extends GuiScreen{
         this.buttonList.clear();
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, ("Travel Into the Future!")));
         this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, ("Cancel")));
-        this.theGuiTextField = new GuiTextField(this.fontRenderer, this.width / 2 - 100, 60, 200, 20);
+        this.theGuiTextField = new GuiTextField(this.fontRendererObj, this.width / 2 - 100, 60, 200, 20);
         this.theGuiTextField.setFocused(true);
         this.theGuiTextField.setText(yearsIntoFuture);
     }
@@ -95,7 +95,7 @@ public class GuiFutureTravel extends GuiScreen{
                     	System.out.println(dataoutputstream + " :)");
                             dataoutputstream.writeInt(run);
                             System.out.println(":) :)");
-                            PacketDispatcher.sendPacketToServer(new Packet250CustomPayload("futuretravel", bytearrayoutputstream.toByteArray()));
+                            TimeTraveler.snw.sendTo(new Message("futuretravel", "", "", mc.thePlayer.getDisplayName(), run, 0, 0, 0), (EntityPlayerMP)mc.getIntegratedServer().getEntityWorld().getPlayerEntityByName(mc.thePlayer.getDisplayName()));
                             System.out.println(":) :) :)");
                             TimeTraveler.vars.setFuture(run);
                             mc.displayGuiScreen(null);
@@ -142,8 +142,8 @@ public class GuiFutureTravel extends GuiScreen{
     public void drawScreen(int par1, int par2, float par3)
     {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRenderer, ("Future Travel"), this.width / 2, this.height / 4 - 60 + 20, 16777215);
-        this.drawString(this.fontRenderer, ("Years"), this.width / 2 - 100, 47, 10526880);
+        this.drawCenteredString(this.fontRendererObj, ("Future Travel"), this.width / 2, this.height / 4 - 60 + 20, 16777215);
+        this.drawString(this.fontRendererObj, ("Years"), this.width / 2 - 100, 47, 10526880);
         this.theGuiTextField.drawTextBox();
         super.drawScreen(par1, par2, par3);
     }

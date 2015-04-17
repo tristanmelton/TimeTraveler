@@ -65,8 +65,8 @@ public class ModelSlowTimeArmor extends ModelBiped
   public ModelSlowTimeArmor(float f)
   {
 	 super(f, 0 , 64, 64);
-	 textureWidth = 64;
-	 textureHeight = 64;
+	 //textureWidth = 64;
+	 //textureHeight = 64;
     
       torsoBelt = new ModelRenderer(this, 55, 14);
       torsoBelt.addBox(-2.8F, 0F, 1.8F, 1, 10, 3);

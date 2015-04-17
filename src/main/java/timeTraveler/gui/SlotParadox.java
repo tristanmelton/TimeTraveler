@@ -3,6 +3,7 @@ package timeTraveler.gui;
 import timeTraveler.crafting.ParadoxRecipes;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -99,17 +100,5 @@ public class SlotParadox extends Slot
         }
 
         this.field_75228_b = 0;
-
-        GameRegistry.onItemSmelted(thePlayer, par1ItemStack);
-
-        if (par1ItemStack.itemID == Item.ingotIron.itemID)
-        {
-            this.thePlayer.addStat(AchievementList.acquireIron, 1);
-        }
-
-        if (par1ItemStack.itemID == Item.fishCooked.itemID)
-        {
-            this.thePlayer.addStat(AchievementList.cookFish, 1);
-        }
     }
 }

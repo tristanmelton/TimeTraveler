@@ -57,9 +57,9 @@ public class GuiFutureGenerating extends GuiScreen
 	 */
 	public void drawScreen(int par1, int par2, float par3)
 	{
-		this.drawCenteredString(this.fontRenderer, "Loading Future...",
+		this.drawCenteredString(this.fontRendererObj, "Loading Future...",
 				this.width / 2, 20, 16777215);
-		this.drawCenteredString(this.fontRenderer, futureYear - yearsGenerated + " Years Left!",
+		this.drawCenteredString(this.fontRendererObj, futureYear - yearsGenerated + " Years Left!",
 				this.width / 2, 40, 16777215);
 		super.drawScreen(par1, par2, par3);
 		

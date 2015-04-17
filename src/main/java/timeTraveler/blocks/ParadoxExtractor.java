@@ -10,7 +10,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -22,7 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
@@ -41,7 +41,7 @@ public class ParadoxExtractor extends BlockContainer
     private final boolean isActive;
 
     
-	public static Icon[] textures = new Icon[6];
+	public static IIcon[] textures = new IIcon[6];
 
     /**
      * This flag is used to prevent the furnace inventory to be dropped upon block removal, is used internally when the
@@ -50,17 +50,18 @@ public class ParadoxExtractor extends BlockContainer
     private static boolean keepInventory = false;
 
 	
-   public ParadoxExtractor (int id, boolean par2) 
+   public ParadoxExtractor(boolean par2) 
    {
-        super(id, Material.iron);
+        super(Material.iron);
         this.isActive = par2;
+        setBlockName("ParadoxExtractor");
         this.setHardness(0.5F);
-        this.setStepSound(Block.soundSnowFootstep);
-        this.setCreativeTab(CreativeTabs.tabBlock);
+        this.setStepSound(Block.soundTypeSnow);
+        this.setCreativeTab(TimeTraveler.tabTT);
    }
    
    @Override
-   public void registerIcons(IconRegister ires)
+   public void registerBlockIcons(IIconRegister ires)
    {
       this.blockIcon = ires.registerIcon(TimeTraveler.modid + ":" + "BlockTimeTravelerFront");
       
@@ -84,12 +85,12 @@ public class ParadoxExtractor extends BlockContainer
       return false;
    } // make it opaque cube, or else you will be able to see trough the world !
    @Override
-   public TileEntity createNewTileEntity(World world) 
+   public TileEntity createNewTileEntity(World world, int metadata) 
    {
       return new TileEntityExtractor();
    }
    
-   
+   @Override
    public void onBlockAdded(World par1World, int par2, int par3, int par4)
    {
 		for (int i = -1; i < 2; i++) 
@@ -101,8 +102,8 @@ public class ParadoxExtractor extends BlockContainer
 				} 
 				else
 				{
-					par1World.setBlock(par2 + i, par3 + k, par4, TimeTraveler.collisionBlock.blockID);
-					TileEntityCollision collisionTile = (TileEntityCollision)par1World.getBlockTileEntity(par2 + i, par3 + k, par4);
+					par1World.setBlock(par2 + i, par3 + k, par4, TimeTraveler.collisionBlock);
+					TileEntityCollision collisionTile = (TileEntityCollision)par1World.getTileEntity(par2 + i, par3 + k, par4);
 
 					if (collisionTile != null) {
 						collisionTile.primary_x = par2;
@@ -116,11 +117,11 @@ public class ParadoxExtractor extends BlockContainer
 
    }
    @Override
-   public void breakBlock(World world, int x, int y, int z, int par5, int par6)
+   public void breakBlock(World world, int x, int y, int z, Block par5, int par6)
    {
        if (!keepInventory)
        {
-       	TileEntityExtractor tileEntityParadox = (TileEntityExtractor)world.getBlockTileEntity(x, y, z);
+       	TileEntityExtractor tileEntityParadox = (TileEntityExtractor)world.getTileEntity(x, y, z);
 
            if (tileEntityParadox != null)
            {
@@ -144,7 +145,7 @@ public class ParadoxExtractor extends BlockContainer
                            }
 
                            itemstack.stackSize -= k1;
-                           EntityItem entityitem = new EntityItem(world, (double)((float)x + f), (double)((float)y + f1), (double)((float)z + f2), new ItemStack(itemstack.itemID, k1, itemstack.getItemDamage()));
+                           EntityItem entityitem = new EntityItem(world, (double)((float)x + f), (double)((float)y + f1), (double)((float)z + f2), new ItemStack(itemstack.getItem(), k1, itemstack.getItemDamage()));
 
                            if (itemstack.hasTagCompound())
                            {
@@ -160,42 +161,44 @@ public class ParadoxExtractor extends BlockContainer
                    }
                }
 
-               world.func_96440_m(x, y, z, par5);
+               //world.func_96440_m(x, y, z, par5);
            }
        }
 
        super.breakBlock(world, x, y, z, par5, par6);
 
 	   
-	   world.destroyBlock(x + 1, y, z, false);
-	   world.destroyBlock(x + 1, y + 1, z, false);
-	   world.destroyBlock(x - 1, y, z, false);
-	   world.destroyBlock(x - 1, y + 1, z, false);
-	   world.destroyBlock(x, y + 1, z, false);
-	   world.destroyBlock(x, y + 2, z, false);
-	   world.removeBlockTileEntity(x + 1, y, z);
-	   world.removeBlockTileEntity(x + 1, y + 1, z);
-	   world.removeBlockTileEntity(x - 1, y, z);
-	   world.removeBlockTileEntity(x - 1,  y + 1, z);
-	   world.removeBlockTileEntity(x, y + 1, z);
-	   world.removeBlockTileEntity(x, y + 2, z);
+	   world.setBlockToAir(x + 1, y, z);
+	   world.setBlockToAir(x + 1, y + 1, z);
+	   world.setBlockToAir(x - 1, y, z);
+	   world.setBlockToAir(x - 1, y + 1, z);
+	   world.setBlockToAir(x, y + 1, z);
+	   world.setBlockToAir(x, y + 2, z);
+	   world.removeTileEntity(x + 1, y, z);
+	   world.removeTileEntity(x + 1, y + 1, z);
+	   world.removeTileEntity(x - 1, y, z);
+	   world.removeTileEntity(x - 1,  y + 1, z);
+	   world.removeTileEntity(x, y + 1, z);
+	   world.removeTileEntity(x, y + 2, z);
 	   
-	   world.destroyBlock(x, y, z, true);
-	   world.removeBlockTileEntity(x, y, z);
+	   world.setBlockToAir(x, y, z);
+	   world.removeTileEntity(x, y, z);
    }
    /**
     * Returns the ID of the items to drop on destruction.
     */
+   /*
+   @Override
    public int idDropped(int par1, Random par2Random, int par3)
    {
        return TimeTraveler.paradoxExtractor.blockID;
-   }
+   }*/
    /**
     * Called upon block activation (right click on the block.)
     */
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i, float f, float g, float t) {
-		TileEntity tile_entity = world.getBlockTileEntity(x, y, z);
+		TileEntity tile_entity = world.getTileEntity(x, y, z);
 
 		if (tile_entity == null || player.isSneaking()) {
 
@@ -212,7 +215,7 @@ public class ParadoxExtractor extends BlockContainer
     public static void updateFurnaceBlockState(boolean par0, World par1World, int par2, int par3, int par4)
     {
         int l = par1World.getBlockMetadata(par2, par3, par4);
-        TileEntity tileentity = par1World.getBlockTileEntity(par2, par3, par4);
+        TileEntity tileentity = par1World.getTileEntity(par2, par3, par4);
         keepInventory = true;
 
         if (par0)
@@ -230,7 +233,7 @@ public class ParadoxExtractor extends BlockContainer
         if (tileentity != null)
         {
             tileentity.validate();
-            par1World.setBlockTileEntity(par2, par3, par4, tileentity);
+            par1World.setTileEntity(par2, par3, par4, tileentity);
         }
     }
 
@@ -288,7 +291,7 @@ public class ParadoxExtractor extends BlockContainer
      */
     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
-        return Container.calcRedstoneFromInventory((IInventory)par1World.getBlockTileEntity(par2, par3, par4));
+        return Container.calcRedstoneFromInventory((IInventory)par1World.getTileEntity(par2, par3, par4));
     }
     /**
      * Called when the block is placed in the world.
@@ -316,11 +319,5 @@ public class ParadoxExtractor extends BlockContainer
         {
             par1World.setBlockMetadataWithNotify(par2, par3, par4, 4, 2);
         }
-
-        if (par6ItemStack.hasDisplayName())
-        {
-            ((TileEntityExtractor)par1World.getBlockTileEntity(par2, par3, par4)).func_94129_a(par6ItemStack.getDisplayName());
-        }
     }
-
 }

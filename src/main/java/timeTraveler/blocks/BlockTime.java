@@ -14,7 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
@@ -31,7 +31,7 @@ public class BlockTime extends BlockContainer
     private final boolean isActive;
 
     
-	public static Icon[] textures = new Icon[6];
+	public static IIcon[] textures = new IIcon[6];
 
     /**
      * This flag is used to prevent the furnace inventory to be dropped upon block removal, is used internally when the
@@ -39,11 +39,12 @@ public class BlockTime extends BlockContainer
      */
     private static boolean keepInventory = false;
 
-    public BlockTime(int par1, boolean par2)
+    public BlockTime()
     {
-        super(par1, Material.iron);
-        this.isActive = par2;
-        this.setCreativeTab(CreativeTabs.tabBlock);
+        super(Material.iron);
+        setBlockName("TimeTravel");
+        this.isActive = false;
+        this.setCreativeTab(TimeTraveler.tabTT);
     }
     //This makes our gag invisible.
     @Override
@@ -56,20 +57,22 @@ public class BlockTime extends BlockContainer
     /**
      * Returns the ID of the items to drop on destruction.
      */
+    /*
     @Override
     public int idDropped(int par1, Random par2Random, int par3)
     {
         return 0;
     }
-
+*/
     /**
      * Called whenever the block is added into the world. Args: world, x, y, z
      * @return 
      */
+    @Override
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         super.onBlockAdded(par1World, par2, par3, par4);
-        this.prepareBlock(par1World, par2, par3, par4);
+       // this.prepareBlock(par1World, par2, par3, par4);
     
         for(int i = -1; i < 2; i++)
         {
@@ -83,8 +86,8 @@ public class BlockTime extends BlockContainer
         			else
         			{
         				System.out.println("ADDING");
-            			par1World.setBlock(par2 + i, par3 + j, par4 + k, TimeTraveler.collisionBlock.blockID);
-            	        TileEntityCollision collisionTile = (TileEntityCollision)par1World.getBlockTileEntity(par2 + i, par3 + j, par4 + k);
+            			par1World.setBlock(par2 + i, par3 + j, par4 + k, TimeTraveler.collisionBlock);
+            	        TileEntityCollision collisionTile = (TileEntityCollision)par1World.getTileEntity(par2 + i, par3 + j, par4 + k);
 
             	        if(collisionTile != null)
             	        {
@@ -102,6 +105,8 @@ public class BlockTime extends BlockContainer
     /**
      * set a blocks direction
      */
+    /*
+    @Override
     private void prepareBlock(World par1World, int par2, int par3, int par4)
     {
         if (!par1World.isRemote)
@@ -138,9 +143,10 @@ public class BlockTime extends BlockContainer
 
         }
     }
+    */
 /*
     @Override
-    public void registerIcons(IconRegister iconRegistry)
+    public void registerIIcons(IIconRegister iconRegistry)
     {
     	textures[0] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockParadoxCondenserBot");
     	textures[1] = iconRegistry.registerIcon(TimeTraveler.modid + ":" + "BlockParadoxCondenserTop");
@@ -179,7 +185,7 @@ public class BlockTime extends BlockContainer
      */
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i, float f, float g, float t) {
-		TileEntity tile_entity = world.getBlockTileEntity(x, y, z);
+		TileEntity tile_entity = world.getTileEntity(x, y, z);
 
 		System.out.println(tile_entity);
 		/*EntityChair chair = new EntityChair(world);
@@ -231,6 +237,7 @@ public class BlockTime extends BlockContainer
     /**
      * A randomly called display update to be able to add particles or other items for display
      */
+    @Override
     public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
         /*if (this.isActive)
@@ -251,14 +258,16 @@ public class BlockTime extends BlockContainer
     /**
      * Returns a new instance of a block's tile entity class. Called on placing the block.
      */
-    public TileEntity createNewTileEntity(World par1World)
+    @Override
+    public TileEntity createNewTileEntity(World par1World, int metadata)
     {
         return new TileEntityTimeTravel();
     }
     /**
      * ejects contained items into the world, and notifies neighbours of an update, as appropriate
      */
-    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+    @Override
+    public void breakBlock(World par1World, int par2, int par3, int par4, Block par5, int par6)
     {
 
         super.breakBlock(par1World, par2, par3, par4, par5, par6);
@@ -268,6 +277,7 @@ public class BlockTime extends BlockContainer
      * If this returns true, then comparators facing away from this block will use the value from
      * getComparatorInputOverride instead of the actual redstone signal strength.
      */
+    @Override
     public boolean hasComparatorInputOverride()
     {
         return true;
@@ -277,9 +287,10 @@ public class BlockTime extends BlockContainer
      * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
      * strength when this block inputs to a comparator.
      */
+    @Override
     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
-        return Container.calcRedstoneFromInventory((IInventory)par1World.getBlockTileEntity(par2, par3, par4));
+        return Container.calcRedstoneFromInventory((IInventory)par1World.getTileEntity(par2, par3, par4));
     }
     @Override
     public int getRenderType() 
@@ -296,5 +307,4 @@ public class BlockTime extends BlockContainer
     {
         return false;
     }
-
 }

@@ -112,7 +112,7 @@ private GuiButton buttonSelect;
             					TimeTraveler.vars.setLastPastTimeSavedForWorld(nameOfTime);
             					//File allEntityData = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
             					
-            					mc.thePlayer.addChatMessage("Loading...");
+            					mc.thePlayer.sendChatMessage("Loading...");
             					File present = new File("./saves/" + ms.getWorldName() + "/region").getAbsoluteFile();
             					String fname = "\\mods\\TimeMod\\present\\" + ms.getWorldName();
                             
@@ -187,7 +187,7 @@ private GuiButton buttonSelect;
         public void drawScreen(int par1, int par2, float par3)
         {
             this.timeSlotContainer.drawScreen(par1, par2, par3);
-            this.drawCenteredString(this.fontRenderer, "Travel To...", this.width / 2, 20, 16777215);
+            this.drawCenteredString(this.fontRendererObj, "Travel To...", this.width / 2, 20, 16777215);
             super.drawScreen(par1, par2, par3);
         }        
         static List getSize(GuiTimeTravel par1)
@@ -198,14 +198,18 @@ private GuiButton buttonSelect;
         {
             this.timeList = new ArrayList();
             System.out.println(files);
-            for(File file : files) {
-            	System.out.println(files.length + " " + file.getName());
-            	if(!file.getName().contains("Entity"))
-            	{
-                	timeList.add(file.getName());
-            	}
+            if(files != null)
+            {
+                for(File file : files) {
+                	System.out.println(files.length + " " + file.getName());
+                	if(!file.getName().contains("Entity"))
+                	{
+                    	timeList.add(file.getName());
+                	}
+                }
+                this.selectedWorld = -1;
+
             }
-            this.selectedWorld = -1;
         }
 
         /**

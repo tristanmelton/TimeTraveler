@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -13,7 +14,7 @@ import timeTraveler.blocks.ParadoxExtractor;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.crafting.ExtractingRecipes;
 import timeTraveler.gui.GuiExtractor;
-import timeTraveler.ticker.TickerClient;
+import timeTraveler.ticker.Ticker;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -44,6 +45,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
     /**
      * Returns the number of slots in the inventory.
      */
+    @Override
     public int getSizeInventory()
     {
         return this.paradoxItemStacks.length;
@@ -52,6 +54,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
     /**
      * Returns the stack in slot i
      */
+    @Override
     public ItemStack getStackInSlot(int par1)
     {
         return this.paradoxItemStacks[par1];
@@ -61,6 +64,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
      * Removes from an inventory slot (first arg) up to a specified number (second arg) of items and returns them in a
      * new stack.
      */
+    @Override
     public ItemStack decrStackSize(int par1, int par2)
     {
         if (this.paradoxItemStacks[par1] != null)
@@ -95,6 +99,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
      * When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
      * like when you close a workbench GUI.
      */
+    @Override
     public ItemStack getStackInSlotOnClosing(int par1)
     {
         if (this.paradoxItemStacks[par1] != null)
@@ -112,6 +117,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
     /**
      * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
      */
+    @Override
     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
         this.paradoxItemStacks[par1] = par2ItemStack;
@@ -125,37 +131,35 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
     /**
      * Returns the name of the inventory.
      */
-    public String getInvName()
+    @Override
+    public String getInventoryName()
     {
-        return this.isInvNameLocalized() ? this.field_94130_e : "Paradox Extractor";
+        return this.hasCustomInventoryName() ? this.field_94130_e : "Paradox Extractor";
     }
 
     /**
      * If this returns false, the inventory name will be used as an unlocalized name, and translated into the player's
      * language. Otherwise it will be used directly.
      */
-    public boolean isInvNameLocalized()
+    @Override
+    public boolean hasCustomInventoryName()
     {
         return this.field_94130_e != null && this.field_94130_e.length() > 0;
-    }
-
-    public void func_94129_a(String par1Str)
-    {
-        this.field_94130_e = par1Str;
     }
 
     /**
      * Reads a tile entity from NBT.
      */
+    @Override
     public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
-        NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items");
+        NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items", 0);
         this.paradoxItemStacks = new ItemStack[this.getSizeInventory()];
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
-            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.tagAt(i);
+            NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
             byte b0 = nbttagcompound1.getByte("Slot");
 
             if (b0 >= 0 && b0 < this.paradoxItemStacks.length)
@@ -178,6 +182,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
     /**
      * Writes a tile entity to NBT.
      */
+    @Override
     public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
@@ -199,9 +204,9 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
 
         par1NBTTagCompound.setTag("Items", nbttaglist);
 
-        if (this.isInvNameLocalized())
+        if (this.hasCustomInventoryName())
         {
-            par1NBTTagCompound.setString("Tut Furnace", this.field_94130_e);
+            par1NBTTagCompound.setString("Paradox Extractor", this.field_94130_e);
         }
     }
 
@@ -209,6 +214,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
      * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
      * this more of a set than a get?*
      */
+    @Override
     public int getInventoryStackLimit()
     {
         return 64;
@@ -220,11 +226,10 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
      * Returns an integer between 0 and the passed value representing how close the current item is to being completely
      * cooked
      */
-    public int getCookProgressScaled(int par1)
+    public int getItemBurnTime(int par1)
     {
         return this.paradoxCookTime * par1 / 200;
     }
-
     public int getFormProgressScaled(int par1)
     {
     	return this.paradoxFormTime * par1 / 200;
@@ -258,6 +263,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
      * Allows the entity to update its state. Overridden in most subclasses, e.g. the mob spawner uses this to count
      * ticks and creates a new spawn inside its implementation.
      */
+    @Override
     public void updateEntity()
     {	
         boolean flag = this.paradoxBurnTime > 0;
@@ -278,7 +284,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
                     {
                         if (this.paradoxItemStacks[1].stackSize == 0)
                         {
-                            this.paradoxItemStacks[1] = this.paradoxItemStacks[1].getItem().getContainerItemStack(paradoxItemStacks[1]);
+                            this.paradoxItemStacks[1] = this.paradoxItemStacks[1].getItem().getContainerItem(paradoxItemStacks[1]);
                         }
                     }
             }
@@ -305,7 +311,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
                 	paradoxCurrent++;
                 	System.out.println(paradoxCurrent);
                 	int paradoxPlayerAmt = TimeTraveler.vars.getParadoxAmt();
-                	System.out.println(TickerClient.paradoxLevel + " Before");
+                	System.out.println(Ticker.paradoxLevel + " Before");
                 	if(paradoxPlayerAmt > 0)
                 	{
        			     	GuiScreen curScreen = Minecraft.getMinecraft().currentScreen;
@@ -314,7 +320,7 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
                 			paradoxPlayerAmt--;
                 			TimeTraveler.vars.setParadoxAmt(paradoxPlayerAmt);
                 			this.paradoxItemStacks[2].getTagCompound().setInteger("paradoxLevel", paradoxCurrent);
-                    		System.out.println(TickerClient.paradoxLevel + " After");
+                    		System.out.println(Ticker.paradoxLevel + " After");
                 		}
                 	}
             	}
@@ -336,10 +342,10 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
             }
         }
 
-        if (flag1)
+        /*if (flag1)
         {
             this.onInventoryChanged();
-        }
+        }*/
     }
 
     /**
@@ -426,7 +432,6 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
         }
         else
         {
-            int i = par0ItemStack.getItem().itemID;
             Item item = par0ItemStack.getItem();
             if(item.equals(TimeTraveler.bottledParadox))
             {
@@ -475,29 +480,10 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
     /**
      * Do not make give this method the name canInteractWith because it clashes with Container
      */
+    @Override
     public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
     {
-        return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
-    }
-
-    public void openChest() {}
-
-    public void closeChest() {}
-
-    /**
-     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
-     */
-    public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
-    {
-        return par1 == 2 ? false : (par1 == 1 ? isItemFuel(par2ItemStack) : true);
-    }
-
-    /**
-     * Get the size of the side inventory.
-     */
-    public int[] getSizeInventorySide(int par1)
-    {
-        return par1 == 0 ? field_102011_e : (par1 == 1 ? field_102010_d : field_102009_f);
+        return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
     }
 
     /***********************************************************************************
@@ -548,5 +534,19 @@ public class TileEntityExtractor extends TileEntity implements ISidedInventory
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+
+
+	@Override
+	public void openInventory() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeInventory() {
+		// TODO Auto-generated method stub
+		
 	}
 }

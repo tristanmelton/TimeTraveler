@@ -12,8 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -78,9 +78,9 @@ public class EntityPlayerPast extends EntityLiving
         {
             case PastActionTypes.CHAT:
             {
-                MinecraftServer.getServer().getConfigurationManager().sendChatMsg(
-                    ChatMessageComponent.createFromTranslationWithSubstitutions("chat.type.text", new Object[] {getEntityName(), ma.message})
-                );
+                //MinecraftServer.getServer().getConfigurationManager().sendChatMsg(
+                  //.createFromTranslationWithSubstitutions("chat.type.text", new Object[] {getEntityName(), ma.message})
+                //);
                 break;
             }
 
@@ -252,27 +252,31 @@ public class EntityPlayerPast extends EntityLiving
 
     public boolean isPlayerSeen(Entity par1Entity)
     {
-    	Vec3 pastLook = this.getLook(0);
-    	
-    	Vec3 playerPos = FMLClientHandler.instance().getClient().thePlayer.getPosition(0);
-    	Vec3 pastPos = this.getPosition(0);
-    	
-    	Vec3 displacement = Vec3.createVectorHelper(playerPos.xCoord - pastPos.xCoord, playerPos.yCoord - pastPos.yCoord, playerPos.zCoord - pastPos.zCoord);
-    	//displacement.addVector(playerPos.xCoord - pastPos.xCoord, playerPos.yCoord - pastPos.yCoord, playerPos.zCoord - pastPos.zCoord);
-    	double dP = displacement.normalize().dotProduct(pastLook.normalize());
-    	if(dP < 0)
+    	if(FMLClientHandler.instance().getClient().thePlayer != null && FMLClientHandler.instance().getClient().thePlayer.isPotionActive(Potion.invisibility))
     	{
-    		return false;
+        	Vec3 pastLook = this.getLook(0);
+        	
+        	Vec3 playerPos = FMLClientHandler.instance().getClient().thePlayer.getPosition(0);
+        	Vec3 pastPos = this.getPosition(0);
+        	
+        	Vec3 displacement = Vec3.createVectorHelper(playerPos.xCoord - pastPos.xCoord, playerPos.yCoord - pastPos.yCoord, playerPos.zCoord - pastPos.zCoord);
+        	//displacement.addVector(playerPos.xCoord - pastPos.xCoord, playerPos.yCoord - pastPos.yCoord, playerPos.zCoord - pastPos.zCoord);
+        	double dP = displacement.normalize().dotProduct(pastLook.normalize());
+        	if(dP < 0)
+        	{
+        		return false;
+        	}
+        	if(dP >= Math.cos((120/2)))
+        	{    		
+        		if(this.canEntityBeSeen(FMLClientHandler.instance().getClient().thePlayer))
+        		{
+        			return true;
+        		
+        		}
+        	}
+        	
+        	return false;
     	}
-    	if(dP >= Math.cos((120/2)))
-    	{    		
-    		if(this.canEntityBeSeen(FMLClientHandler.instance().getClient().thePlayer))
-    		{
-    			return true;
-    		
-    		}
-    	}
-    	
     	return false;
     }
     

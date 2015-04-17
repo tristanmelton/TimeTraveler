@@ -20,7 +20,7 @@ public class WorldProviderFuture extends WorldProvider
 	@Override
 	public void registerWorldChunkManager()
 	{    
-		this.worldChunkMgr = new WorldChunkManagerHell(BiomeGenBase.desertHills, 0.8F, 0.1F);  
+		this.worldChunkMgr = new WorldChunkManagerHell(BiomeGenBase.desertHills, 0.1F);  
 		this.dimensionId = TimeTraveler.dimensionId; 
 	}
 	

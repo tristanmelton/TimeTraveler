@@ -19,6 +19,7 @@ class GuiTimeSlot extends GuiSlot
     /**
      * Gets the size of the current slot list.
      */
+    @Override
     protected int getSize()
     {
         return GuiTimeTravel.getSize(this.parentWorldGui).size();
@@ -27,7 +28,8 @@ class GuiTimeSlot extends GuiSlot
     /**
      * the element in the slot that was clicked, boolean for wether it was double clicked or not
      */
-    protected void elementClicked(int par1, boolean par2)
+    @Override
+    protected void elementClicked(int par1, boolean par2, int par3, int par4)
     {
         GuiTimeTravel.onElementSelected(this.parentWorldGui, par1);
         boolean var3 = GuiTimeTravel.getSelectedWorld(this.parentWorldGui) >= 0 && GuiTimeTravel.getSelectedWorld(this.parentWorldGui) < this.getSize();
@@ -42,6 +44,7 @@ class GuiTimeSlot extends GuiSlot
     /**
      * returns true if the element passed in is currently selected
      */
+    @Override
     protected boolean isSelected(int par1)
     {
         return par1 == GuiTimeTravel.getSelectedWorld(this.parentWorldGui);
@@ -50,17 +53,18 @@ class GuiTimeSlot extends GuiSlot
     /**
      * return the height of the content being scrolled
      */
+    @Override
     protected int getContentHeight()
     {
         return GuiTimeTravel.getSize(this.parentWorldGui).size() * 36;
     }
-
+    @Override
     protected void drawBackground()
     {
         this.parentWorldGui.drawDefaultBackground();
     }
-
-    protected void drawSlot(int par1, int par2, int par3, int par4, Tessellator par5Tessellator)
+    @Override
+    protected void drawSlot(int par1, int par2, int par3, int par4, Tessellator par5Tessellator, int par6, int par7)
     {
         String var6 = GuiTimeTravel.getSize(this.parentWorldGui).get(par1).toString();
         String var7 = var6;

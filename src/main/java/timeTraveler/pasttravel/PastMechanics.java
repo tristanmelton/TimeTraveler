@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
@@ -27,7 +28,7 @@ import timeTraveler.entities.EntityPlayerPast;
 import timeTraveler.gui.GuiTimeTravel;
 import timeTraveler.mechanics.ClientMethods;
 import timeTraveler.mechanics.CopyFile;
-import timeTraveler.ticker.TickerClient;
+import timeTraveler.ticker.Ticker;
 import cpw.mods.fml.client.FMLClientHandler;
 
 /**
@@ -47,7 +48,7 @@ public class PastMechanics
 	 */
 	public void updateParadoxBar(Minecraft minecraft, int amtOfParadox)
 	{
-	    ScaledResolution var5 = new ScaledResolution(minecraft.gameSettings, minecraft.displayWidth, minecraft.displayHeight);
+	    ScaledResolution var5 = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
 	    
 	    int var6 = var5.getScaledWidth();
 	    int var7 = var5.getScaledHeight();
@@ -166,10 +167,10 @@ public class PastMechanics
 			
 			paradoxLevel = 0;
 			
-			
-	        minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
 	        minecraft.theWorld.sendQuittingDisconnectingPacket();
 	        minecraft.loadWorld((WorldClient)null);
+
+	        //minecraft.statFileWriter.readStat(StatList.leaveGameStat, 1);
 	        //minecraft.displayGuiScreen(new GuiMainMenu());
 	        
 	        
@@ -188,9 +189,9 @@ public class PastMechanics
 		            Thread.sleep(2000);
 		        	CopyFile.moveMultipleFiles(present, worldFile);
 		            gtt.isInPast = false;
-		            TickerClient.minutes = 1;
-		            TickerClient.seconds = 10;
-				    TickerClient.paradoxLevel = 0;
+		            Ticker.minutes = 2;
+		            Ticker.seconds = 1;
+				    Ticker.paradoxLevel = 0;
 			        minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
 	            }
 	            else
@@ -233,8 +234,10 @@ public class PastMechanics
 			String worldName = ms.getWorldName();
 			String folderName = ms.getFolderName();
 			
+			
 		    minecraft.theWorld.sendQuittingDisconnectingPacket();
 		    minecraft.loadWorld((WorldClient)null);
+
 		    minecraft.displayGuiScreen(new GuiMainMenu());
 		           
 		    File present = new File(minecraft.mcDataDir + "/mods/TimeMod/present/" + ms.getWorldName());
@@ -250,8 +253,8 @@ public class PastMechanics
 				    Thread.sleep(1000);
 				    CopyFile.moveMultipleFiles(present, worldFile);
 				    gtt.isInPast = false;
-				    TickerClient.minutes = 1;
-				    TickerClient.seconds = 10;
+				    Ticker.minutes = 1;
+				    Ticker.seconds = 10;
 				    minecraft.launchIntegratedServer(folderName, worldName, (WorldSettings)null);
 				    
 			        //minecraft.loadWorld(worldClient);
@@ -278,7 +281,7 @@ public class PastMechanics
 		int additionZ = rand.nextInt(25);
 		World world  = mcServer.getEntityWorld();
 		
-		if(world.getBlockId((int)minecraft.thePlayer.posX + additionX, (int)minecraft.thePlayer.posY + additionY,(int) minecraft.thePlayer.posZ + additionZ) == 0)
+		if(world.getBlock((int)minecraft.thePlayer.posX + additionX, (int)minecraft.thePlayer.posY + additionY,(int) minecraft.thePlayer.posZ + additionZ) == Blocks.air)
 		{
 			System.out.println("Hurrah!");
 			EntityParadoxHunter hunter = new EntityParadoxHunter(world);
@@ -385,122 +388,3 @@ public class PastMechanics
 		this.playThreads.add(new PastPlayThread(entity, file.toString()));
 	}
 }
-
-//UNUSED METHODS OF OLD:
-/*
-public void initSpawnEntities()
-{
-	World world = DimensionManager.getWorld(0);
-
-	Set keys = TimeTraveler.vars.pathData.data.keySet();
-	
-	for(int i = 0; i < TimeTraveler.vars.pathData.data.size(); i++)
-	{
-		Integer uid = (Integer)keys.iterator().next();
-		//System.out.println(uid);
-		List<EntityData> dataForKey = TimeTraveler.vars.pathData.data.get(uid);
-		//System.out.println(dataForKey);
-
-		EntityData primaryData = dataForKey.get(0);
-		//System.out.println(primaryData);
-
-		String[] entityData = primaryData.getData();
-		
-		Entity entity = EntityList.createEntityByName(entityData[0], world);
-		entity.posX = Integer.parseInt(entityData[1]);
-		entity.posY = Integer.parseInt(entityData[2]);
-		entity.posZ = Integer.parseInt(entityData[3]);
-		
-		ExtendedEntity props = ExtendedEntity.get((EntityLiving)entity);
-		props.setEntityUID(uid);
-		props.saveNBTData(entity.getEntityData());
-		
-		world.spawnEntityInWorld(entity);
-	}
-}
-	public void addEntityData()
-	{
-		
-		List<EntityLiving> allEntities = FMLClientHandler.instance().getClient().theWorld.loadedEntityList;
-		
-		for(int i = 0; i < allEntities.size(); i++)
-		{
-			if(allEntities.get(i) instanceof EntityLiving)
-			{
-				
-				String entityName = allEntities.get(i).getEntityName();
-				int xCoord = (int) allEntities.get(i).posX;
-				int yCoord = (int) allEntities.get(i).posY;
-				int zCoord = (int) allEntities.get(i).posZ;
-				
-				ExtendedEntity props = ExtendedEntity.get((EntityLiving)allEntities.get(i));
-				int entityUniqueId = props.getEntityUID();
-				
-				String[] rData = new String[4];
-				rData[0] = entityName;
-				rData[1] = Integer.toString(xCoord);
-				rData[2] = Integer.toString(yCoord);
-				rData[3] = Integer.toString(zCoord);
-				
-				EntityData data = new EntityData(rData);
-				
-				TimeTraveler.vars.pathData.addEntity(entityUniqueId);
-				TimeTraveler.vars.pathData.addData(entityUniqueId, data);	
-			}
-		}
-	}
-
-	public void saveEntityData(MinecraftServer par2MinecraftServer)
-	{
-		try
-		{
-			File init = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName());
-			if(!init.exists())
-			{
-				init.mkdirs();
-			}
-			int fNumbers = new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName()).listFiles().length + 1;
-			
-			String time = "Time ";
-			time = time.concat(String.format("%03d",fNumbers));
-			
-			FileOutputStream output = new FileOutputStream(new File(FMLClientHandler.instance().getClient().mcDataDir + "\\mods\\TimeMod\\past\\EntityLocations\\" + par2MinecraftServer.getWorldName() + "\\" + time + ".epd"));
-			ObjectOutputStream outputObj = new ObjectOutputStream(output);
-			outputObj.writeObject(TimeTraveler.vars.pathData.data);
-			outputObj.flush();
-			outputObj.close();
-						
-			System.out.println(TimeTraveler.vars.pathData.data);
-			
-			TimeTraveler.vars.pathData.data.clear();		
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-	}
-	
-	public void loadEntityData()
-	{
-		File allEntityData = new File(FMLClientHandler.instance().getClient().mcDataDir +"/mods/TimeMod/past/EntityLocations/" + FMLClientHandler.instance().getServer().getWorldName() + "/" + TimeTraveler.vars.getPastTime() + ".epd");
-		if(allEntityData.exists())
-		{
-			ObjectInputStream input;
-			try
-			{
-				input = new ObjectInputStream(new FileInputStream(allEntityData));
-				TimeTraveler.vars.pathData.data = (HashMap<Integer, List<EntityData>>)input.readObject();
-				System.out.println("Set the Correct Data! " + TimeTraveler.vars.pathData.data);
-			} 
-			catch(Exception ex)
-			{
-				ex.printStackTrace();
-			}
-
-		}
-		else
-		{
-			System.out.println("N_LHOUOH");
-		}
-	}*/

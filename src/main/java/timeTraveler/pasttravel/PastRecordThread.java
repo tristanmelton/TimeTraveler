@@ -7,6 +7,7 @@ import java.io.RandomAccessFile;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.server.MinecraftServer;
 import timeTraveler.core.TimeTraveler;
@@ -119,9 +120,8 @@ class PastRecordThread implements Runnable
 		{
 			if (this.player.inventory.armorInventory[(ci - 1)] != null)
 			{
-				if (this.player.inventory.armorInventory[(ci - 1)].itemID != this.itemsEquipped[ci])
-				{
-					this.itemsEquipped[ci] = this.player.inventory.armorInventory[(ci - 1)].itemID;
+				if (Item.getIdFromItem(player.inventory.armorInventory[ci - 1].getItem()) != itemsEquipped[ci]) {
+					itemsEquipped[ci] = Item.getIdFromItem(player.inventory.armorInventory[ci - 1].getItem());	
 					PastAction ma = new PastAction(PastActionTypes.EQUIP);
 					ma.armorSlot = ci;
 					ma.armorId = this.itemsEquipped[ci];
@@ -146,9 +146,9 @@ class PastRecordThread implements Runnable
 	{
 		if (this.player.getHeldItem() != null)
 		{
-			if (this.player.getHeldItem().itemID != this.itemsEquipped[0])
+			if (Item.getIdFromItem(player.getHeldItem().getItem()) != itemsEquipped[0])
 			{
-				this.itemsEquipped[0] = this.player.getHeldItem().itemID;
+				itemsEquipped[0] = Item.getIdFromItem(player.getHeldItem().getItem());
 				PastAction ma = new PastAction(PastActionTypes.EQUIP);
 				ma.armorSlot = 0;
 				ma.armorId = this.itemsEquipped[0];

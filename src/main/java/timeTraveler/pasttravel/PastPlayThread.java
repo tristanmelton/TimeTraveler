@@ -1,12 +1,12 @@
 package timeTraveler.pasttravel;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityPlayerPast;
@@ -16,7 +16,7 @@ class PastPlayThread implements Runnable
 {
 	Thread t;
 	EntityPlayerPast replayEntity;
-	RandomAccessFile in;
+	DataInputStream in;
 
 	public PastPlayThread(EntityPlayerPast _player, String recfile)
 	{
@@ -24,7 +24,7 @@ class PastPlayThread implements Runnable
 		{
 			File file = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past/EntityLocations/" + MinecraftServer.getServer().getWorldName() + "/" + TimeTraveler.vars.getLastPastTimeSavedForWorld());
 
-			this.in = new RandomAccessFile(new File(recfile).getAbsoluteFile(), "r");
+			this.in = new DataInputStream(new FileInputStream(new File(recfile).getAbsoluteFile()));
 			//this.in = new RandomAccessFile(file.getAbsolutePath() + "/" + recfile, "r");
 		} 
 		catch (FileNotFoundException e)
@@ -53,7 +53,7 @@ class PastPlayThread implements Runnable
 			{
 				throw new Exception("Not a Past file!  Someone's trying to hack the past!");
 			}
-			while (this.in.getFilePointer() != this.in.length()) 
+			while (true) 
 			{
 				float yaw = this.in.readFloat();
 				float pitch = this.in.readFloat();

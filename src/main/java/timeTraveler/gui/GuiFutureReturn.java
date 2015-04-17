@@ -77,7 +77,7 @@ public class GuiFutureReturn extends GuiScreen
 						String allNames[] = minecraft.getAllUsernames().clone();
 						for(int i = 0; i < allNames.length; i++)
 						{
-							player = minecraft.getConfigurationManager().getPlayerForUsername(allNames[i]);
+							player = minecraft.getConfigurationManager().func_152612_a(allNames[i]);
 							System.out.println(player);
 						}
 						CopyFile.moveMultipleFiles(futureDim, future);
@@ -93,7 +93,7 @@ public class GuiFutureReturn extends GuiScreen
 				{
 	            	try 
 	            	{
-	    		        mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
+	    		       // mc.statFileWriter.readStat(StatList.leaveGameStat, 1);
 	    		        mc.theWorld.sendQuittingDisconnectingPacket();
 	    		        mc.loadWorld((WorldClient)null);
 
@@ -125,7 +125,7 @@ public class GuiFutureReturn extends GuiScreen
     public void drawScreen(int par1, int par2, float par3)
     {
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRenderer, ("Return to the Present?"), this.width / 2, this.height / 4 - 60 + 20, 16777215);
+        this.drawCenteredString(this.fontRendererObj, ("Return to the Present?"), this.width / 2, this.height / 4 - 60 + 20, 16777215);
         super.drawScreen(par1, par2, par3);
     }
 }

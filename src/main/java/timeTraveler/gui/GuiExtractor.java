@@ -31,9 +31,9 @@ public class GuiExtractor extends GuiContainer
      */
     protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
-        String s = this.paradoxInventory.isInvNameLocalized() ? this.paradoxInventory.getInvName() : StatCollector.translateToLocal(this.paradoxInventory.getInvName());
-        this.fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6, 4210752);
-        this.fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
+        String s = this.paradoxInventory.hasCustomInventoryName() ? this.paradoxInventory.getInventoryName() : StatCollector.translateToLocal(this.paradoxInventory.getInventoryName());
+        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
+        this.fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
     }
 
     /**
@@ -55,7 +55,7 @@ public class GuiExtractor extends GuiContainer
             //this.drawTexturedModalRect(k + 56, l + 36 + 12 - i1, 176, 12 - i1, 14, i1 + 2);
         }
 
-        i1 = this.paradoxInventory.getCookProgressScaled(24);
+        i1 = this.paradoxInventory.getFormProgressScaled(24);
         this.drawTexturedModalRect(k + 59, l + 32, 176, 0, i1, 17);
     }	
 }

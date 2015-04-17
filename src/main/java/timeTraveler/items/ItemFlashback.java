@@ -1,14 +1,8 @@
 package timeTraveler.items;
 
-import java.util.List;
-
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import timeTraveler.core.TimeTraveler;
 
 /**
@@ -19,14 +13,15 @@ import timeTraveler.core.TimeTraveler;
 public class ItemFlashback extends Item
 {
 
-	public ItemFlashback (int id)
+	public ItemFlashback ()
 	{
-		super(id);
-		this.setCreativeTab(CreativeTabs.tabMisc);
+		super();
+		setUnlocalizedName("Flashback");
+		this.setCreativeTab(TimeTraveler.tabTT);
 		
 	}
 
-    public void registerIcons(IconRegister par1IconRegister)
+    public void registerIcons(IIconRegister par1IconRegister)
     {
      this.itemIcon = par1IconRegister.registerIcon(TimeTraveler.modid + ":" + this.getUnlocalizedName());
     }

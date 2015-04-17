@@ -3,22 +3,21 @@ package timeTraveler.mechanics;
 import java.io.IOException;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import timeTraveler.core.TimeTraveler;
 import timeTraveler.entities.EntityXPOrbTT;
@@ -30,12 +29,40 @@ import timeTraveler.pasttravel.PastActionTypes;
 import timeTraveler.pasttravel.PastMechanics;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 
 public class TTEventHandler
 {
-	
-	@ForgeSubscribe
+	@SubscribeEvent
+	public void onBucketFill(FillBucketEvent event) 
+	{
+
+		ItemStack result = fillCustomBucket(event.world, event.target);
+
+		if (result == null)
+			return;
+
+		event.result = result;
+		event.setResult(Event.Result.ALLOW);
+		event.entityPlayer.inventory.mainInventory[event.entityPlayer.inventory.currentItem] = event.result;
+		System.out.println(event.result);
+	}
+
+	public ItemStack fillCustomBucket(World world, MovingObjectPosition pos) 
+	{
+		Block blockID = world.getBlock(pos.blockX, pos.blockY, pos.blockZ);
+		System.out.println(blockID + " " + TimeTraveler.timeLiquid);
+		if (blockID == TimeTraveler.timeLiquid) {
+			System.out.println("IT WORKED");
+			world.setBlock(pos.blockX, pos.blockY, pos.blockZ, Blocks.air);
+			return new ItemStack(TimeTraveler.bucket);
+		} else
+			return null;
+	}
+
+	@SubscribeEvent
 	public void onBlockBreakEvent(BreakEvent event)
 	{
 		if(!GuiTimeTravel.isInPast)
@@ -64,7 +91,7 @@ public class TTEventHandler
 		}
 		
 	}
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onLivingPlaceBlockEvent(LivingPlaceBlockEvent event) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 
@@ -89,7 +116,7 @@ public class TTEventHandler
 			}
 		}
 	}
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onArrowLooseEvent(ArrowLooseEvent ev) throws IOException
 	{
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
@@ -105,10 +132,11 @@ public class TTEventHandler
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onItemTossEvent(ItemTossEvent ev) throws IOException 
 	{
-		
+		System.out.println("EVENTS WORKING");
+	
 		List<PastAction> aList = TimeTraveler.instance.getActionListForPlayer(ev.player);
 		if (aList != null) 
 		{
@@ -120,7 +148,7 @@ public class TTEventHandler
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onServerChatEvent(ServerChatEvent ev) 
 	{
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
@@ -139,7 +167,7 @@ public class TTEventHandler
 
 	boolean inPast;
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityJoin(EntityJoinWorldEvent event)
 	{
 		if(event.entity instanceof EntityXPOrb)
@@ -186,7 +214,7 @@ public class TTEventHandler
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityConstructing(EntityConstructing event)
 	{
 		/*
