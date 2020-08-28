@@ -1,0 +1,13 @@
+{
+    "variants":
+    {
+        "burning=false,facing=north": { "model":"timetraveler:paradox_condenser" },
+        "burning=false,facing=east": { "model":"timetraveler:paradox_condenser", "y":90 },
+        "burning=false,facing=south": { "model":"timetraveler:paradox_condenser", "y":180 },
+        "burning=false,facing=west": { "model":"timetraveler:paradox_condenser", "y":270 },
+        "burning=true,facing=north": { "model":"timetraveler:paradox_condenser" },
+        "burning=true,facing=east": { "model":"timetraveler:paradox_condenser", "y":90 },
+        "burning=true,facing=south": { "model":"timetraveler:paradox_condenser", "y":180 },
+        "burning=true,facing=west": { "model":"timetraveler:paradox_condenser", "y":270 }
+    }
+}

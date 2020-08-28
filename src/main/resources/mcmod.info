@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "timetraveler",
+  "name": "Time Traveler",
+  "description": "Time Traveler Mod.",
   "version": "${version}",
-  "mcversion": "${mcversion}",
+  "mcversion": "1.12.2",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["Charsmud"],
+  "credits": "Charsmud",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

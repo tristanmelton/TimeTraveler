@@ -1,0 +1,23 @@
+//Items
+item.bottled_paradox.name=Bottled Paradox
+item.condensed_paradox.name=Condensed Paradox
+item.exp_enhance.name=EXP Enhancer
+item.flashback.name=Flashback
+item.paradoximer.name=Paradoximer
+item.slow_armor.name=Slow Armor
+item.time_fluid_bucket=Time Fluid Bucket
+
+//Blocks
+tile.paradox_condenser.name=Paradox Condenser
+tile.paradox_extractor.name=Paradox Extractor
+tile.marker.name=Marker
+tile.time_machine.name=Time Machine
+tile.time_distorter.name=Time Distorter
+tile.time_field.name=Time Field
+tile.time_traveler=Time Traveler
+
+//Containers
+container.paradox_condenser=Paradox Condenser
+container.paradox_extractor=Paradox Extractor
+
+itemGroup.timetraveler=TimeTraveler

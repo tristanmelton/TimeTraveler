@@ -1,0 +1,6 @@
+{
+   "parent": "block/cube_all",
+   "textures": {
+       "all": "timetraveler:blocks/time_traveler"
+   }
+}
