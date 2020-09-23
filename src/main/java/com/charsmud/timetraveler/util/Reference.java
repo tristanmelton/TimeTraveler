@@ -12,5 +12,6 @@ public class Reference
 	public static final int GUI_FUTURE_TRAVEL = 2;
 	public static final int GUI_FUTURE_RETURN = 3;
 	public static final int GUI_PARADOX_EXTRACTOR = 4;
+	public static final int GUI_PAST_TRAVEL = 5;
 
 }

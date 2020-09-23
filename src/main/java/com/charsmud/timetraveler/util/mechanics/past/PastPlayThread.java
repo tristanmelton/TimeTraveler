@@ -49,7 +49,7 @@ public class PastPlayThread implements Runnable
 			{
 				throw new Exception("Not a Past file!  Someone's trying to hack the past!");
 			}
-			while (true) 
+			while (true) //TODO: Change to while the end of file hasn't been reached, and if it has, send back to present 
 			{
 				long timestamp = this.in.readLong();
 				float yaw = this.in.readFloat();

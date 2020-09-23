@@ -7,6 +7,7 @@ import com.charsmud.timetraveler.gui.GuiFutureReturn;
 import com.charsmud.timetraveler.gui.GuiFutureTravel;
 import com.charsmud.timetraveler.gui.GuiParadoxCondenser;
 import com.charsmud.timetraveler.gui.GuiParadoxExtractor;
+import com.charsmud.timetraveler.gui.GuiPastTravel;
 import com.charsmud.timetraveler.tileentities.TileEntityParadoxCondenser;
 import com.charsmud.timetraveler.tileentities.TileEntityParadoxExtractor;
 import com.charsmud.timetraveler.util.Reference;
@@ -44,6 +45,8 @@ public class GuiHandler implements IGuiHandler
 			return new GuiFutureReturn(player);
 		else if(ID == Reference.GUI_PARADOX_EXTRACTOR)
 			return new GuiParadoxExtractor(player.inventory, (TileEntityParadoxExtractor)world.getTileEntity(new BlockPos(x,y,z)));
+		else if (ID == Reference.GUI_PAST_TRAVEL)
+			return new GuiPastTravel(player);
 		return null;
 	}
 	@SubscribeEvent

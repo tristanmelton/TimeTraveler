@@ -84,6 +84,7 @@ public class GuiFutureTravel extends GuiScreen
             	if(theGuiTextField.getText() != "")
             	{
                 	int run = Integer.parseInt(theGuiTextField.getText());
+                	//TODO: have "strength" of future travel depend on runs
                 	TimeTraveler.TEMPORAL_LOCATION = PlayerTemporalLocation.FUTURE;
                 	TimeTraveler.past_mechanics.stopPastRecording(player);
                 	TimeTeleporter.teleportToDimension(player, DimensionInit.DIMENSION_FUTURE_ID, player.posX, player.posY, player.posZ);
@@ -91,31 +92,6 @@ public class GuiFutureTravel extends GuiScreen
                 	double dy = player.world.getHeight(MathHelper.floor(player.posX), MathHelper.floor(player.posZ));
                 	// still seem to need to set the position, +1 so you don't get in the void
                 	player.setPositionAndUpdate(player.posX, dy + 1, player.posZ);
-
-                	//TODO: Implement Future Travel
-                	/*
-            		FutureTravelMechanics ftm = new FutureTravelMechanics();
-            	
-            		WorldClient world = FMLClientHandler.instance().getClient().theWorld;
-                	System.out.println(run);
-
-                    ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
-                    DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
-                    try
-                    {
-                    	System.out.println(dataoutputstream + " :)");
-                            dataoutputstream.writeInt(run);
-                            System.out.println(":) :)");
-                            TimeTraveler.snw.sendTo(new Message("futuretravel", "", "", mc.thePlayer.getDisplayName(), run, 0, 0, 0), (EntityPlayerMP)mc.getIntegratedServer().getEntityWorld().getPlayerEntityByName(mc.thePlayer.getDisplayName()));
-                            System.out.println(":) :) :)");
-                            TimeTraveler.vars.setFuture(run);
-                            mc.displayGuiScreen(null);
-                    }
-                    catch (Exception exception)
-                    {
-                            exception.printStackTrace();
-                    }*/
-
             	}
             }
         }

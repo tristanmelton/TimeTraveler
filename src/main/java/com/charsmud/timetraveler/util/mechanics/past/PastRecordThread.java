@@ -29,7 +29,7 @@ class PastRecordThread implements Runnable
 	PastRecordThread(EntityPlayer _player)
 	{
 		try {
-			File f = new File(FMLClientHandler.instance().getClient().mcDataDir , "/mods/TimeMod/past/EntityLocations/" + Minecraft.getMinecraft().getIntegratedServer().getWorldName() + "/");
+			File f = new File(FMLClientHandler.instance().getClient().mcDataDir , "/mods/TimeMod/past/" + Minecraft.getMinecraft().getIntegratedServer().getWorldName() + "/");
 			if(!f.exists())
 			{
 				f.mkdirs();
