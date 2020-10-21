@@ -1,22 +1,30 @@
 package com.charsmud.timetraveler.util.mechanics.past;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.charsmud.timetraveler.TimeTraveler;
+import com.charsmud.timetraveler.TimeTraveler.PlayerTemporalLocation;
 import com.charsmud.timetraveler.entities.EntityPlayerPast;
+import com.charsmud.timetraveler.util.mechanics.TimeTeleporter;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.util.math.MathHelper;
 
 public class PastPlayThread implements Runnable
 {
-	Thread t;
-	EntityPlayerPast replayEntity;
-	DataInputStream in;
+	private Thread t;
+	private EntityPlayerPast replayEntity;
+	private EntityPlayer playerTarget;
+	private DataInputStream in;
 
-	public PastPlayThread(EntityPlayerPast _player, String recfile)
+	public PastPlayThread(EntityPlayer _player, EntityPlayerPast _playerpast, String recfile)
 	{
 		try 
 		{
@@ -27,7 +35,8 @@ public class PastPlayThread implements Runnable
 		{
 			e.printStackTrace();
 		}
-		this.replayEntity = _player;
+		this.replayEntity = _playerpast;
+		this.playerTarget = _player;
 		this.t = new Thread(this, "TimeTraveler Past Player Replay Thread");
 		this.t.start();
 	}
@@ -49,9 +58,9 @@ public class PastPlayThread implements Runnable
 			{
 				throw new Exception("Not a Past file!  Someone's trying to hack the past!");
 			}
-			while (true) //TODO: Change to while the end of file hasn't been reached, and if it has, send back to present 
+			while (true) 
 			{
-				long timestamp = this.in.readLong();
+				//long timestamp = this.in.readLong();
 				float yaw = this.in.readFloat();
 				float pitch = this.in.readFloat();
 				double x = this.in.readDouble();
@@ -68,6 +77,7 @@ public class PastPlayThread implements Runnable
 				//Boolean ie = Boolean.valueOf(this.in.readBoolean());
 
 				replayEntity.isAirBorne = iab;
+				replayEntity.setPositionAndRotation(x, y, z, yaw, pitch);
 				replayEntity.motionX = mx;
 				replayEntity.motionY = my;
 				replayEntity.motionZ = mz;
@@ -75,7 +85,6 @@ public class PastPlayThread implements Runnable
 				replayEntity.setSneaking(isn);
 				replayEntity.setSprinting(isp);
 				replayEntity.onGround = iog;
-				replayEntity.setPositionAndRotation(x, y, z, yaw, pitch);
 				//replayEntity.setEating(ie);
 
 				Boolean hasAction = Boolean.valueOf(this.in.readBoolean());
@@ -109,10 +118,6 @@ public class PastPlayThread implements Runnable
 						ma2.armorSlot = aSlot;
 						ma2.armorId = aId;
 						ma2.armorDmg = aDmg;
-
-
-						
-						System.out.println(ma2.armorSlot + " " + ma2.armorId + " " + ma2.armorDmg);
 						
 						this.replayEntity.eventsList.add(ma2);
 						break;
@@ -145,9 +150,7 @@ public class PastPlayThread implements Runnable
 						ma.xCoord = in.readInt();
 						ma.yCoord = in.readInt();
 						ma.zCoord = in.readInt();
-						System.out.println(ma.itemData);
-						System.out.println(in);
-						ma.itemData = CompressedStreamTools.read(in);
+						ma.blockType = Block.getBlockById(in.readInt());
 						replayEntity.eventsList.add(ma);
 						break;
 					}
@@ -164,22 +167,33 @@ public class PastPlayThread implements Runnable
 				Thread.sleep(100L);
 			}
 		}
+		catch (EOFException ex)
+		{
+			this.replayEntity.setDead();
+			TimeTraveler.instance.playThreads.remove(this);
+		}
 		catch (Exception e) 
 		{
 			System.out.println("Replay thread interrupted.");
 			System.out.println("Error loading Past file, either not a past file or recorded by an older version.");
-		
 			e.printStackTrace();
 		}
+
 		this.replayEntity.setDead();
+		
 		
 		try 
 		{
 			this.in.close();
 		} 
+	
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+	}
+	public boolean getThreadIsAlive()
+	{
+		return t.isAlive();
 	}
 }

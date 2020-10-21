@@ -14,9 +14,8 @@ class GuiTimeSlot extends GuiScrollingList
 	
 	public GuiTimeSlot(GuiPastTravel par1, ArrayList<String> timeList)
 	{
-		super(par1.mc, 200, par1.height, 32, par1.height - 64, 36, 36);
+		super(Minecraft.getMinecraft(), 200, par1.height, 32, par1.height - 64, 36, 36);
 		this.timeList = timeList;
-		//super(par1.mc, par1.width, par1.height, 32, par1.height - 64, 36);
 		this.parentWorldGui = par1;
 	}
 
@@ -86,7 +85,7 @@ class GuiTimeSlot extends GuiScrollingList
 		// Date(var6.getLastTimePlayed()));
 		// var8 = var8 + ")";
 
-		this.parentWorldGui.drawString(this.parentWorldGui.mc.fontRenderer, var7, this.left + 3, slotTop + 2, 0xFF2222);
-		this.parentWorldGui.drawString(this.parentWorldGui.mc.fontRenderer, var8, this.left + 3, slotTop + 12, 0xFF2222);
+		this.parentWorldGui.drawString(Minecraft.getMinecraft().fontRenderer, var7, this.left + 3, slotTop + 2, 0xFF2222);
+		this.parentWorldGui.drawString(Minecraft.getMinecraft().fontRenderer, var8, this.left + 3, slotTop + 12, 0xFF2222);
 	}
 }

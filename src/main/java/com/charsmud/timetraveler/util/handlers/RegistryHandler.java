@@ -2,6 +2,7 @@ package com.charsmud.timetraveler.util.handlers;
 
 import com.charsmud.timetraveler.TimeTraveler;
 import com.charsmud.timetraveler.blocks.BlockInit;
+import com.charsmud.timetraveler.entities.EntityInit;
 import com.charsmud.timetraveler.items.ItemInit;
 import com.charsmud.timetraveler.renderers.RendererMarker;
 import com.charsmud.timetraveler.renderers.RendererParadoxCondenser;
@@ -45,7 +46,6 @@ public class RegistryHandler
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityParadoxExtractor.class, new RendererParadoxExtractor());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTimeDistorter.class, new RendererTimeDistorter());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTimeMachine.class, new RendererTimeMachine());
-
 	}
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event)
@@ -72,8 +72,10 @@ public class RegistryHandler
 	}
 	public static void preInitRegistries()
 	{
-		GameRegistry.registerWorldGenerator(new WorldGenCustomStructures(), 0);
+		GameRegistry.registerWorldGenerator(new WorldGenCustomStructures(), 2);
 		DimensionInit.registerDimensions();
+		EntityInit.registerEntities();
+		RenderHandler.registerEntityRenders();
 	}
 	public static void initRegistries()
 	{

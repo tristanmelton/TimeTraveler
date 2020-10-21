@@ -43,8 +43,8 @@ public class TimeTraveler
 	public static PastMechanics past_mechanics;
 	public static final CreativeTabs TIMETRAVELER_TAB = new TimeTravelerTab("timetraveler");
 	
-	public Map<EntityPlayer, TimeTravelerPastRecorder> recordThreads = Collections.synchronizedMap(new HashMap());
-	public ArrayList<PastPlayThread> playThreads = new ArrayList();
+	public Map<EntityPlayer, TimeTravelerPastRecorder> recordThreads = Collections.synchronizedMap(new HashMap<EntityPlayer, TimeTravelerPastRecorder>());
+	public ArrayList<PastPlayThread> playThreads = new ArrayList<PastPlayThread>();
 
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.COMMON_PROXY_CLASS)
 	public static CommonProxy proxy;
@@ -55,7 +55,6 @@ public class TimeTraveler
 	{
     	TEMPORAL_LOCATION = PlayerTemporalLocation.PRESENT;
     	RegistryHandler.preInitRegistries();
-    	past_mechanics = new PastMechanics();
 	}
 
     @EventHandler
@@ -68,15 +67,26 @@ public class TimeTraveler
     public void postInit(FMLPostInitializationEvent event)
     {
     	MinecraftForge.EVENT_BUS.register(new GuiHandler());
+    	past_mechanics = new PastMechanics();
     }
 	public List<PastAction> getActionListForPlayer(EntityPlayer ep)
 	{
-		TimeTravelerPastRecorder aRecorder = (TimeTravelerPastRecorder) this.recordThreads.get(ep);
+		TimeTravelerPastRecorder aRecorder = this.recordThreads.get(ep);
 		if (aRecorder == null) 
 		{
 			return null;
 		}
 		return aRecorder.eventsList;
 	}
-
+	public void addActionToPlayer(EntityPlayer ep, PastAction action)
+	{
+		this.recordThreads.get(ep).eventsList.add(action);
+	}
+	public void clearActionList(EntityPlayer ep)
+	{
+		synchronized(this.recordThreads)
+		{
+			this.recordThreads.get(ep).eventsList.clear();
+		}
+	}
 }

@@ -2,11 +2,8 @@ package com.charsmud.timetraveler.blocks;
 
 import com.charsmud.timetraveler.TimeTraveler;
 import com.charsmud.timetraveler.TimeTraveler.PlayerTemporalLocation;
-import com.charsmud.timetraveler.gui.GuiFutureReturn;
-import com.charsmud.timetraveler.gui.GuiFutureTravel;
 import com.charsmud.timetraveler.gui.GuiPastTravel;
 import com.charsmud.timetraveler.tileentities.TileEntityTimeMachine;
-import com.charsmud.timetraveler.util.Reference;
 
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -17,9 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 //TODO: Implement me
 public class BlockTimeMachine extends BlockBase implements ITileEntityProvider 

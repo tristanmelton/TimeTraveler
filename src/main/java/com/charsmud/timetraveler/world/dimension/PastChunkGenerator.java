@@ -2,6 +2,8 @@ package com.charsmud.timetraveler.world.dimension;
 
 import java.util.List;
 
+import com.charsmud.timetraveler.util.mechanics.future.FutureTravelMechanics;
+
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -14,10 +16,9 @@ public class PastChunkGenerator implements IChunkGenerator {
 	
 	private final World world;
 	private final IChunkGenerator past;
-	
-	public PastChunkGenerator(World world, IChunkGenerator past) {
+	public PastChunkGenerator(World world, IChunkGenerator future) {
 		this.world = world;
-		this.past = past;
+		this.past = future;
 	}
 	
 	@Override

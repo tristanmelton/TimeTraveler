@@ -20,11 +20,11 @@ public class WorldGenCustomStructures implements IWorldGenerator
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
 	{
-		System.out.println("Trying to generate");
 		int i = (chunkX * 16) + random.nextInt(15);
 		int k = (chunkZ * 16) + random.nextInt(15);
 		int j = calculateGenerationHeight(world, i, k, Blocks.GRASS);
-		if(world.getBlockState(new BlockPos(i, j, k)).getBlock()  != Blocks.GRASS || world.getBlockState(new BlockPos(i + 10, j, k)).getBlock() != Blocks.GRASS || world.getBlockState(new BlockPos(i + 10, j, k + 10)).getBlock() != Blocks.GRASS || world.getBlockState(new BlockPos(i, j, k + 10)).getBlock() != Blocks.GRASS)
+		int chance = random.nextInt(5);
+		if(chance == 0 && world.getBlockState(new BlockPos(i, j, k)).getBlock()  != Blocks.GRASS || world.getBlockState(new BlockPos(i + 10, j, k)).getBlock() != Blocks.GRASS || world.getBlockState(new BlockPos(i + 10, j, k + 10)).getBlock() != Blocks.GRASS || world.getBlockState(new BlockPos(i, j, k + 10)).getBlock() != Blocks.GRASS)
 		{
 			return;
 		}

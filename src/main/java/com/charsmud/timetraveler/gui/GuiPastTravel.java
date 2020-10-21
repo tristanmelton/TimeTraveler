@@ -1,12 +1,17 @@
 package com.charsmud.timetraveler.gui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 import com.charsmud.timetraveler.TimeTraveler;
 import com.charsmud.timetraveler.TimeTraveler.PlayerTemporalLocation;
+import com.charsmud.timetraveler.entities.EntityPlayerPast;
 import com.charsmud.timetraveler.util.mechanics.TimeTeleporter;
+import com.charsmud.timetraveler.util.mechanics.past.PastPlayThread;
 import com.charsmud.timetraveler.world.DimensionInit;
 
 import net.minecraft.client.Minecraft;
@@ -15,8 +20,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.client.FMLClientHandler;
 
 /**
@@ -53,15 +58,10 @@ public class GuiPastTravel extends GuiScreen
 		this.player = player;
 	}
 
-	static final Minecraft mc = Minecraft.getMinecraft();
-	static final MinecraftServer ms = mc.getIntegratedServer();
-	WorldInfo wi = mc.world.getWorldInfo();
-	public File directory;
-	public File[] files;
-	public int timezone;
-	public int num;
-
-	public File worldInPast;
+	private static final Minecraft mc = Minecraft.getMinecraft();
+	private static final MinecraftServer ms = mc.getIntegratedServer();
+	private File directory;
+	private File[] files;	
 
 	/**
 	 * Initializes the GUI, sest up buttons and title and directories.
@@ -84,8 +84,6 @@ public class GuiPastTravel extends GuiScreen
 		this.buttonSelect.enabled = false;
 
 		this.timeSlotContainer = new GuiTimeSlot(this, timeList);
-		//this.timeSlotContainer.registerScrollButtons(4, 5);
-
 	}
 
 	/**
@@ -107,90 +105,6 @@ public class GuiPastTravel extends GuiScreen
         	double dy = player.world.getHeight(MathHelper.floor(player.posX), MathHelper.floor(player.posZ));
         	// still seem to need to set the position, +1 so you don't get in the void
         	player.setPositionAndUpdate(player.posX, dy + 1, player.posZ);
-
-			//TODO: Implement past travel
-			/*String nameOfTime = (this.timeList.get(this.getSelectedWorld(this)).toString());
-			System.out.println(nameOfTime);
-			for (int i = 0; i < files.length; i++)
-			{
-				System.out.println(files[i].toString());
-				if (files[i].toString().contains(nameOfTime)) 
-				{
-					try 
-					{
-
-						PastMechanics pMechanics = new PastMechanics();
-						EntityMechanics eMechanics = new EntityMechanics();
-
-						WorldClient wc = mc.theWorld;
-						WorldInfo worldi = mc.theWorld.getWorldInfo();
-
-						String worldName = ms.getWorldName();
-						String folderName = ms.getFolderName();
-
-						TimeTraveler.vars.setLastPastTimeSavedForWorld(nameOfTime);
-						// File allEntityData = new
-						// File(FMLClientHandler.instance().getClient().mcDataDir
-						// +"/mods/TimeMod/past/EntityLocations/" +
-						// FMLClientHandler.instance().getServer().getWorldName() + "/" +
-						// TimeTraveler.vars.getPastTime() + ".epd");
-
-						mc.thePlayer.sendChatMessage("Loading...");
-						File present = new File("./saves/" + ms.getWorldName() + "/region").getAbsoluteFile();
-						String fname = "\\mods\\TimeMod\\present\\" + ms.getWorldName();
-
-						File directory = new File(mc.mcDataDir + fname);
-
-						CopyFile cp = new CopyFile();
-
-						System.out.println("Present: " + present);
-						System.out.println("Directory: " + directory);
-						cp.copyDirectory(present, directory);
-						isInPast = true;
-
-						EntityPlayer player = mc.thePlayer;
-						// pMechanics.loadEntityData();
-
-						// eMechanics.despawnAllEntities(FMLServerHandler.instance().getServer().worldServerForDimension(0));
-
-						mc.theWorld.sendQuittingDisconnectingPacket();
-						mc.loadWorld((WorldClient) null);
-						mc.displayGuiScreen(new GuiMainMenu());
-
-						source = new File(FMLClientHandler.instance().getClient().mcDataDir + "/mods/TimeMod/past/"
-								+ ms.getWorldName() + "/" + nameOfTime);
-						staticsource = source;
-						worldInPast = source;
-						File dest = new File(FMLClientHandler.instance().getClient().mcDataDir + "/saves/"
-								+ ms.getWorldName() + "/region");
-
-						try
-						{
-							if (mc.getSaveLoader().canLoadWorld(worldName))
-							{
-								Thread.sleep(files.length * 750 * 2);
-								System.out.println(nameOfTime);
-								System.out.println(source);
-								System.out.println(source.listFiles());
-								System.out.println(dest.listFiles());
-
-								CopyFile.moveMultipleFiles(source, dest);
-
-								mc.launchIntegratedServer(folderName, worldName, (WorldSettings) null);
-							}
-						} 
-						catch (Exception ex)
-						{
-							ex.printStackTrace();
-						}
-					}
-
-					catch (IOException ex)
-					{
-						ex.printStackTrace();
-					}
-				}
-			}*/
 		} 
 		else 
 		{
@@ -202,15 +116,6 @@ public class GuiPastTravel extends GuiScreen
 	{
 		this.buttonSelect.enabled = value;
 	}
-	public boolean doesGuiPauseGame() 
-	{
-		return false;
-	}
-
-	public void onGuiClosed() 
-	{
-	}
-
 	/**
 	 * Draws the screen and all the components in it.
 	 */
@@ -313,10 +218,5 @@ public class GuiPastTravel extends GuiScreen
 	static String getLocalizedWorldName(GuiPastTravel par0GuiSelectWorld) 
 	{
 		return par0GuiSelectWorld.localizedWorldText;
-	}
-
-	public File getSaveNumber() 
-	{
-		return source;
 	}
 }

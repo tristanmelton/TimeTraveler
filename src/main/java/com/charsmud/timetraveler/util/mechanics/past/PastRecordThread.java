@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.charsmud.timetraveler.TimeTraveler;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -63,7 +64,9 @@ class PastRecordThread implements Runnable
 			this.in.writeShort(60651);
 			while (this.capture.booleanValue())
 			{
-				writeTime();
+				this.eventList.addAll(TimeTraveler.instance.getActionListForPlayer(player));
+				TimeTraveler.instance.clearActionList(player);
+				//writeTime();
 				
 				trackAndWriteMovement();
 
@@ -104,7 +107,7 @@ class PastRecordThread implements Runnable
 		in.writeFloat(player.rotationYaw);
 		in.writeFloat(player.rotationPitch);
 		in.writeDouble(player.posX);
-		in.writeDouble(player.posY - 1.5);
+		in.writeDouble(player.posY);
 		in.writeDouble(player.posZ);
 		in.writeDouble(player.motionX);
 		in.writeDouble(player.motionY);
@@ -117,6 +120,46 @@ class PastRecordThread implements Runnable
 		//in.writeBoolean((player.getDataWatcher().getWatchableObjectByte(0) & 1 << 4) != 0);
 	}
 
+	private void trackSwing() 
+	{
+		if (this.player.isSwingInProgress)
+		{
+			if (!this.lastTickSwipe.booleanValue())
+			{
+				this.lastTickSwipe = Boolean.valueOf(true);
+				this.eventList.add(new PastAction(PastActionTypes.SWIPE));
+			}
+		}
+		else 
+		{
+			this.lastTickSwipe = Boolean.valueOf(false);
+		}
+	}
+	private void trackHeldItem()
+	{
+		if (this.player.getHeldItemMainhand() != ItemStack.EMPTY)
+		{
+			if (Item.getIdFromItem(player.getHeldItemMainhand().getItem()) != itemsEquipped[0])
+			{
+				itemsEquipped[0] = Item.getIdFromItem(player.getHeldItemMainhand().getItem());
+				PastAction ma = new PastAction(PastActionTypes.EQUIP);
+				ma.armorSlot = 0;
+				ma.armorId = this.itemsEquipped[0];
+				ma.armorDmg = this.player.getHeldItemMainhand().getItemDamage();
+				player.getHeldItemMainhand().writeToNBT(ma.itemData);
+				this.eventList.add(ma);
+			}
+		} 
+		else if (this.player.getHeldItemMainhand() == ItemStack.EMPTY && this.itemsEquipped[0] != -1)
+		{
+			this.itemsEquipped[0] = -1;
+			PastAction ma = new PastAction(PastActionTypes.EQUIP);
+			ma.armorSlot = 0;
+			ma.armorId = 0;//this.itemsEquipped[0];
+			ma.armorDmg = 0;
+			this.eventList.add(ma);
+		}
+	}
 	private void trackArmor()
 	{
 		for (int ci = 1; ci < 5; ci++)
@@ -144,58 +187,17 @@ class PastRecordThread implements Runnable
 			}
 		}
 	}
-
-	private void trackHeldItem()
-	{
-		if (this.player.getHeldItemMainhand() != ItemStack.EMPTY)
-		{
-			if (Item.getIdFromItem(player.getHeldItemMainhand().getItem()) != itemsEquipped[0])
-			{
-				itemsEquipped[0] = Item.getIdFromItem(player.getHeldItemMainhand().getItem());
-				PastAction ma = new PastAction(PastActionTypes.EQUIP);
-				ma.armorSlot = 0;
-				ma.armorId = this.itemsEquipped[0];
-				ma.armorDmg = this.player.getHeldItemMainhand().getItemDamage();
-				player.getHeldItemMainhand().writeToNBT(ma.itemData);
-				this.eventList.add(ma);
-			}
-		} 
-		else if (this.player.getHeldItemMainhand() == ItemStack.EMPTY)
-		{
-			this.itemsEquipped[0] = -1;
-			PastAction ma = new PastAction(PastActionTypes.EQUIP);
-			ma.armorSlot = 0;
-			ma.armorId = 0;//this.itemsEquipped[0];
-			ma.armorDmg = 0;
-			this.eventList.add(ma);
-		}
-	}
-
-	private void trackSwing() 
-	{
-		if (this.player.isSwingInProgress)
-		{
-			if (!this.lastTickSwipe.booleanValue())
-			{
-				this.lastTickSwipe = Boolean.valueOf(true);
-				this.eventList.add(new PastAction(PastActionTypes.SWIPE));
-			}
-		}
-		else 
-		{
-			this.lastTickSwipe = Boolean.valueOf(false);
-		}
-	}
-
 	private void writeActions() throws IOException 
 	{
 		if (this.eventList.size() > 0) 
 		{
 			this.in.writeBoolean(true);
 			PastAction ma = (PastAction) this.eventList.get(0);
+			System.out.println("PAST ACTION TYPE " + ma.type);
 			this.in.writeByte(ma.type);
 			switch (ma.type) 
 			{
+			//TODO: Not Implemented
 			case PastActionTypes.CHAT:
 			{
 				this.in.writeUTF(ma.message);
@@ -207,6 +209,7 @@ class PastRecordThread implements Runnable
 			}
 			case PastActionTypes.DROP:
 			{
+				System.out.println("DROP");
 				CompressedStreamTools.write(ma.itemData, this.in);
 				break;
 			}
@@ -223,15 +226,17 @@ class PastRecordThread implements Runnable
 			}
 			case PastActionTypes.SHOOTARROW:
 			{
+				System.out.println("SHOOTARROW");
 				this.in.writeInt(ma.arrowCharge);
 				break;
 			}
 			case PastActionTypes.PLACEBLOCK: 
 			{
+				System.out.println("PLACEBLOCK");
 				in.writeInt(ma.xCoord);
 				in.writeInt(ma.yCoord);
 				in.writeInt(ma.zCoord);
-				CompressedStreamTools.write(ma.itemData, in);
+				in.writeInt(Block.getIdFromBlock(ma.blockType));
 				break;
 			}
 			case PastActionTypes.LOGOUT:
@@ -243,6 +248,7 @@ class PastRecordThread implements Runnable
 			}
 			case PastActionTypes.BREAKBLOCK:
 			{
+				System.out.println("BREAKBLOCK");
 				in.writeInt(ma.xCoord);
 				in.writeInt(ma.yCoord);
 				in.writeInt(ma.zCoord);
